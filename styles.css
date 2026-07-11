@@ -1,0 +1,5 @@
+body{margin:0;font-family:Arial,sans-serif;display:flex}
+.sidebar{width:220px;background:#1f2937;color:#fff;padding:20px;height:100vh}
+.content{padding:30px;flex:1}
+button{padding:10px 16px;cursor:pointer}
+#notification{margin-top:20px;color:green;font-weight:bold}
