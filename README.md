@@ -1,8 +1,3 @@
-# KALEM-V1 Paket 1
+# KALEM V2
 
-İçerik:
-- Dashboard
-- Sol menü
-- Bildirim testi
-- LocalStorage altyapısı
-- HTML/CSS/JS başlangıç yapısı
+Bu başlangıç paketidir. Sonraki sürümlerde yeni özellikler eklenecektir.
