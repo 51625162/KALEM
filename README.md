@@ -1,3 +1,3 @@
-# KALEM V2
+# KALEM V2.0
 
-Bu başlangıç paketidir. Sonraki sürümlerde yeni özellikler eklenecektir.
+İlk çalışan paket.
