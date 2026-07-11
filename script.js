@@ -1,6 +1,12 @@
-// Tamamen Boş Veritabanı Seti (Sıfırdan veri eklemen için)
-let evrakVeritabanı = [];
-let evrakSayac = 0;
+// Tarayıcı hafızasından verileri çek, eğer boşsa sıfır dizi başlat
+let evrakVeritabanı = JSON.parse(localStorage.getItem('kalem_evraklar')) || [];
+// Sayacı da kayıtlı evrak sayısına göre dinamik belirle
+let evrakSayac = evrakVeritabanı.length > 0 ? Math.max(...evrakVeritabanı.map(e => parseInt(e.no.split('-')[1]))) : 0;
+
+// Verileri hafızaya (LocalStorage) kaydetme fonksiyonu
+function hafizayaKaydet() {
+    localStorage.setItem('kalem_evraklar', JSON.stringify(evrakVeritabanı));
+}
 
 // Sistemi ve Tabloları Yenileme Fonksiyonu
 function sistemiGuncelle() {
@@ -13,7 +19,6 @@ function sistemiGuncelle() {
     let dashRows = "";
     let dosyaRows = "";
 
-    // Eğer hiç evrak yoksa kullanıcıya bilgi ver
     if (evrakVeritabanı.length === 0) {
         const bosSatir = `<tr><td colspan="6" style="text-align:center; color:#64748b;">Sistemde kayıtlı evrak bulunmamaktadır. Yeni evrak ekleyin.</td></tr>`;
         if(mainTable) mainTable.innerHTML = bosSatir;
@@ -33,7 +38,6 @@ function sistemiGuncelle() {
             badgeClass = "badge badge-tamamlanan";
         }
         
-        // Ana Evrak Yönetim Tablosu
         mainRows += `<tr>
             <td><strong>${evrak.no}</strong></td>
             <td>${evrak.ad}</td>
@@ -46,7 +50,6 @@ function sistemiGuncelle() {
             </td>
         </tr>`;
 
-        // Dashboard Özet Tablosu
         dashRows += `<tr>
             <td><strong>${evrak.no}</strong></td>
             <td>${evrak.ad}</td>
@@ -55,7 +58,6 @@ function sistemiGuncelle() {
             <td><span class="${badgeClass}">${evrak.durum}</span></td>
         </tr>`;
 
-        // Dosya Arşiv Tablosu
         if(evrak.dosya) {
             const dosyaIkonu = evrak.dosya.endsWith('.pdf') ? 'fa-file-pdf text-danger' : 'fa-file-word text-primary';
             dosyaRows += `<tr>
@@ -78,7 +80,6 @@ function sistemiGuncelle() {
     if(bekleyenEl) bekleyenEl.innerText = bekleyen;
 }
 
-// Görünüm Değiştirici
 function switchView(viewId, element) {
     document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active-view'));
     document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
@@ -95,7 +96,6 @@ function toggleElement(id) {
     if(el) el.style.display = el.style.display === 'none' ? 'grid' : 'none';
 }
 
-// Tamamen senin formdan girdiğin veriyi kaydeden fonksiyon
 function sistemeEvrakKaydet() {
     const ad = document.getElementById('form-ad').value.trim();
     const tur = document.getElementById('form-tur').value;
@@ -105,14 +105,12 @@ function sistemeEvrakKaydet() {
 
     if (!ad) return alert("Lütfen evrak konusunu yazınız.");
     
-    // Yüklenen dosya adını al veya varsayılan ata
     let secilenDosyaAdi = "ek_belge.pdf";
     if(dosyaGirişi && dosyaGirişi.files.length > 0) {
         secilenDosyaAdi = dosyaGirişi.files[0].name;
     }
 
     evrakSayac++;
-    // Numaratörü dinamik yapıyoruz (EVR-0001, EVR-0002...)
     const evrakNo = "EVR-" + String(evrakSayac).padStart(4, '0');
 
     evrakVeritabanı.push({
@@ -125,17 +123,18 @@ function sistemeEvrakKaydet() {
         dosyaIcerik: `${ad} konusuyla alakalı sisteme yüklediğiniz ${secilenDosyaAdi} isimli resmi evrak içeriği.`
     });
 
-    // Formu temizle
     document.getElementById('form-ad').value = "";
     if(dosyaGirişi) dosyaGirişi.value = "";
     
     toggleElement('evrak-ekleme-formu');
+    hafizayaKaydet(); // Tarayıcıya kaydet
     sistemiGuncelle();
 }
 
 function evrakSil(no) {
     if(confirm('Seçilen resmi evrakı silmek istediğinize emin misiniz?')) {
         evrakVeritabanı = evrakVeritabanı.filter(e => e.no !== no);
+        hafizayaKaydet(); // Silindikten sonra güncel halini kaydet
         sistemiGuncelle();
     }
 }
