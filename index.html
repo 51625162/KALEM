@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KALEM Projesi - Evrak Yönetim Sistemi</title>
+    <title>KALEM Projesi - Evrak & Dosya Yönetim Sistemi</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -23,7 +23,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background-color: var(--bg-primary); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sol Menü - Sidebar */
+        /* Sidebar */
         .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; }
         .sidebar-brand { padding: 24px 20px; font-size: 20px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #1e293b; color: var(--sidebar-active); }
         .sidebar-menu { list-style: none; padding: 20px 10px; flex: 1; }
@@ -32,217 +32,155 @@
         .sidebar-menu a:hover, .sidebar-menu li.active a { background-color: #1e293b; color: white; }
         .sidebar-menu li.active a { color: var(--sidebar-active); border-left: 4px solid var(--sidebar-active); border-radius: 0 8px 8px 0; }
 
-        /* Ana İçerik Alanı */
+        /* Ana Alan */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        
-        /* Üst Bar - Topbar */
         .topbar { height: 70px; background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
         .topbar-actions { display: flex; align-items: center; gap: 24px; margin-left: auto; }
-        .notification-bell { position: relative; cursor: pointer; font-size: 20px; color: #64748b; }
-        .notification-badge { position: absolute; top: -4px; right: -4px; background-color: var(--danger); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
         .user-profile { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; }
 
-        /* Sayfa Gövdesi */
+        /* Gövde */
         .page-body { flex: 1; padding: 30px; overflow-y: auto; }
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .page-title { font-size: 24px; font-weight: 700; color: #1e293b; }
         
-        /* Modüller (Varsayılan olarak gizli, JS ile açılacak) */
         .view-section { display: none; }
         .view-section.active-view { display: block; }
 
-        /* Kartlar ve Grid Yapısı */
+        /* Grid & Kartlar */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background-color: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        .stat-info h3 { font-size: 13px; color: #64748b; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card { background-color: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .stat-info h3 { font-size: 13px; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
         .stat-info p { font-size: 28px; font-weight: 700; color: #1e293b; }
         .stat-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
 
-        /* Form Elemanları ve Gelişmiş Filtreleme */
+        /* Tablolar ve Filtreler */
         .filter-panel { background-color: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .table-actions { display: flex; gap: 10px; margin-bottom: 15px; justify-content: flex-end; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         .form-group label { font-size: 13px; font-weight: 600; color: #475569; }
-        .form-control { padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 14px; transition: border 0.2s; }
-        .form-control:focus { border-color: var(--primary); }
-
-        /* Tablolar */
-        .data-table-container { background-color: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .form-control { padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 14px; }
+        
+        .data-table-container { background-color: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background-color: #f8fafc; padding: 16px 20px; font-weight: 600; color: #475569; border-bottom: 1px solid var(--border-color); font-size: 14px; }
-        td { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-size: 14px; color: #334155; }
+        th { background-color: #f8fafc; padding: 16px 20px; font-weight: 600; color: #475569; border-bottom: 1px solid var(--border-color); }
+        td { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
         tr:hover { background-color: #f8fafc; }
 
-        /* Butonlar */
-        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; transition: all 0.2s; }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        /* Butonlar & Badges */
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
         .btn-primary { background-color: var(--primary); color: white; }
         .btn-success { background-color: var(--success); color: white; }
+        .btn-secondary { background-color: #64748b; color: white; }
         
-        /* Rozetler (Badges) */
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
         .badge-bekleyen { background-color: #fef3c7; color: #d97706; }
         .badge-tamamlanan { background-color: #d1fae5; color: #059669; }
-
-        .action-icons i { cursor: pointer; margin-right: 12px; color: #94a3b8; transition: color 0.2s; }
+        .action-icons i { cursor: pointer; margin-right: 12px; color: #94a3b8; }
         .action-icons i:hover { color: #475569; }
         
-        /* Yeni Evrak Ekleme Alanı */
         .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; background: white; padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; }
+
+        /* Modal (Dosya Önizleme Penceresi) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 16px; width: 500px; max-width: 90%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .modal-body { font-size: 14px; line-height: 1.6; color: #475569; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color); }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="sidebar-brand">
-            <i class="fa-solid fa-gavel"></i> KALEM PROJESİ
-        </div>
+        <div class="sidebar-brand"><i class="fa-solid fa-gavel"></i> KALEM PROJESİ</div>
         <ul class="sidebar-menu">
             <li class="menu-item active" onclick="switchView('dashboard', this)"><a><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
             <li class="menu-item" onclick="switchView('evrak-yonetimi', this)"><a><i class="fa-solid fa-folder-open"></i> Evrak Yönetimi</a></li>
+            <li class="menu-item" onclick="switchView('dosya-yonetimi', this)"><a><i class="fa-solid fa-file-pdf"></i> Dosya Yönetimi</a></li>
             <li class="menu-item"><a><i class="fa-solid fa-users"></i> Kullanıcı Yönetimi</a></li>
             <li class="menu-item"><a><i class="fa-solid fa-chart-line"></i> Raporlar</a></li>
-            <li class="menu-item"><a><i class="fa-solid fa-file-pdf"></i> Dosya Yönetimi</a></li>
-            <li class="menu-item"><a><i class="fa-solid fa-gears"></i> Ayarlar</a></li>
         </ul>
     </div>
 
-    <!-- ANA İÇERİK ALANI -->
     <div class="main-content">
-        <!-- TOPBAR -->
         <div class="topbar">
-            <div class="topbar-actions">
-                <div class="notification-bell">
-                    <i class="fa-solid fa-bell"></i>
-                    <span class="notification-badge" id="bell-count">2</span>
-                </div>
-                <div class="user-profile">
-                    <i class="fa-solid fa-circle-user" style="font-size: 24px; color: var(--primary);"></i>
-                    <span>Yazı İşleri Müdürü</span>
-                </div>
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user" style="font-size: 24px; color: var(--primary);"></i>
+                <span>Yazı İşleri Müdürü</span>
             </div>
         </div>
 
-        <!-- SAYFA GÖVDESİ -->
         <div class="page-body">
             
-            <!-- 1. MODÜL: DASHBOARD -->
             <div id="dashboard" class="view-section active-view">
-                <div class="page-header">
-                    <h2 class="page-title">Genel Bakış Dashboard</h2>
-                </div>
-                
+                <div class="page-header"><h2 class="page-title">Genel Bakış Dashboard</h2></div>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-info">
-                            <h3>Toplam Evrak</h3>
-                            <p id="dash-total">3</p>
-                        </div>
+                        <div class="stat-info"><h3>Toplam Evrak</h3><p id="dash-total">3</p></div>
                         <div class="stat-icon" style="background-color: #e0f2fe; color: var(--primary);"><i class="fa-solid fa-file-invoice"></i></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-info">
-                            <h3>Bekleyen İşler</h3>
-                            <p id="dash-bekleyen" style="color: var(--warning);">2</p>
-                        </div>
+                        <div class="stat-info"><h3>Bekleyen İşler</h3><p id="dash-bekleyen" style="color: var(--warning);">2</p></div>
                         <div class="stat-icon" style="background-color: #fef3c7; color: var(--warning);"><i class="fa-solid fa-clock"></i></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-info">
-                            <h3>Tamamlanan</h3>
-                            <p id="dash-tamamlanan" style="color: var(--success);">1</p>
-                        </div>
-                        <div class="stat-icon" style="background-color: #d1fae5; color: var(--success);"><i class="fa-solid fa-circle-check"></i></div>
-                    </div>
                 </div>
-
                 <div class="data-table-container">
-                    <div style="padding: 20px; border-bottom: 1px solid var(--border-color); font-weight: bold;">Son İşlemler</div>
+                    <div style="padding: 20px; font-weight: bold; border-bottom: 1px solid var(--border-color);">Son İşlemler</div>
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Evrak No</th>
-                                <th>Evrak Adı</th>
-                                <th>Tür</th>
-                                <th>Tarih</th>
-                                <th>Durum</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dash-summary-table">
-                            <!-- JS ile doldurulacak -->
-                        </tbody>
+                        <thead><tr><th>Evrak No</th><th>Evrak Adı</th><th>Tür</th><th>Tarih</th><th>Durum</th></tr></thead>
+                        <tbody id="dash-summary-table"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 2. MODÜL: EVRAK YÖNETİMİ -->
             <div id="evrak-yonetimi" class="view-section">
                 <div class="page-header">
                     <h2 class="page-title">Evrak Yönetim Paneli</h2>
                     <button class="btn btn-primary" onclick="toggleElement('evrak-ekleme-formu')"><i class="fa-solid fa-plus"></i> Yeni Evrak Kayıt</button>
                 </div>
 
-                <!-- Hızlı/Gizlenebilir Evrak Ekleme Formu -->
                 <div id="evrak-ekleme-formu" class="form-grid" style="display: none;">
-                    <div class="form-group">
-                        <label>Evrak Adı / Konusu</label>
-                        <input type="text" id="form-ad" class="form-control" placeholder="Örn: Süre Uzatım Talebi">
-                    </div>
-                    <div class="form-group">
-                        <label>Evrak Türü</label>
+                    <div class="form-group"><label>Evrak Adı / Konusu</label><input type="text" id="form-ad" class="form-control" placeholder="Örn: Tahliye Müzekkeresi"></div>
+                    <div class="form-group"><label>Evrak Türü</label>
                         <select id="form-tur" class="form-control">
                             <option value="Dilekçe">Dilekçe</option>
                             <option value="Müzekkere">Müzekkere</option>
                             <option value="Genelge">Genelge</option>
-                            <option value="Kurum İçi Yazı">Kurum İçi Yazı</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Durum</label>
+                    <div class="form-group"><label>Durum</label>
                         <select id="form-durum" class="form-control">
                             <option value="Beklemede">Beklemede</option>
                             <option value="Tamamlandı">Tamamlandı</option>
                         </select>
                     </div>
-                    <div class="form-group" style="justify-content: flex-end; display: flex; flex-direction: row; align-items: flex-end; gap: 10px;">
+                    <div class="form-group"><label>Dosya Eki (PDF/Word Simüle)</label><input type="file" id="form-dosya" class="form-control"></div>
+                    <div class="form-group" style="grid-column: span 2; display:flex; justify-content:flex-end;">
                         <button class="btn btn-success" onclick="sistemeEvrakKaydet()"><i class="fa-solid fa-check"></i> Kaydet</button>
                     </div>
                 </div>
 
-                <!-- Gelişmiş Arama & Filtreleme -->
-                <div class="filter-panel">
-                    <div class="form-group">
-                        <label>Evrak No veya Adı ile Ara</label>
-                        <input type="text" id="search-input" class="form-control" placeholder="Yazın ve arayın..." onkeyup="evrakFiltrele()">
-                    </div>
-                    <div class="form-group">
-                        <label>Evrak Türü Filtresi</label>
-                        <select id="filter-tur" class="form-control" onchange="evrakFiltrele()">
-                            <option value="HEPSİ">Tüm Türler</option>
-                            <option value="Dilekçe">Dilekçe</option>
-                            <option value="Müzekkere">Müzekkere</option>
-                            <option value="Genelge">Genelge</option>
-                            <option value="Kurum İçi Yazı">Kurum İçi Yazı</option>
-                        </select>
-                    </div>
+                <div class="table-actions">
+                    <button class="btn btn-secondary" onclick="tabloyuYazdir()"><i class="fa-solid fa-print"></i> PDF / Yazdır</button>
+                    <button class="btn btn-success" onclick="tabloyuExceleAktar()"><i class="fa-solid fa-file-excel"></i> Excel'e Aktar (CSV)</button>
                 </div>
 
-                <!-- Ana Evrak Tablosu -->
+                <div class="filter-panel">
+                    <div class="form-group"><label>Evrak No veya Adı ile Ara</label><input type="text" id="search-input" class="form-control" placeholder="Ara..." onkeyup="evrakFiltrele()"></div>
+                </div>
+
+                <div class="data-table-container">
+                    <table id="yazdirilabilir-tablo">
+                        <thead><tr><th>Evrak No</th><th>Evrak Adı</th><th>Evrak Türü</th><th>Kayıt Tarihi</th><th>Durum</th><th>İşlemler</th></tr></thead>
+                        <tbody id="main-evrak-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="dosya-yonetimi" class="view-section">
+                <div class="page-header"><h2 class="page-title">Ekli Dosyalar & Arşiv</h2></div>
                 <div class="data-table-container">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Evrak No</th>
-                                <th>Evrak Adı</th>
-                                <th>Evrak Türü</th>
-                                <th>Kayıt Tarihi</th>
-                                <th>Durum</th>
-                                <th>İşlemler</th>
-                            </tr>
-                        </thead>
-                        <tbody id="main-evrak-table">
-                            <!-- JS ile dinamik beslenecek -->
-                        </tbody>
+                        <thead><tr><th>İlgili Evrak</th><th>Dosya Adı</th><th>Dosya Türü</th><th>Boyut</th><th>İşlem</th></tr></thead>
+                        <tbody id="dosya-tablo-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -250,142 +188,154 @@
         </div>
     </div>
 
-    <!-- SİSTEM SCRIPT ALTYAPISI (DİNAMİK VERİ YÖNETİMİ) -->
+    <div id="onizleme-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="modal-baslik">Dosya Önizleme</h3><i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="modalKapat()"></i></div>
+            <div class="modal-body" id="modal-icerik">Ekli resmi belge içeriği simüle ediliyor...</div>
+        </div>
+    </div>
+
     <script>
-        // Merkezi Veri Havuzu (Simüle Veri Tabanı)
+        // Veritabanı Altyapısı (Dosya Eki verisi eklendi)
         let evrakVeritabanı = [
-            { no: "EVR-0001", ad: "Bakanlık Muhabere Dilekçesi", tur: "Dilekçe", tarih: "10.07.2026", durum: "Tamamlandı" },
-            { no: "EVR-0002", ad: "Personel Görev Süre Uzatımı", tur: "Kurum İçi Yazı", tarih: "11.07.2026", durum: "Beklemede" },
-            { no: "EVR-0003", ad: "Ödenek ve Bütçe Planlama Müzekkeresi", tur: "Müzekkere", tarih: "12.07.2026", durum: "Beklemede" }
+            { no: "EVR-0001", ad: "Bakanlık Muhabere Dilekçesi", tur: "Dilekçe", tarih: "10.07.2026", durum: "Tamamlandı", dosya: "muhabere_ek.pdf", dosyaIcerik: "T.C. ADALET BAKANLIĞI Muhabere Evrakı ekidir. Gereğinin yapılması hususu arz olunur." },
+            { no: "EVR-0002", ad: "Personel Görev Süre Uzatımı", tur: "Genelge", tarih: "11.07.2026", durum: "Beklemede", dosya: "sure_uzatimi.docx", dosyaIcerik: "İlgili personelin görev süresinin 6 ay süreyle uzatılmasına dair karar taslağıdır." },
+            { no: "EVR-0003", ad: "Ödenek Planlama Müzekkeresi", tur: "Müzekkere", tarih: "12.07.2026", durum: "Beklemede", dosya: "odenek_plani.pdf", dosyaIcerik: "2026 yılı 3. çeyrek kalem ödenek ihtiyaç cetveli tablosudur." }
         ];
 
         let evrakSayac = 3;
 
-        // Sayfa/Modül Geçiş Fonksiyonu
         function switchView(viewId, element) {
-            document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active-view'));
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active-view'));
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
             document.getElementById(viewId).classList.add('active-view');
             element.classList.add('active');
-            
             sistemiGuncelle();
         }
 
-        // Açılır-Kapanır Panel Kontrolü
         function toggleElement(id) {
             const el = document.getElementById(id);
             el.style.display = el.style.display === 'none' ? 'grid' : 'none';
         }
 
-        // Merkezi Tablo ve İstatistik Güncelleme Sistemi
         function sistemiGuncelle() {
             const mainTable = document.getElementById('main-evrak-table');
             const dashTable = document.getElementById('dash-summary-table');
+            const dosyaTable = document.getElementById('dosya-tablo-body');
             
-            // Sıfırlama
-            mainTable.innerHTML = "";
-            dashTable.innerHTML = "";
-
-            let bekleyenSayisi = 0;
-            let tamamlananSayisi = 0;
+            mainTable.innerHTML = ""; dashTable.innerHTML = ""; dosyaTable.innerHTML = "";
+            let bekleyen = 0;
 
             evrakVeritabanı.forEach((evrak) => {
-                if(evrak.durum === "Beklemede") bekleyenSayisi++;
-                else tamamlananSayisi++;
-
-                const durumRozeti = `<span class="badge badge-${evrak.durum.toLowerCase().replace('ə','e')}">${evrak.durum}</span>`;
+                if(evrak.durum === "Beklemede") bekleyen++;
+                const badgeClass = `badge badge-${evrak.durum.toLowerCase().replace('ə','e')}`;
                 
-                // Evrak Yönetimi Tablosu Satırı
-                const rowHTML = `
-                    <tr>
-                        <td><strong>${evrak.no}</strong></td>
-                        <td>${evrak.ad}</td>
-                        <td>${evrak.tur}</td>
-                        <td>${evrak.tarih}</td>
-                        <td>${durumRozeti}</td>
-                        <td class="action-icons">
-                            <i class="fa-solid fa-eye" title="Görüntüle"></i>
-                            <i class="fa-solid fa-pen" title="Düzenle"></i>
-                            <i class="fa-solid fa-trash" style="color:var(--danger)" title="Sil" onclick="evrakSil('${evrak.no}')"></i>
-                        </td>
-                    </tr>`;
-                mainTable.innerHTML += rowHTML;
+                // Evrak Tablosu
+                mainTable.innerHTML += `<tr>
+                    <td><strong>${evrak.no}</strong></td><td>${evrak.ad}</td><td>${evrak.tur}</td><td>${evrak.tarih}</td>
+                    <td><span class="${badgeClass}">${evrak.durum}</span></td>
+                    <td class="action-icons">
+                        <i class="fa-solid fa-file-lines" title="Dosyayı Gör" onclick="dosyaOnizle('${evrak.no}')"></i>
+                        <i class="fa-solid fa-trash" style="color:var(--danger)" onclick="evrakSil('${evrak.no}')"></i>
+                    </td>
+                </tr>`;
 
-                // Dashboard Tablosu Satırı (Son eklenenler üstte görünecek şekilde)
-                const dashRowHTML = `
-                    <tr>
-                        <td><strong>${evrak.no}</strong></td>
-                        <td>${evrak.ad}</td>
-                        <td>${evrak.tur}</td>
-                        <td>${evrak.tarih}</td>
-                        <td>${durumRozeti}</td>
+                // Dashboard Özeti
+                dashTable.insertAdjacentHTML('afterbegin', `<tr><td><strong>${evrak.no}</strong></td><td>${evrak.ad}</td><td>${evrak.tur}</td><td>${evrak.tarih}</td><td><span class="${badgeClass}">${evrak.durum}</span></td></tr>`);
+
+                // Dosya Yönetimi Tablosu
+                if(evrak.dosya) {
+                    const dosyaIkonu = evrak.dosya.endsWith('.pdf') ? 'fa-file-pdf text-danger' : 'fa-file-word text-primary';
+                    dosyaTable.innerHTML += `<tr>
+                        <td>${evrak.no}</td>
+                        <td><i class="fa-solid ${dosyaIkonu}"></i> ${evrak.dosya}</td>
+                        <td>${evrak.dosya.endsWith('.pdf') ? 'PDF Belgesi' : 'Word Dokümanı'}</td>
+                        <td>1.2 MB</td>
+                        <td><button class="btn btn-primary" style="padding:4px 10px; font-size:12px;" onclick="dosyaOnizle('${evrak.no}')">Görüntüle</button></td>
                     </tr>`;
-                dashTable.insertAdjacentHTML('afterbegin', dashRowHTML);
+                }
             });
 
-            // Üst Sayaçları Güncelleme
             document.getElementById('dash-total').innerText = evrakVeritabanı.length;
-            document.getElementById('dash-bekleyen').innerText = bekleyenSayisi;
-            document.getElementById('dash-tamamlanan').innerText = tamamlananSayisi;
-            document.getElementById('bell-count').innerText = bekleyenSayisi;
+            document.getElementById('dash-bekleyen').innerText = bekleyen;
         }
 
-        // Yeni Evrak Kayıt Fonksiyonu
         function sistemeEvrakKaydet() {
             const ad = document.getElementById('form-ad').value.trim();
             const tur = document.getElementById('form-tur').value;
             const durum = document.getElementById('form-durum').value;
+            const dosyaInput = document.getElementById('form-dosya');
             const bugun = new Date().toLocaleDateString('tr-TR');
 
-            if (!ad) {
-                alert("Lütfen Evrak Adı / Konusu alanını boş bırakmayın.");
-                return;
-            }
-
+            if (!ad) return alert("Evrak adını yazınız.");
+            
             evrakSayac++;
             const yeniNo = `EVR-000${evrakSayac}`;
+            const dosyaAdi = dosyaInput.files[0] ? dosyaInput.files[0].name : "belge_eki.pdf";
 
-            evrakVeritabanı.push({ no: yeniNo, ad: ad, tur: tur, tarih: bugun, durum: durum });
-            
-            // Formu temizle ve kapat
+            evrakVeritabanı.push({
+                no: yeniNo, ad: ad, tur: tur, tarih: bugun, durum: durum,
+                dosya: dosyaAdi, dosyaIcerik: `${ad} konulu resmi evrakın sistem tarafından üretilen otomatik önizleme içeriğidir.`
+            });
+
             document.getElementById('form-ad').value = "";
             toggleElement('evrak-ekleme-formu');
-            
             sistemiGuncelle();
         }
 
-        // Evrak Silme Fonksiyonu
-        function evrakSil(evrakNo) {
-            if(confirm(`${evrakNo} numaralı evrakı silmek istediğinize emin misiniz?`)) {
-                evrakVeritabanı = evrakVeritabanı.filter(e => e.no !== evrakNo);
+        function evrakSil(no) {
+            if(confirm('Silinsin mi?')) {
+                evrakVeritabanı = evrakVeritabanı.filter(e => e.no !== no);
                 sistemiGuncelle();
             }
         }
 
-        // Gelişmiş Filtreleme ve Arama Algoritması
+        // --- DOSYA GÖRÜNTÜLEME MODAL SİSTEMİ ---
+        function dosyaOnizle(no) {
+            const evrak = evrakVeritabanı.find(e => e.no === no);
+            if(evrak) {
+                document.getElementById('modal-baslik').innerText = `${evrak.no} - ${evrak.dosya} İçeriği`;
+                document.getElementById('modal-icerik').innerText = evrak.dosyaIcerik;
+                document.getElementById('onizleme-modal').style.display = 'flex';
+            }
+        }
+        function modalKapat() { document.getElementById('onizleme-modal').style.display = 'none'; }
+
+        // --- EXCEL'E AKTARMA (CSV MANTIĞI) ---
+        function tabloyuExceleAktar() {
+            let csv = 'Evrak No,Evrak Adi,Tur,Tarih,Durum\n';
+            evrakVeritabanı.forEach(e => {
+                csv += `${e.no},${e.ad},${e.tur},${e.tarih},${e.durum}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", "kalem_evrak_listesi.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- PDF / YAZDIRMA MANTIĞI ---
+        function tabloyuYazdir() {
+            const printContent = document.getElementById('yazdirilabilir-tablo').outerHTML;
+            const win = window.open('', '', 'height=700,width=900');
+            win.document.write('<html><head><title>Evrak Raporu Çıktısı</title>');
+            win.document.write('<style>table{width:100%;border-collapse:collapse;} th,td{border:1px solid #ccc;padding:10px;text-align:left;}</style></head><body>');
+            win.document.write('<h2>KALEM PROJESİ RESMİ EVRAK RAPORU</h2>');
+            win.document.write(printContent);
+            win.document.write('</body></html>');
+            win.document.close();
+            win.print();
+        }
+
         function evrakFiltrele() {
-            const aramaTerimi = document.getElementById('search-input').value.toLowerCase();
-            const turFiltresi = document.getElementById('filter-tur').value;
-            const satirlar = document.querySelectorAll('#main-evrak-table tr');
-
-            satirlar.forEach(satir => {
-                const noText = satir.children[0].innerText.toLowerCase();
-                const adText = satir.children[1].innerText.toLowerCase();
-                const turText = satir.children[2].innerText;
-
-                const aramaUyumlu = noText.includes(aramaTerimi) || adText.includes(aramaTerimi);
-                const turUyumlu = (turFiltresi === "HEPSİ") || (turText === turFiltresi);
-
-                if(aramaUyumlu && turUyumlu) {
-                    satir.style.display = "";
-                } else {
-                    satir.style.display = "none";
-                }
+            const terim = document.getElementById('search-input').value.toLowerCase();
+            document.querySelectorAll('#main-evrak-table tr').forEach(row => {
+                row.style.display = (row.children[0].innerText.toLowerCase().includes(terim) || row.children[1].innerText.toLowerCase().includes(terim)) ? "" : "none";
             });
         }
 
-        // Sayfa İlk Açıldığında Verileri Yükle
         window.onload = sistemiGuncelle;
     </script>
 </body>
