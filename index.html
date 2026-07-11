@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>KALEM V2</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="assets/css/styles.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
 </head>
 
@@ -17,17 +18,47 @@
 
 <div class="sidebar">
 
-<h2>📋 KALEM</h2>
+<div class="logo">
+<i class="fa-solid fa-feather"></i>
+<h2>KALEM</h2>
+</div>
 
 <ul>
 
-<li class="active">🏠 Dashboard</li>
+<li class="active">
+<i class="fa-solid fa-house"></i>
+<span>Dashboard</span>
+</li>
 
-<li>📁 Belgeler</li>
+<li>
+<i class="fa-solid fa-folder"></i>
+<span>Evraklar</span>
+</li>
 
-<li>➕ Yeni Belge</li>
+<li>
+<i class="fa-solid fa-users"></i>
+<span>Kullanıcılar</span>
+</li>
 
-<li>⚙️ Ayarlar</li>
+<li>
+<i class="fa-solid fa-chart-line"></i>
+<span>Raporlar</span>
+</li>
+
+<li>
+<i class="fa-solid fa-calendar"></i>
+<span>Takvim</span>
+</li>
+
+<li>
+<i class="fa-solid fa-bell"></i>
+<span>Bildirimler</span>
+</li>
+
+<li>
+<i class="fa-solid fa-gear"></i>
+<span>Ayarlar</span>
+</li>
 
 </ul>
 
@@ -37,9 +68,23 @@
 
 <header>
 
-<h1>Dashboard</h1>
+<div class="search">
 
-<p>Belge yönetim paneli</p>
+<input
+type="text"
+placeholder="Ara...">
+
+</div>
+
+<div class="profile">
+
+<i class="fa-solid fa-bell"></i>
+
+<img
+src="https://i.pravatar.cc/100"
+alt="">
+
+</div>
 
 </header>
 
@@ -47,17 +92,25 @@
 
 <div class="card">
 
-<h3>Toplam Belge</h3>
+<h3>Toplam Evrak</h3>
 
-<p id="toplamBelge">0</p>
+<h1 id="evrak">0</h1>
 
 </div>
 
 <div class="card">
 
-<h3>Tamamlanan</h3>
+<h3>Kullanıcı</h3>
 
-<p id="tamamlananBelge">0</p>
+<h1 id="users">0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Bugünkü İşlem</h3>
+
+<h1 id="today">0</h1>
 
 </div>
 
@@ -65,78 +118,43 @@
 
 <h3>Bekleyen</h3>
 
-<p id="bekleyenBelge">0</p>
+<h1 id="waiting">0</h1>
 
 </div>
 
 </section>
 
-<section class="ekle">
+<section class="table">
 
-<h2>Yeni Belge</h2>
+<h2>Son İşlemler</h2>
 
-<input
-type="text"
-id="belgeAdi"
-placeholder="Belge adı">
+<table>
 
-<select id="kategori">
+<thead>
 
-<option>Kimlik</option>
+<tr>
 
-<option>Eğitim</option>
+<th>Tarih</th>
 
-<option>Sağlık</option>
+<th>İşlem</th>
 
-<option>Resmi Evrak</option>
+<th>Durum</th>
 
-<option>Diğer</option>
+</tr>
 
-</select>
+</thead>
 
-<select id="durum">
+<tbody id="tableData">
 
-<option>Bekliyor</option>
+</tbody>
 
-<option>Tamamlandı</option>
-
-</select>
-
-<button onclick="belgeEkle()">
-
-Belgeyi Kaydet
-
-</button>
-
-</section>
-
-<section class="arama">
-
-<input
-
-type="text"
-
-id="arama"
-
-placeholder="Belge Ara..."
-
-onkeyup="aramaYap()">
-
-</section>
-
-<section>
-
-<h2>Kayıtlı Belgeler</h2>
-
-<div id="belgeListesi">
-
-</div>
+</table>
 
 </section>
 
 </div>
 
-<script src="script.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 
