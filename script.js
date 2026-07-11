@@ -1,10 +1,6 @@
-// Örnek Veritabanı Seti
-let evrakVeritabanı = [
-    { no: "EVR-0001", ad: "Bakanlık Muhabere Dilekçesi", tur: "Dilekçe", tarih: "10.07.2026", durum: "Tamamlanan", dosya: "muhabere_ek.pdf", dosyaIcerik: "T.C. ADALET BAKANLIĞI Muhabere Evrakı ekidir. Evrak arşiv kaydı tamamlanmıştır." },
-    { no: "EVR-0002", ad: "Personel Görev Süre Uzatımı", tur: "Genelge", tarih: "11.07.2026", durum: "Bekleyen", dosya: "sure_uzatimi.docx", dosyaIcerik: "İlgili kalemde çalışan personelin görev süresinin 6 ay süreyle uzatılması kararı." },
-    { no: "EVR-0003", ad: "Ödenek Planlama Müzekkeresi", tur: "Müzekkere", tarih: "12.07.2026", durum: "Bekleyen", dosya: "odenek_plani.pdf", dosyaIcerik: "Kalem odası donanım ve lojistik giderleri 3. çeyrek bütçe cetvelidir." }
-];
-let evrakSayac = 3;
+// Tamamen Boş Veritabanı Seti (Sıfırdan veri eklemen için)
+let evrakVeritabanı = [];
+let evrakSayac = 0;
 
 // Sistemi ve Tabloları Yenileme Fonksiyonu
 function sistemiGuncelle() {
@@ -17,16 +13,27 @@ function sistemiGuncelle() {
     let dashRows = "";
     let dosyaRows = "";
 
+    // Eğer hiç evrak yoksa kullanıcıya bilgi ver
+    if (evrakVeritabanı.length === 0) {
+        const bosSatir = `<tr><td colspan="6" style="text-align:center; color:#64748b;">Sistemde kayıtlı evrak bulunmamaktadır. Yeni evrak ekleyin.</td></tr>`;
+        if(mainTable) mainTable.innerHTML = bosSatir;
+        if(dashTable) dashTable.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">İşlem geçmişi boş.</td></tr>`;
+        if(dosyaTable) dosyaTable.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">Arşivde dosya yok.</td></tr>`;
+        
+        if(document.getElementById('dash-total')) document.getElementById('dash-total').innerText = "0";
+        if(document.getElementById('dash-bekleyen')) document.getElementById('dash-bekleyen').innerText = "0";
+        return;
+    }
+
     evrakVeritabanı.forEach((evrak) => {
         if(evrak.durum.includes("Bekleyen") || evrak.durum === "Beklemede") bekleyen++;
         
-        // Türkçe karakter ve CSS sınıf uyumu
         let badgeClass = "badge badge-bekleyen";
         if(evrak.durum.includes("Tamamlanan") || evrak.durum === "Tamamlandı") {
             badgeClass = "badge badge-tamamlanan";
         }
         
-        // Ana Evrak Yönetim Tablosu (Silme butonu burada)
+        // Ana Evrak Yönetim Tablosu
         mainRows += `<tr>
             <td><strong>${evrak.no}</strong></td>
             <td>${evrak.ad}</td>
@@ -61,12 +68,10 @@ function sistemiGuncelle() {
         }
     });
 
-    // Tablolar mevcutsa içlerini doldur
     if(mainTable) mainTable.innerHTML = mainRows;
     if(dashTable) dashTable.innerHTML = dashRows;
     if(dosyaTable) dosyaTable.innerHTML = dosyaRows;
 
-    // Sayaçları Güncelle
     const totalEl = document.getElementById('dash-total');
     const bekleyenEl = document.getElementById('dash-bekleyen');
     if(totalEl) totalEl.innerText = evrakVeritabanı.length;
@@ -90,21 +95,40 @@ function toggleElement(id) {
     if(el) el.style.display = el.style.display === 'none' ? 'grid' : 'none';
 }
 
+// Tamamen senin formdan girdiğin veriyi kaydeden fonksiyon
 function sistemeEvrakKaydet() {
     const ad = document.getElementById('form-ad').value.trim();
     const tur = document.getElementById('form-tur').value;
     const durum = document.getElementById('form-durum').value;
+    const dosyaGirişi = document.getElementById('form-dosya');
     const bugun = new Date().toLocaleDateString('tr-TR');
 
     if (!ad) return alert("Lütfen evrak konusunu yazınız.");
     
+    // Yüklenen dosya adını al veya varsayılan ata
+    let secilenDosyaAdi = "ek_belge.pdf";
+    if(dosyaGirişi && dosyaGirişi.files.length > 0) {
+        secilenDosyaAdi = dosyaGirişi.files[0].name;
+    }
+
     evrakSayac++;
+    // Numaratörü dinamik yapıyoruz (EVR-0001, EVR-0002...)
+    const evrakNo = "EVR-" + String(evrakSayac).padStart(4, '0');
+
     evrakVeritabanı.push({
-        no: `EVR-000${evrakSayac}`, ad: ad, tur: tur, tarih: bugun, durum: durum === "Beklemede" ? "Bekleyen" : "Tamamlanan",
-        dosya: "yeni_belge.pdf", dosyaIcerik: `${ad} konusuyla alakalı sisteme yeni eklenen evrak ekidir.`
+        no: evrakNo, 
+        ad: ad, 
+        tur: tur, 
+        tarih: bugun, 
+        durum: durum === "Beklemede" ? "Bekleyen" : "Tamamlanan",
+        dosya: secilenDosyaAdi, 
+        dosyaIcerik: `${ad} konusuyla alakalı sisteme yüklediğiniz ${secilenDosyaAdi} isimli resmi evrak içeriği.`
     });
 
+    // Formu temizle
     document.getElementById('form-ad').value = "";
+    if(dosyaGirişi) dosyaGirişi.value = "";
+    
     toggleElement('evrak-ekleme-formu');
     sistemiGuncelle();
 }
@@ -134,11 +158,14 @@ function modalKapat() {
 function evrakFiltrele() {
     const terim = document.getElementById('search-input').value.toLowerCase();
     document.querySelectorAll('#main-evrak-table tr').forEach(row => {
-        row.style.display = (row.children[0].innerText.toLowerCase().includes(terim) || row.children[1].innerText.toLowerCase().includes(terim)) ? "" : "none";
+        if(row.children.length > 1) {
+            row.style.display = (row.children[0].innerText.toLowerCase().includes(terim) || row.children[1].innerText.toLowerCase().includes(terim)) ? "" : "none";
+        }
     });
 }
 
 function tabloyuExceleAktar() {
+    if(evrakVeritabanı.length === 0) return alert("Aktarılacak veri bulunamadı.");
     let csv = 'Evrak No,Evrak Adi,Tur,Tarih,Durum\n';
     evrakVeritabanı.forEach(e => csv += `${e.no},${e.ad},${e.tur},${e.tarih},${e.durum}\n`);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -156,5 +183,4 @@ function tabloyuYazdir() {
     win.print();
 }
 
-// Sayfa hazır olduğunda çalıştır
 window.onload = sistemiGuncelle;
