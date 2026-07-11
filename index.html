@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KALEM Projesi - Kurumsal Evrak & Rol Yönetim Sistemi</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="stiller.css">
 </head>
 <body>
 
-    <!-- SIDEBAR -->
     <div class="sidebar" id="app-sidebar">
         <div class="sidebar-brand"><i class="fa-solid fa-gavel"></i> KALEM PROJESİ</div>
         <ul class="sidebar-menu">
@@ -21,33 +20,31 @@
         </ul>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="topbar">
             <div>
                 <span style="font-size: 12px; font-weight: bold; color: #64748b; margin-right: 8px;">Sistem Rolü:</span>
                 <select class="role-switcher" id="role-select" onchange="rolDegistir()">
-                    <option value="admin">Yazı İşleri Müdürü (Admin)</option>
+                    <option value="admin">Yetkili Kullanıcı (Admin)</option>
                     <option value="staff">Zabıt Katibi (Personel)</option>
                 </select>
             </div>
             <div class="user-profile">
                 <i class="fa-solid fa-circle-user" style="font-size: 24px; color: #0284c7;"></i>
-                <span id="profile-name">Yazı İşleri Müdürü</span>
+                <span id="profile-name">Yetkili Kullanıcı</span>
             </div>
         </div>
 
         <div class="page-body">
-            <!-- MODÜL 1: DASHBOARD -->
             <div id="dashboard" class="view-section active-view">
                 <div class="page-header"><h2 class="page-title">Genel Bakış Dashboard</h2></div>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Toplam Evrak</h3><p id="dash-total">3</p></div>
+                        <div class="stat-info"><h3>Toplam Evrak</h3><p id="dash-total">0</p></div>
                         <div class="stat-icon" style="background-color: #e0f2fe; color: #0284c7;"><i class="fa-solid fa-file-invoice"></i></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-info"><h3>Bekleyen İşler</h3><p id="dash-bekleyen" style="color: #f59e0b;">2</p></div>
+                        <div class="stat-info"><h3>Bekleyen İşler</h3><p id="dash-bekleyen" style="color: #f59e0b;">0</p></div>
                         <div class="stat-icon" style="background-color: #fef3c7; color: #f59e0b;"><i class="fa-solid fa-clock"></i></div>
                     </div>
                 </div>
@@ -55,12 +52,12 @@
                     <div style="padding: 20px; font-weight: bold; border-bottom: 1px solid #e2e8f0;">Son İşlemler</div>
                     <table>
                         <thead><tr><th>Evrak No</th><th>Evrak Adı</th><th>Tür</th><th>Tarih</th><th>Durum</th></tr></thead>
-                        <tbody id="dash-summary-table"></tbody>
+                        <tbody id="dash-summary-table">
+                            </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- MODÜL 2: EVRAK YÖNETİMİ -->
             <div id="evrak-yonetimi" class="view-section">
                 <div class="page-header">
                     <h2 class="page-title">Evrak Yönetim Paneli</h2>
@@ -100,49 +97,47 @@
                 <div class="data-table-container">
                     <table id="yazdirilabilir-tablo">
                         <thead><tr><th>Evrak No</th><th>Evrak Adı</th><th>Evrak Türü</th><th>Kayıt Tarihi</th><th>Durum</th><th>İşlemler</th></tr></thead>
-                        <tbody id="main-evrak-table"></tbody>
+                        <tbody id="main-evrak-table">
+                            </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- MODÜL 3: DOSYA YÖNETİMİ -->
             <div id="dosya-yonetimi" class="view-section">
                 <div class="page-header"><h2 class="page-title">Ekli Dosyalar & Arşiv</h2></div>
                 <div class="data-table-container">
                     <table>
                         <thead><tr><th>İlgili Evrak</th><th>Dosya Adı</th><th>Dosya Türü</th><th>Boyut</th><th>İşlem</th></tr></thead>
-                        <tbody id="dosya-tablo-body"></tbody>
+                        <tbody id="dosya-tablo-body">
+                            </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- MODÜL 4: KULLANICI YÖNETİMİ -->
             <div id="kullanici-yonetimi" class="view-section">
                 <div class="page-header"><h2 class="page-title">Personel Listesi ve Yetkilendirme</h2></div>
                 <div class="data-table-container">
                     <table>
-                        <thead><tr><th>Ad Soyad</th><th>Sicil No</th><th>Görev / Rol</th><th>Sistem Yetkisi</th></tr></thead>
+                        <thead><tr><th>Unvan</th><th>Sistem Yetkisi</th></tr></thead>
                         <tbody>
-                            <tr><td>Ahmet Yılmaz</td><td>192834</td><td>Yazı İşleri Müdürü</td><td><span class="badge badge-tamamlanan">Tam Yetki (Admin)</span></td></tr>
-                            <tr><td>Mehmet Demir</td><td>204958</td><td>Zabıt Katibi</td><td><span class="badge badge-bekleyen">Kısıtlı Yetki (Personel)</span></td></tr>
+                            <tr><td>Sistem Yöneticisi</td><td><span class="badge badge-tamamlanan">Tam Yetki (Admin)</span></td></tr>
+                            <tr><td>Zabıt Katibi</td><td><span class="badge badge-bekleyen">Kısıtlı Yetki (Personel)</span></td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- MODÜL 5: SİSTEM AYARLARI -->
             <div id="sistem-ayarlari" class="view-section">
                 <div class="page-header"><h2 class="page-title">Kalem Sistem Ayarları</h2></div>
                 <div class="form-grid" style="display: grid;">
-                    <div class="form-group"><label>Otomatik Evrak Numaralandırma Şablonu</label><input type="text" class="form-control" value="EVR-000"></div>
-                    <div class="form-group"><label>Veri Tabanı Yedekleme Sıklığı</label><input type="text" class="form-control" value="Her Gün (Gece 00:00)"></div>
-                    <div class="form-group" style="grid-column: span 2;"><button class="btn btn-primary" onclick="alert('Ayarlar kaydedildi!')">Ayarları Kaydet</button></div>
+                    <div class="form-group"><label>Otomatik Evrak Numaralandırma Şablonu</label><input type="text" class="form-control" value="EVR-0000"></div>
+                    <div class="form-group"><label>Veri Tabanı Durumu</label><input type="text" class="form-control" value="Aktif (Dinamik Tarayıcı Hafızası)" readonly></div>
+                    <div class="form-group" style="grid-column: span 2;"><button class="btn btn-primary" onclick="alert('Sistem şablon ayarları güncellendi!')">Ayarları Kaydet</button></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL ÖNİZLEME -->
     <div id="onizleme-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h3 id="modal-baslik">Dosya Önizleme</h3><i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="modalKapat()"></i></div>
@@ -150,8 +145,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT DOSYALARI -->
     <script src="script.js"></script>
-    <script src="app.js"></script>
+    <script src="uygulama.js"></script>
 </body>
 </html>
