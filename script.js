@@ -1,11 +1,31 @@
 // Tarayıcı hafızasından verileri çek, eğer boşsa sıfır dizi başlat
 let evrakVeritabanı = JSON.parse(localStorage.getItem('kalem_evraklar')) || [];
-// Sayacı da kayıtlı evrak sayısına göre dinamik belirle
 let evrakSayac = evrakVeritabanı.length > 0 ? Math.max(...evrakVeritabanı.map(e => parseInt(e.no.split('-')[1]))) : 0;
 
-// Verileri hafızaya (LocalStorage) kaydetme fonksiyonu
 function hafizayaKaydet() {
     localStorage.setItem('kalem_evraklar', JSON.stringify(evrakVeritabanı));
+}
+
+// YAPAY ZEKA RESMİ BELGE ÜRETİCİ MOTORU
+function yapayZekaBelgeUret(tur, konu) {
+    const bugun = new Date().toLocaleDateString('tr-TR');
+    let taslak = "";
+
+    if (tur === "Müzekkere") {
+        taslak = `T.C.\nADALET BAKANLIĞI\n\nSayı: E-${SayıUret()}\nKonu: ${konu}\n\nİLGİLİ MAKAMA\n\nSistemimiz üzerinden kaydı açılan "${konu}" hususu ile ilgili olarak; gerekli tahkikatın yapılarak neticeden ivedi olarak Kalemimize bilgi verilmesi hususunda gereği rica olunur.\n\n${bugun}\nYetkili Kullanıcı\n(İmza)`;
+    } else if (tur === "Dilekçe") {
+        taslak = `ADALET BAKANLIĞI YÜKSEK MAKAMINA\n\nBaşvuran: Yetkili Kullanıcı\nKonu: ${konu}\n\nTalebin Özeti: Yukarıda belirtilen "${konu}" konusu kapsamında, mevzuatın ilgili maddeleri uyarınca gerekli yasal işlemlerin başlatılmasını ve tarafıma yazılı olarak bilgi verilmesini saygılarımla arz ve talep ederim.\n\nAdres/İletişim: Sistem Kayıtlı Adresi\n\n${bugun}\nAd Soyad / İmza`;
+    } else if (tur === "Genelge") {
+        taslak = `T.C.\nADALET BAKANLIĞI\n\nGenelge No: 2026 / ${evrakSayac + 1}\nKonu: ${konu}\n\nMERKEZ VE TAŞRA TEŞKİLATINA\n\nYürütülen faaliyetlerin daha etkin ve mevzuata uygun şekilde sürdürülebilmesi amacıyla, "${konu}" başlığı altındaki kurallara titizlikle uyulması, aksaklığa meydan verilmemesi hususunda gereği önemle rica olunur.\n\n${bugun}\nBakan Adına\nYetkili Kullanıcı`;
+    } else {
+        // Varsayılan / Karar Metni
+        taslak = `GEREĞİ DÜŞÜNÜLDÜ:\n\nKalem Projesi Otomasyonu üzerinden intikal eden "${konu}" konulu evrak ve tüm ekleri incelendi.\n\nKARAR:\nDosya kapsamı ve mevcut delil durumu dikkate alınarak, talebin resmi kayıtlara işlenmesine ve sürecin takibine oy birliği ile karar verildi.\n\n${bugun}`;
+    }
+    return taslak;
+}
+
+function SayıUret() {
+    return Math.floor(100000 + Math.random() * 900000);
 }
 
 // Sistemi ve Tabloları Yenileme Fonksiyonu
@@ -31,12 +51,9 @@ function sistemiGuncelle() {
     }
 
     evrakVeritabanı.forEach((evrak) => {
-        if(evrak.durum.includes("Bekleyen") || evrak.durum === "Beklemede") bekleyen++;
+        if(evrak.durum === "Bekleyen" || evrak.durum === "Beklemede") bekleyen++;
         
-        let badgeClass = "badge badge-bekleyen";
-        if(evrak.durum.includes("Tamamlanan") || evrak.durum === "Tamamlandı") {
-            badgeClass = "badge badge-tamamlanan";
-        }
+        let badgeClass = evrak.durum === "Tamamlanan" ? "badge badge-tamamlanan" : "badge badge-bekleyen";
         
         mainRows += `<tr>
             <td><strong>${evrak.no}</strong></td>
@@ -45,7 +62,7 @@ function sistemiGuncelle() {
             <td>${evrak.tarih}</td>
             <td><span class="${badgeClass}">${evrak.durum}</span></td>
             <td class="action-icons">
-                <i class="fa-solid fa-file-lines" title="Dosyayı Gör" onclick="dosyaOnizle('${evrak.no}')" style="cursor:pointer; margin-right:10px; color:#64748b;"></i>
+                <i class="fa-solid fa-file-lines" title="Resmi Belgeyi Gör / Yazdır" onclick="dosyaOnizle('${evrak.no}')" style="cursor:pointer; margin-right:10px; color:#0284c7;"></i>
                 <i class="fa-solid fa-trash" title="Evrakı Sil" onclick="evrakSil('${evrak.no}')" style="cursor:pointer; color:#ef4444;"></i>
             </td>
         </tr>`;
@@ -59,12 +76,11 @@ function sistemiGuncelle() {
         </tr>`;
 
         if(evrak.dosya) {
-            const dosyaIkonu = evrak.dosya.endsWith('.pdf') ? 'fa-file-pdf text-danger' : 'fa-file-word text-primary';
             dosyaRows += `<tr>
                 <td>${evrak.no}</td>
-                <td><i class="fa-solid ${dosyaIkonu}"></i> ${evrak.dosya}</td>
-                <td>${evrak.dosya.endsWith('.pdf') ? 'PDF Belgesi' : 'Word Dokümanı'}</td>
-                <td>1.2 MB</td>
+                <td><i class="fa-solid fa-file-word text-primary"></i> ${evrak.dosya}</td>
+                <td>Resmi Şablon</td>
+                <td>Hazır</td>
                 <td><button class="btn btn-primary" style="padding:4px 10px; font-size:12px;" onclick="dosyaOnizle('${evrak.no}')">Görüntüle</button></td>
             </tr>`;
         }
@@ -74,10 +90,8 @@ function sistemiGuncelle() {
     if(dashTable) dashTable.innerHTML = dashRows;
     if(dosyaTable) dosyaTable.innerHTML = dosyaRows;
 
-    const totalEl = document.getElementById('dash-total');
-    const bekleyenEl = document.getElementById('dash-bekleyen');
-    if(totalEl) totalEl.innerText = evrakVeritabanı.length;
-    if(bekleyenEl) bekleyenEl.innerText = bekleyen;
+    if(document.getElementById('dash-total')) document.getElementById('dash-total').innerText = evrakVeritabanı.length;
+    if(document.getElementById('dash-bekleyen')) document.getElementById('dash-bekleyen').innerText = bekleyen;
 }
 
 function switchView(viewId, element) {
@@ -100,18 +114,15 @@ function sistemeEvrakKaydet() {
     const ad = document.getElementById('form-ad').value.trim();
     const tur = document.getElementById('form-tur').value;
     const durum = document.getElementById('form-durum').value;
-    const dosyaGirişi = document.getElementById('form-dosya');
     const bugun = new Date().toLocaleDateString('tr-TR');
 
     if (!ad) return alert("Lütfen evrak konusunu yazınız.");
     
-    let secilenDosyaAdi = "ek_belge.pdf";
-    if(dosyaGirişi && dosyaGirişi.files.length > 0) {
-        secilenDosyaAdi = dosyaGirişi.files[0].name;
-    }
-
     evrakSayac++;
     const evrakNo = "EVR-" + String(evrakSayac).padStart(4, '0');
+
+    // Yapay Zekadan şablon yazıyı türetiyoruz
+    const uretilenIcerik = yapayZekaBelgeUret(tur, ad);
 
     evrakVeritabanı.push({
         no: evrakNo, 
@@ -119,22 +130,20 @@ function sistemeEvrakKaydet() {
         tur: tur, 
         tarih: bugun, 
         durum: durum === "Beklemede" ? "Bekleyen" : "Tamamlanan",
-        dosya: secilenDosyaAdi, 
-        dosyaIcerik: `${ad} konusuyla alakalı sisteme yüklediğiniz ${secilenDosyaAdi} isimli resmi evrak içeriği.`
+        dosya: `${tur.toLowerCase()}_taslak.doc`, 
+        dosyaIcerik: uretilenIcerik
     });
 
     document.getElementById('form-ad').value = "";
-    if(dosyaGirişi) dosyaGirişi.value = "";
-    
     toggleElement('evrak-ekleme-formu');
-    hafizayaKaydet(); // Tarayıcıya kaydet
+    hafizayaKaydet();
     sistemiGuncelle();
 }
 
 function evrakSil(no) {
     if(confirm('Seçilen resmi evrakı silmek istediğinize emin misiniz?')) {
         evrakVeritabanı = evrakVeritabanı.filter(e => e.no !== no);
-        hafizayaKaydet(); // Silindikten sonra güncel halini kaydet
+        hafizayaKaydet();
         sistemiGuncelle();
     }
 }
@@ -143,8 +152,11 @@ function dosyaOnizle(no) {
     const evrak = evrakVeritabanı.find(e => e.no === no);
     const modal = document.getElementById('onizleme-modal');
     if(evrak && modal) {
-        document.getElementById('modal-baslik').innerText = `${evrak.no} Evrak İçerik Detayı`;
-        document.getElementById('modal-icerik').innerText = evrak.dosyaIcerik;
+        document.getElementById('modal-baslik').innerText = `${evrak.no} - Resmi Belge Metni (${evrak.tur})`;
+        // Satır atlamalarının düzgün görünmesi için white-space stilini ekliyoruz
+        const icerikAlani = document.getElementById('modal-icerik');
+        icerikAlani.innerText = evrak.dosyaIcerik;
+        icerikAlani.style.whiteSpace = "pre-wrap";
         modal.style.display = 'flex';
     }
 }
