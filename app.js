@@ -6,21 +6,20 @@ function rolDegistir() {
 
     if(secilenRol === 'staff') {
         body.classList.add('role-restricted');
-        profilName.innerText = "Zabıt Katibi (Mehmet D.)";
+        profilName.innerText = "Zabıt Katibi";
         
-        // Eğer katip yasaklı bir sayfadaysa otomatik dashboard'a yönlendir
+        // Katip yasaklı bir sayfadaysa otomatik ana ekrana yönlendir
         const activeSection = document.querySelector('.view-section.active-view');
         if(activeSection && (activeSection.id === 'kullanici-yonetimi' || activeSection.id === 'sistem-ayarlari')) {
             switchView('dashboard', document.querySelector('.menu-item'));
         }
     } else {
         body.classList.remove('role-restricted');
-        profilName.innerText = "Yazı İşleri Müdürü (Ahmet Y.)";
+        profilName.innerText = "Yetkili Kullanıcı";
     }
     sistemiGuncelle();
 }
 
-// Uygulama İlk Açıldığında Çalışacak Yapı
 window.addEventListener('DOMContentLoaded', () => {
     if (typeof sistemiGuncelle === "function") {
         sistemiGuncelle();
