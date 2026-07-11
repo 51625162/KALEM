@@ -8,7 +8,6 @@ function rolDegistir() {
         body.classList.add('role-restricted');
         profilName.innerText = "Zabıt Katibi";
         
-        // Katip yasaklı bir sayfadaysa otomatik ana ekrana yönlendir
         const activeSection = document.querySelector('.view-section.active-view');
         if(activeSection && (activeSection.id === 'kullanici-yonetimi' || activeSection.id === 'sistem-ayarlari')) {
             switchView('dashboard', document.querySelector('.menu-item'));
