@@ -1,1 +1,21 @@
-<!DOCTYPE html><html lang='tr'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>KALEM V2.2</title><link rel='stylesheet' href='styles.css'></head><body><h1>KALEM V2.2</h1><input id='name' placeholder='Evrak adı'><button onclick='addRecord()'>+ Yeni Evrak</button><table><thead><tr><th>Evrak</th><th>İşlem</th></tr></thead><tbody id='list'></tbody></table><script src='script.js'></script></body></html>
+<!DOCTYPE html><html lang="tr"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KALEM V2.3</title><link rel="stylesheet" href="styles.css">
+</head><body>
+<div class="sidebar"><h2>KALEM</h2>
+<ul><li class="active">🏠 Dashboard</li><li>📁 Evraklar</li><li>👥 Kullanıcılar</li><li>📊 Raporlar</li><li>⚙️ Ayarlar</li></ul>
+</div>
+<div class="main">
+<h1>KALEM V2.3</h1>
+<div class="cards">
+<div class="card"><b>Toplam Evrak</b><h2 id="count">0</h2></div>
+<div class="card"><b>Kullanıcı</b><h2>12</h2></div>
+<div class="card"><b>Bekleyen</b><h2 id="wait">0</h2></div>
+</div>
+<div class="toolbar">
+<input id="doc" placeholder="Evrak adı">
+<button onclick="addDoc()">+ Evrak Ekle</button>
+</div>
+<table><thead><tr><th>Evrak</th><th>İşlem</th></tr></thead><tbody id="tbody"></tbody></table>
+</div>
+<script src="script.js"></script></body></html>
