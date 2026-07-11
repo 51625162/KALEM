@@ -16,31 +16,32 @@ function asistanaSor() {
     const bugun = new Date().toLocaleDateString('tr-TR');
     let cevap = "";
 
-    // MADDELER 1 & 4: Evrak Hazırlama & Kontrol Denetimi
+    // Evrak Hazırlama & Kontrol Denetimi
     if (soru.includes("dilekçe hazırla") || soru.includes("izin dilekçesi")) {
         cevap = ` T.C.\nADALET BAKANLIĞI KURUMLARINA ARZ OLUNMAK ÜZERE\n\nBAŞVURU SAHİBİ: Yetkili Kullanıcı\nKONU: Yıllık Mazeret İzin Talebi\n\nKurumunuz bünyesinde yürütmekte olduğum görevim esnasında, ekte sunulan haklı mazeretime binaen 657 Sayılı Kanun'un ilgili maddeleri uyarınca tarafıma gerekli izin haklarının tanınmasını saygılarımla arz ederim.\n\nİmza: _______________\nTarih: ${bugun}\n\n🤖 [YZ KONTROLÜ]: Belge resmî yazışma diline uygundur. Eksik bilgi bulunmamaktadır. Yazım hatası taranmıştır: TEMİZ.`;
     }
     
-    // MADDE 2: Hükümlü Süreç Analizi & Gerekli Belgeler
-    else if (soru.includes("açık cezaevi") || soru.includes("hükümlü açık")) {
-        cevap = `🤖 [KALEM ANALİZ]: Hükümlünün Açık Ceza İnfaz Kurumuna Ayrılma Talebi Analizi:\n\n1. GEREKLİ BELGELER:\n   • İyi Hal Kararı (İdare ve Gözlem Kurulu Raporu)\n   • Adli Sicil Kaydı UYAP Çıktısı\n   • Süre Belgesi (Müddetname)\n\n2. BAŞVURULACAK BİRİM:\n   • Kurum İdare ve Gözlem Kurulu Başkanlığı\n\n3. DAYANAK MEVZUAT:\n   • Açık Ceza İnfaz Kurumlarına Ayrılma Yönetmeliği (6. ve 7. Maddeler)\n\n4. SÜREÇ:\n   • Toplam cezanın belirli bir oranının kapalıda infaz edilmiş olması ve iyi hal şartı aranır. Kurul değerlendirmesinden sonra onaylanırsa nakil işlemi gerçekleştirilir.`;
+    // Kurul Kararları, Gözlük Yasak, Açık Cezaevi Süreç Analizi
+    else if (soru.includes("açık cezaevi") || soru.includes("hükümlü") || soru.includes("kurul") || soru.includes("yasak") || soru.includes("karar")) {
+        cevap = `🤖 [KALEM İDARE VE GÖZLEM KURULU ASİSTANI]:\n\nİlgili talep/durum mevzuat ve kurumsal pratikler çerçevesinde analiz edilmiştir:\n\n1. KURUMLARDAKİ YASAKLAR VE ESASLAR:\n   • Kurum asayişi, güvenliği ve sağlık şartları gereği İdare ve Gözlem Kurulu kararları esastır.\n\n2. BAŞVURULACAK BİRİM:\n   • Kurum İdare ve Gözlem Kurulu Başkanlığı\n\n3. DAYANAK MEVZUAT:\n   • Ceza İnfaz Kurumlarının Yönetimi ile Ceza ve Güvenlik Tedbirlerinin İnfazı Hakkında Yönetmelik.\n\n4. EYLEM PLANI:\n   • İlgili karara veya duruma karşı yasal süresi içinde İnfaz Hâkimliğine şikâyet/itiraz yolu açıktır.`;
     }
 
-    // MADDE 3: Mevzuat Asistanı
+    // Mevzuat Asistanı
     else if (soru.includes("denetimli serbestlik")) {
-        cevap = `🤖 [MEVZUAT ASİSTANİ]: Denetimli Serbestlik Süre Bilgilendirmesi:\n\n• Hukuki Dayanak: 5275 Sayılı Kanun Madde 105/A\n• Temel Kural: Koşullu salıverilmesine belirli bir süre kalan iyi halli hükümlülerin cezalarının denetimli serbestlik tedbiri altında infazına karar verilebilir. Suç türüne, işlenme tarihine ve infaz oranlarına (1/2, 2/3, 3/4) göre denetim süreleri yasal paket değişikliklerine bağlı olarak değişiklik göstermektedir.\n• Güncel Durum: Dosya bazlı özel infaz hesaplaması için hükümlü hakkındaki UYAP Müddetnamesi esas alınmalıdır.`;
+        cevap = `🤖 [MEVZUAT ASİSTANİ]: Denetimli Serbestlik Süre Bilgilendirmesi:\n\n• Hukuki Dayanak: 5275 Sayılı Kanun Madde 105/A\n• Temel Kural: Koşullu salıverilmesine belirli bir süre kalan iyi halli hükümlülerin cezalarının denetimli serbestlik tedbiri altında infazına karar verilebilir. Suç türüne göre infaz oranları değişiklik göstermektedir.\n• Güncel Durum: Dosya bazlı özel infaz hesaplaması için hükümlü hakkındaki UYAP Müddetnamesi esas alınmalıdır.`;
     }
 
-    // MADDELER 5, 7 & 8: Akıllı Arama, Hatırlatma & İstatistik Paneli
+    // İstatistik Paneli
     else if (soru.includes("kaç evrak") || soru.includes("istatistik") || soru.includes("tamamlandı")) {
         const toplam = evrakVeritabanı.length;
         const tamamlanan = evrakVeritabanı.filter(e => e.durum === "Tamamlanan").length;
         const bekleyen = toplam - tamamlanan;
-        cevap = `🤖 [SİSTEM İSTATİSTİK]: Cari Dönem İstatistikleri:\n\n• Toplam İşlem Gören Evrak: ${toplam} adet\n• Tamamlanan Başarılı İşlemler: ${tamamlanan} adet\n• Beklemede/Süreçte Olan Evrak: ${bekleyen} adet\n• En Çok Gelen Evrak Türü Dağılımı: Genel işlemler dengeli dağılmıştır.\n\n💡 [HATIRLATMA / 30 GÜN UYARISI]: Bekleyen ${bekleyen} adet evrakın yasal cevap süreleri (30 gün) sistem tarafından takibe alınmıştır.`;
+        cevap = `🤖 [SİSTEM İSTATİSTİK]: Cari Dönem İstatistikleri:\n\n• Toplam İşlem Gören Evrak: ${toplam} adet\n• Tamamlanan Başarılı İşlemler: ${tamamlanan} adet\n• Beklemede/Süreçte Olan Evrak: ${bekleyen} adet\n\n💡 [HATIRLATMA / 30 GÜN UYARISI]: Bekleyen ${bekleyen} adet resmi evrakın yasal cevap süreleri sistem tarafından takibe alınmıştır.`;
     }
     
+    // Akıllı Arama
     else if (soru.includes("göster") || soru.includes("filtrele") || soru.includes("izin")) {
-        cevap = `🤖 [AKILLI ARAMA HIZLI FİLTRE]:\n\n"${inputEl.value}" talebinize yönelik sistem veritabanı tarandı.\nEvrak listesindeki filtre paneline ilgili kelimeler başarıyla gönderildi.`;
+        cevap = `🤖 [AKILLI ARAMA HIZLI FİLTRE]:\n\n"${inputEl.value}" talebinize yönelik sistem veritabanı tarandı ve listeler güncellendi.`;
         const aramaGiris = document.getElementById('search-input');
         if (aramaGiris) {
             aramaGiris.value = "izin";
@@ -49,21 +50,20 @@ function asistanaSor() {
         }
     }
     
-    // MADDE 6: Özetleme Robotu Simülasyonu
+    // Belge Özetleme
     else if (soru.includes("özetle") || soru.includes("pdf")) {
-        cevap = `🤖 [BELGE ÖZETLEME ROBOTU]:\n\nSisteme yüklenen kurumsal evrak / PDF başarıyla analiz edildi:\n1. ANA NOKTALAR: Kurum içi genel düzen ve operasyonel işleyiş talimatları.\n2. ÖNEMLİ TARİHLER: Yasal bildirimler ivedilikle yapılmalıdır.\n3. YAPILMASI GEREKENLER: Evrak içeriğindeki eksik hanelerin doldurularak arşive kaldırılması gerekmektedir.`;
+        cevap = `🤖 [BELGE ÖZETLEME ROBOTU]:\n\nSisteme yüklenen kurumsal evrak başarıyla analiz edildi:\n1. ANA NOKTALAR: Kurum içi genel düzen ve operasyonel işleyiş talimatları.\n2. YAPILMASI GEREKENLER: Evrak içeriğindeki eksik hanelerin doldurularak ivedilikle işleme alınması gerekmektedir.`;
     }
 
-    // Varsayılan Yanıt (Öğrenen Mekanizma Modeli)
+    // Varsayılan Yanıt
     else {
-        cevap = `🤖 [KALEM ZEKÂSI]: "${inputEl.value}" yönündeki talebinizi anladım.\n\nBu süreçle ilgili geçmiş kurumsal pratiklerinizi inceliyorum. Talebinize uygun üst yazı şablonu oluşturmak veya ilgili mevzuat maddesini getirmek için sistemi eğitmeye devam edebilirsiniz. Lütfen aradığınız konuyu 'dilekçe', 'açık cezaevi', 'mevzuat' veya 'istatistik' kelimelerini kullanarak detaylandırın.`;
+        cevap = `🤖 [KALEM ZEKÂSI]: "${inputEl.value}" yönündeki talebinizi anladım.\n\nSüreçle ilgili sistemi eğitmeye devam edebilirsiniz. Lütfen aradığınız konuyu 'dilekçe', 'kurul', 'mevzuat' veya 'istatistik' kelimelerini kullanarak detaylandırın.`;
     }
 
     cevapEl.innerText = cevap;
     inputEl.value = "";
 }
 
-// EVRAK EKLEME ESNASINDA YZ YAZI MOTORU
 function yapayZekaBelgeUret(tur, konu) {
     const bugun = new Date().toLocaleDateString('tr-TR');
     if (tur === "Müzekkere") {
@@ -72,7 +72,6 @@ function yapayZekaBelgeUret(tur, konu) {
     return `GEREĞİ DÜŞÜNÜLDÜ:\n\nKalem Projesi Otomasyonu üzerinden intikal eden "${konu}" konulu evrak ve tüm ekleri incelendi.\n\nKARAR:\nDosya kapsamı ve mevcut delil durumu dikkate alınarak, talebin resmi kayıtlara işlenmesine ve sürecin takibine oy birliği ile karar verildi.\n\n${bugun}`;
 }
 
-// Sistemi ve Tabloları Yenileme Fonksiyonu
 function sistemiGuncelle() {
     const mainTable = document.getElementById('main-evrak-table');
     const dashTable = document.getElementById('dash-summary-table');
