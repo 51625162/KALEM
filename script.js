@@ -1,15 +1,4 @@
-const USERS = [
-  {
-    username: "KASIM",
-    password: "516251",
-    fullName: "Kasım"
-  },
-  {
-    username: "ENES",
-    password: "190344",
-    fullName: "Enes"
-  }
-];
+
 
 /* ---------------- State & storage ---------------- */
 const STORE_KEYS = { docs:'kalem_documents', rems:'kalem_reminders', settings:'kalem_settings', profile:'kalem_profile' };
