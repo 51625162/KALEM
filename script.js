@@ -10,26 +10,25 @@ Yardımcı Fonksiyonlar
 ========================== */
 
 const $ = (id) => document.getElementById(id);
-
 const $$ = (selector) => document.querySelectorAll(selector);
 
 /* ==========================
-Local Storage Anahtarları
+LocalStorage Anahtarları
 ========================== */
 
 const STORAGE = {
 
-documents : "kalem_documents",
+documents: "kalem_documents",
 
-tasks : "kalem_tasks",
+tasks: "kalem_tasks",
 
-notes : "kalem_notes",
+notes: "kalem_notes",
 
-calendar : "kalem_calendar",
+calendar: "kalem_calendar",
 
-contacts : "kalem_contacts",
+contacts: "kalem_contacts",
 
-theme : "kalem_theme"
+theme: "kalem_theme"
 
 };
 
@@ -38,41 +37,40 @@ Veriler
 ========================== */
 
 let documents =
-JSON.parse(
-localStorage.getItem(STORAGE.documents)
-) || [];
+JSON.parse(localStorage.getItem(STORAGE.documents)) || [];
 
 let tasks =
-JSON.parse(
-localStorage.getItem(STORAGE.tasks)
-) || [];
+JSON.parse(localStorage.getItem(STORAGE.tasks)) || [];
 
 let notes =
-JSON.parse(
-localStorage.getItem(STORAGE.notes)
-) || [];
+JSON.parse(localStorage.getItem(STORAGE.notes)) || [];
 
 let calendars =
-JSON.parse(
-localStorage.getItem(STORAGE.calendar)
-) || [];
+JSON.parse(localStorage.getItem(STORAGE.calendar)) || [];
 
 let contacts =
-JSON.parse(
-localStorage.getItem(STORAGE.contacts)
-) || [];
+JSON.parse(localStorage.getItem(STORAGE.contacts)) || [];
 
 /* ==========================
 Sayfa Açılışı
 ========================== */
 
-window.addEventListener("load",()=>{
+window.addEventListener("load", init);
+
+function init(){
 
 setTimeout(()=>{
 
-$("loadingScreen").style.display="none";
+const loading=$("loadingScreen");
+const app=$("app");
 
-$("app").classList.remove("hidden");
+if(loading){
+loading.style.display="none";
+}
+
+if(app){
+app.classList.remove("hidden");
+}
 
 loadTheme();
 
@@ -88,9 +86,13 @@ renderCalendar();
 
 renderContacts();
 
-},700);
+initMenu();
 
-});
+initButtons();
+
+},600);
+
+}
 
 /* ==========================
 Dashboard
@@ -98,23 +100,25 @@ Dashboard
 
 function updateDashboard(){
 
-$("docCount").textContent =
-documents.length;
+if($("docCount"))
+$("docCount").textContent=documents.length;
 
-$("taskCount").textContent =
-tasks.length;
+if($("taskCount"))
+$("taskCount").textContent=tasks.length;
 
-$("noteCount").textContent =
-notes.length;
+if($("noteCount"))
+$("noteCount").textContent=notes.length;
 
-$("calendarCount").textContent =
-calendars.length;
+if($("calendarCount"))
+$("calendarCount").textContent=calendars.length;
 
 }
 
 /* ==========================
-Menü Geçişleri
+Menü Sistemi
 ========================== */
+
+function initMenu(){
 
 $$(".sidebar li").forEach(item=>{
 
@@ -136,7 +140,7 @@ section.classList.remove("active");
 
 });
 
-const target=document.getElementById(page);
+const target=$(page);
 
 if(target){
 
@@ -144,9 +148,11 @@ target.classList.add("active");
 
 }
 
-if(window.innerWidth<=900){
+const sidebar=$("sidebar");
 
-$("sidebar").classList.remove("show");
+if(sidebar && window.innerWidth<=900){
+
+sidebar.classList.remove("show");
 
 }
 
@@ -154,15 +160,61 @@ $("sidebar").classList.remove("show");
 
 });
 
+}
+
 /* ==========================
-Mobil Menü
+Butonlar
 ========================== */
 
-$("menuBtn").addEventListener("click",()=>{
+function initButtons(){
 
-$("sidebar").classList.toggle("show");
+const menuBtn=$("menuBtn");
+
+if(menuBtn){
+
+menuBtn.addEventListener("click",()=>{
+
+const sidebar=$("sidebar");
+
+if(sidebar){
+
+sidebar.classList.toggle("show");
+
+}
 
 });
+
+}
+
+const themeBtn=$("themeBtn");
+
+if(themeBtn){
+
+themeBtn.addEventListener(
+
+"click",
+
+toggleTheme
+
+);
+
+}
+
+const changeThemeBtn=$("changeThemeBtn");
+
+if(changeThemeBtn){
+
+changeThemeBtn.addEventListener(
+
+"click",
+
+toggleTheme
+
+);
+
+}
+
+}
 
 /* ==========================
 Tema Sistemi
@@ -171,6 +223,7 @@ Tema Sistemi
 function loadTheme(){
 
 const theme=
+
 localStorage.getItem(STORAGE.theme);
 
 if(theme==="dark"){
@@ -185,64 +238,65 @@ function toggleTheme(){
 
 document.body.classList.toggle("dark");
 
-if(document.body.classList.contains("dark")){
-
 localStorage.setItem(
-STORAGE.theme,
-"dark"
-);
 
-}else{
-
-localStorage.setItem(
 STORAGE.theme,
-"light"
+
+document.body.classList.contains("dark")
+
+? "dark"
+
+: "light"
+
 );
 
 }
 
-}
+/* ==========================
+Evrak Sistemi
+========================== */
 
-$("themeBtn").addEventListener(
+const saveDocumentBtn = $("saveDocumentBtn");
+
+if(saveDocumentBtn){
+
+saveDocumentBtn.addEventListener(
 
 "click",
 
-toggleTheme
+saveDocument
 
 );
 
-/* ==========================
-Yardımcı Fonksiyon
-========================== */
+}
 
-function clearInputs(){
+const clearDocumentBtn = $("clearDocumentBtn");
 
-document.querySelectorAll(
+if(clearDocumentBtn){
 
-"input[type=text], textarea"
+clearDocumentBtn.addEventListener("click",()=>{
 
-).forEach(input=>{
+const name=$("documentName");
+const desc=$("documentDescription");
 
-input.value="";
+if(name) name.value="";
+if(desc) desc.value="";
 
 });
 
 }
 
-/* ==========================
-Evrak Kaydet
-========================== */
-
-$("saveDocumentBtn").addEventListener("click",saveDocument);
-
 function saveDocument(){
 
-const name=
-$("documentName").value.trim();
+const inputName=$("documentName");
+
+if(!inputName) return;
+
+const name=inputName.value.trim();
 
 if(name===""){
 
-alert("Evrak adı boş olamaz.");
+alert("Evrak adı giriniz.");
 
 return;
 
@@ -254,9 +308,9 @@ id:Date.now(),
 
 name:name,
 
-category:$("documentCategory").value,
+category:$("documentCategory")?.value || "Genel",
 
-description:$("documentDescription").value,
+description:$("documentDescription")?.value || "",
 
 date:new Date().toLocaleDateString("tr-TR")
 
@@ -270,15 +324,15 @@ renderDocuments();
 
 updateDashboard();
 
-$("documentName").value="";
+inputName.value="";
+
+if($("documentDescription")){
 
 $("documentDescription").value="";
 
 }
 
-/* ==========================
-LocalStorage Kaydet
-========================== */
+}
 
 function saveDocuments(){
 
@@ -292,21 +346,17 @@ JSON.stringify(documents)
 
 }
 
-/* ==========================
-Listele
-========================== */
-
 function renderDocuments(){
 
-const tbody=
+const table=$("documentTable");
 
-$("documentTable");
+if(!table) return;
 
-tbody.innerHTML="";
+table.innerHTML="";
 
 documents.forEach((doc,index)=>{
 
-tbody.innerHTML+=`
+table.innerHTML+=`
 
 <tr>
 
@@ -321,7 +371,6 @@ tbody.innerHTML+=`
 <td>
 
 <button
-class="deleteBtn"
 onclick="deleteDocument(${doc.id})">
 
 Sil
@@ -338,21 +387,9 @@ Sil
 
 }
 
-/* ==========================
-Sil
-========================== */
-
 function deleteDocument(id){
 
-if(
-
-!confirm(
-
-"Evrak silinsin mi?"
-
-)
-
-){
+if(!confirm("Bu evrak silinsin mi?")){
 
 return;
 
@@ -362,7 +399,7 @@ documents=
 
 documents.filter(
 
-item=>item.id!==id
+doc=>doc.id!==id
 
 );
 
@@ -375,28 +412,14 @@ updateDashboard();
 }
 
 /* ==========================
-Temizle
-========================== */
-
-$("clearDocumentBtn").addEventListener(
-
-"click",
-
-()=>{
-
-$("documentName").value="";
-
-$("documentDescription").value="";
-
-}
-
-);
-
-/* ==========================
 Görev Sistemi
 ========================== */
 
-$("addTaskBtn").addEventListener(
+const addTaskBtn = $("addTaskBtn");
+
+if(addTaskBtn){
+
+addTaskBtn.addEventListener(
 
 "click",
 
@@ -404,15 +427,19 @@ addTask
 
 );
 
+}
+
 function addTask(){
 
-const text=
+const input=$("taskInput");
 
-$("taskInput").value.trim();
+if(!input) return;
+
+const text=input.value.trim();
 
 if(text===""){
 
-alert("Görev yazınız.");
+alert("Görev giriniz.");
 
 return;
 
@@ -436,13 +463,9 @@ renderTasks();
 
 updateDashboard();
 
-$("taskInput").value="";
+input.value="";
 
 }
-
-/* ==========================
-Görevleri Kaydet
-========================== */
 
 function saveTasks(){
 
@@ -456,15 +479,11 @@ JSON.stringify(tasks)
 
 }
 
-/* ==========================
-Görevleri Listele
-========================== */
-
 function renderTasks(){
 
-const list=
+const list=$("taskList");
 
-$("taskList");
+if(!list) return;
 
 list.innerHTML="";
 
@@ -480,7 +499,7 @@ list.innerHTML+=`
 
 type="checkbox"
 
-${task.done?"checked":""}
+${task.done ? "checked" : ""}
 
 onchange="toggleTask(${task.id})">
 
@@ -508,15 +527,9 @@ Sil
 
 }
 
-/* ==========================
-Görev Tamamla
-========================== */
-
 function toggleTask(id){
 
-tasks=
-
-tasks.map(task=>{
+tasks=tasks.map(task=>{
 
 if(task.id===id){
 
@@ -530,31 +543,19 @@ return task;
 
 saveTasks();
 
-}
+renderTasks();
 
-/* ==========================
-Görev Sil
-========================== */
+}
 
 function deleteTask(id){
 
-if(
-
-!confirm(
-
-"Görev silinsin mi?"
-
-)
-
-){
+if(!confirm("Görev silinsin mi?")){
 
 return;
 
 }
 
-tasks=
-
-tasks.filter(
+tasks=tasks.filter(
 
 task=>task.id!==id
 
@@ -572,35 +573,42 @@ updateDashboard();
 Not Sistemi
 ========================== */
 
-$("saveNoteBtn").addEventListener(
+const saveNoteBtn = $("saveNoteBtn");
+const clearNoteBtn = $("clearNoteBtn");
 
-"click",
+if(saveNoteBtn){
 
-saveNote
-
-);
-
-$("clearNoteBtn").addEventListener(
-
-"click",
-
-()=>{
-
-$("noteInput").value="";
+saveNoteBtn.addEventListener("click",saveNote);
 
 }
 
-);
+if(clearNoteBtn){
+
+clearNoteBtn.addEventListener("click",()=>{
+
+const note=$("noteInput");
+
+if(note){
+
+note.value="";
+
+}
+
+});
+
+}
 
 function saveNote(){
 
-const text=
+const input=$("noteInput");
 
-$("noteInput").value.trim();
+if(!input) return;
+
+const text=input.value.trim();
 
 if(text===""){
 
-alert("Not yazınız.");
+alert("Not giriniz.");
 
 return;
 
@@ -622,7 +630,7 @@ renderNotes();
 
 updateDashboard();
 
-$("noteInput").value="";
+input.value="";
 
 }
 
@@ -640,9 +648,9 @@ JSON.stringify(notes)
 
 function renderNotes(){
 
-const list=
+const list=$("noteList");
 
-$("noteList");
+if(!list) return;
 
 list.innerHTML="";
 
@@ -660,9 +668,7 @@ list.innerHTML+=`
 
 </div>
 
-<button
-
-onclick="deleteNote(${note.id})">
+<button onclick="deleteNote(${note.id})">
 
 Sil
 
@@ -684,9 +690,7 @@ return;
 
 }
 
-notes=
-
-notes.filter(
+notes=notes.filter(
 
 note=>note.id!==id
 
@@ -704,7 +708,11 @@ updateDashboard();
 Takvim Sistemi
 ========================== */
 
-$("saveCalendarBtn").addEventListener(
+const saveCalendarBtn=$("saveCalendarBtn");
+
+if(saveCalendarBtn){
+
+saveCalendarBtn.addEventListener(
 
 "click",
 
@@ -712,17 +720,17 @@ saveCalendar
 
 );
 
+}
+
 function saveCalendar(){
 
-const date=
+const date=$("calendarDate");
 
-$("calendarDate").value;
+const title=$("calendarTitle");
 
-const title=
+if(!date || !title) return;
 
-$("calendarTitle").value.trim();
-
-if(date===""||title===""){
+if(date.value==="" || title.value.trim()===""){
 
 alert("Tarih ve başlık giriniz.");
 
@@ -734,9 +742,9 @@ calendars.unshift({
 
 id:Date.now(),
 
-date,
+date:date.value,
 
-title
+title:title.value.trim()
 
 });
 
@@ -746,9 +754,9 @@ renderCalendar();
 
 updateDashboard();
 
-$("calendarDate").value="";
+date.value="";
 
-$("calendarTitle").value="";
+title.value="";
 
 }
 
@@ -766,9 +774,9 @@ JSON.stringify(calendars)
 
 function renderCalendar(){
 
-const list=
+const list=$("calendarList");
 
-$("calendarList");
+if(!list) return;
 
 list.innerHTML="";
 
@@ -786,9 +794,7 @@ list.innerHTML+=`
 
 </div>
 
-<button
-
-onclick="deleteCalendar(${item.id})">
+<button onclick="deleteCalendar(${item.id})">
 
 Sil
 
@@ -830,7 +836,11 @@ updateDashboard();
 Kişiler
 ========================== */
 
-$("saveContactBtn").addEventListener(
+const saveContactBtn = $("saveContactBtn");
+
+if(saveContactBtn){
+
+saveContactBtn.addEventListener(
 
 "click",
 
@@ -838,13 +848,17 @@ saveContact
 
 );
 
+}
+
 function saveContact(){
 
-const name=
+const name=$("contactName");
+const phone=$("contactPhone");
+const mail=$("contactMail");
 
-$("contactName").value.trim();
+if(!name) return;
 
-if(name===""){
+if(name.value.trim()===""){
 
 alert("Ad Soyad giriniz.");
 
@@ -856,11 +870,11 @@ contacts.unshift({
 
 id:Date.now(),
 
-name:name,
+name:name.value.trim(),
 
-phone:$("contactPhone").value.trim(),
+phone:phone ? phone.value.trim() : "",
 
-mail:$("contactMail").value.trim()
+mail:mail ? mail.value.trim() : ""
 
 });
 
@@ -868,11 +882,11 @@ saveContacts();
 
 renderContacts();
 
-$("contactName").value="";
+name.value="";
 
-$("contactPhone").value="";
+if(phone) phone.value="";
 
-$("contactMail").value="";
+if(mail) mail.value="";
 
 }
 
@@ -890,9 +904,9 @@ JSON.stringify(contacts)
 
 function renderContacts(){
 
-const list=
+const list=$("contactList");
 
-$("contactList");
+if(!list) return;
 
 list.innerHTML="";
 
@@ -906,15 +920,13 @@ list.innerHTML+=`
 
 <h3>${person.name}</h3>
 
-<p>📞 ${person.phone||"-"}</p>
+<p>📞 ${person.phone || "-"}</p>
 
-<p>✉️ ${person.mail||"-"}</p>
+<p>✉️ ${person.mail || "-"}</p>
 
 </div>
 
-<button
-
-onclick="deleteContact(${person.id})">
+<button onclick="deleteContact(${person.id})">
 
 Sil
 
@@ -954,13 +966,19 @@ renderContacts();
 JSON Yedekleme
 ========================== */
 
-$("exportDataBtn").addEventListener(
+const exportBtn=$("exportDataBtn");
+
+if(exportBtn){
+
+exportBtn.addEventListener(
 
 "click",
 
 exportData
 
 );
+
+}
 
 function exportData(){
 
@@ -994,15 +1012,13 @@ const url=
 
 URL.createObjectURL(blob);
 
-const link=
+const a=document.createElement("a");
 
-document.createElement("a");
+a.href=url;
 
-link.href=url;
+a.download="KALEM_YEDEK.json";
 
-link.download="KALEM_YEDEK.json";
-
-link.click();
+a.click();
 
 URL.revokeObjectURL(url);
 
@@ -1012,7 +1028,11 @@ URL.revokeObjectURL(url);
 JSON Geri Yükleme
 ========================== */
 
-$("importFile").addEventListener(
+const importFile=$("importFile");
+
+if(importFile){
+
+importFile.addEventListener(
 
 "change",
 
@@ -1020,49 +1040,33 @@ importData
 
 );
 
-function importData(event){
-
-const file=
-
-event.target.files[0];
-
-if(!file){
-
-return;
-
 }
 
-const reader=
+function importData(e){
 
-new FileReader();
+const file=e.target.files[0];
 
-reader.onload=function(e){
+if(!file) return;
+
+const reader=new FileReader();
+
+reader.onload=function(event){
 
 try{
 
 const data=
 
-JSON.parse(e.target.result);
+JSON.parse(event.target.result);
 
-documents=
+documents=data.documents || [];
 
-data.documents||[];
+tasks=data.tasks || [];
 
-tasks=
+notes=data.notes || [];
 
-data.tasks||[];
+calendars=data.calendars || [];
 
-notes=
-
-data.notes||[];
-
-calendars=
-
-data.calendars||[];
-
-contacts=
-
-data.contacts||[];
+contacts=data.contacts || [];
 
 saveDocuments();
 
@@ -1086,19 +1090,11 @@ renderContacts();
 
 updateDashboard();
 
-alert(
-
-"Yedek başarıyla yüklendi."
-
-);
+alert("Yedek başarıyla yüklendi.");
 
 }catch{
 
-alert(
-
-"Geçersiz yedek dosyası."
-
-);
+alert("Geçersiz JSON dosyası.");
 
 }
 
@@ -1112,11 +1108,23 @@ reader.readAsText(file);
 Tema Sistemi
 ========================== */
 
-$("changeThemeBtn").addEventListener("click",toggleTheme);
+const changeThemeBtn = $("changeThemeBtn");
+
+if(changeThemeBtn){
+
+changeThemeBtn.addEventListener(
+
+"click",
+
+toggleTheme
+
+);
+
+}
 
 function loadTheme(){
 
-const theme=localStorage.getItem(STORAGE.theme);
+const theme = localStorage.getItem(STORAGE.theme);
 
 if(theme==="dark"){
 
@@ -1130,15 +1138,17 @@ function toggleTheme(){
 
 document.body.classList.toggle("dark");
 
-if(document.body.classList.contains("dark")){
+localStorage.setItem(
 
-localStorage.setItem(STORAGE.theme,"dark");
+STORAGE.theme,
 
-}else{
+document.body.classList.contains("dark")
 
-localStorage.setItem(STORAGE.theme,"light");
+? "dark"
 
-}
+: "light"
+
+);
 
 }
 
@@ -1146,11 +1156,23 @@ localStorage.setItem(STORAGE.theme,"light");
 Tüm Verileri Sil
 ========================== */
 
-$("deleteAllBtn").addEventListener("click",deleteAllData);
+const deleteAllBtn = $("deleteAllBtn");
+
+if(deleteAllBtn){
+
+deleteAllBtn.addEventListener(
+
+"click",
+
+deleteAllData
+
+);
+
+}
 
 function deleteAllData(){
 
-if(!confirm("Tüm kayıtlar silinsin mi?")){
+if(!confirm("Tüm veriler silinsin mi?")){
 
 return;
 
@@ -1184,27 +1206,33 @@ alert("Tüm veriler silindi.");
 Evrak Arama
 ========================== */
 
-const documentPage=document.getElementById("documents");
+(function(){
 
-if(documentPage){
+const page=$("documents");
 
-const searchBox=document.createElement("input");
+const table=$("documentTable");
 
-searchBox.type="text";
+if(!page || !table) return;
 
-searchBox.placeholder="🔍 Evrak Ara";
+const search=document.createElement("input");
 
-searchBox.className="searchInput";
+search.type="text";
 
-documentPage.prepend(searchBox);
+search.className="searchInput";
 
-searchBox.addEventListener("input",function(){
+search.placeholder="🔍 Evrak Ara...";
 
-const value=this.value.toLowerCase();
+page.insertBefore(search,page.firstChild);
 
-document.querySelectorAll("#documentTable tr").forEach(row=>{
+search.addEventListener("input",()=>{
 
-row.style.display=row.innerText.toLowerCase().includes(value)
+const value=search.value.toLowerCase();
+
+table.querySelectorAll("tr").forEach(row=>{
+
+row.style.display=row.innerText
+.toLowerCase()
+.includes(value)
 
 ? ""
 
@@ -1214,7 +1242,7 @@ row.style.display=row.innerText.toLowerCase().includes(value)
 
 });
 
-}
+})();
 
 /* ==========================
 Pencere Boyutu
@@ -1224,129 +1252,25 @@ window.addEventListener("resize",()=>{
 
 if(window.innerWidth>900){
 
-$("sidebar").classList.remove("show");
+const sidebar=$("sidebar");
+
+if(sidebar){
+
+sidebar.classList.remove("show");
+
+}
 
 }
 
 });
 
 /* ==========================
-Tema Sistemi
+Genel Yardımcılar
 ========================== */
 
-$("changeThemeBtn").addEventListener(
+function refreshAll(){
 
-"click",
-
-toggleTheme
-
-);
-
-function loadTheme(){
-
-const theme=
-
-localStorage.getItem(
-
-STORAGE.theme
-
-);
-
-if(theme==="dark"){
-
-document.body.classList.add(
-
-"dark"
-
-);
-
-}
-
-}
-
-function toggleTheme(){
-
-document.body.classList.toggle(
-
-"dark"
-
-);
-
-if(
-
-document.body.classList.contains(
-
-"dark"
-
-)
-
-){
-
-localStorage.setItem(
-
-STORAGE.theme,
-
-"dark"
-
-);
-
-}else{
-
-localStorage.setItem(
-
-STORAGE.theme,
-
-"light"
-
-);
-
-}
-
-}
-
-/* ==========================
-Tüm Verileri Sil
-========================== */
-
-$("deleteAllBtn").addEventListener(
-
-"click",
-
-deleteAllData
-
-);
-
-function deleteAllData(){
-
-if(
-
-!confirm(
-
-"Tüm kayıtlar silinsin mi?"
-
-)
-
-){
-
-return;
-
-}
-
-Object.values(STORAGE).forEach(key=>{
-
-localStorage.removeItem(key);
-
-});
-
-documents=[];
-
-tasks=[];
-
-notes=[];
-
-calendars=[];
-
-contacts=[];
+updateDashboard();
 
 renderDocuments();
 
@@ -1358,105 +1282,68 @@ renderCalendar();
 
 renderContacts();
 
-updateDashboard();
-
-alert(
-
-"Tüm veriler silindi."
-
-);
-
 }
 
 /* ==========================
-Evrak Arama
+Sayfa Görünür Olunca
 ========================== */
 
-const searchBox=
+document.addEventListener("visibilitychange",()=>{
 
-document.createElement("input");
+if(!document.hidden){
 
-searchBox.placeholder="🔍 Evrak Ara";
-
-searchBox.className="searchInput";
-
-const documentPage=
-
-document.getElementById("documents");
-
-if(documentPage){
-
-documentPage.prepend(searchBox);
+refreshAll();
 
 }
-
-searchBox.addEventListener(
-
-"input",
-
-function(){
-
-const value=
-
-this.value.toLowerCase();
-
-document
-
-.querySelectorAll(
-
-"#documentTable tr"
-
-)
-
-.forEach(row=>{
-
-row.style.display=
-
-row.innerText
-
-.toLowerCase()
-
-.includes(value)
-
-?
-
-""
-
-:
-
-"none";
 
 });
 
-}
-
 /* ==========================
-Pencere Yeniden Boyutlanınca
+Storage Senkronizasyonu
 ========================== */
 
-window.addEventListener(
+window.addEventListener("storage",(e)=>{
 
-"resize",
+if(!e.key) return;
 
-()=>{
+if(e.key===STORAGE.documents){
 
-if(
-
-window.innerWidth>900
-
-){
-
-$("sidebar").classList.remove(
-
-"show"
-
-);
+documents=JSON.parse(localStorage.getItem(STORAGE.documents))||[];
 
 }
 
+if(e.key===STORAGE.tasks){
+
+tasks=JSON.parse(localStorage.getItem(STORAGE.tasks))||[];
+
 }
-);
 
+if(e.key===STORAGE.notes){
 
+notes=JSON.parse(localStorage.getItem(STORAGE.notes))||[];
+
+}
+
+if(e.key===STORAGE.calendar){
+
+calendars=JSON.parse(localStorage.getItem(STORAGE.calendar))||[];
+
+}
+
+if(e.key===STORAGE.contacts){
+
+contacts=JSON.parse(localStorage.getItem(STORAGE.contacts))||[];
+
+}
+
+refreshAll();
+
+});
+
+/* ==========================
+Başlatıldı
+========================== */
+
+console.log("KALEM V4 başarıyla başlatıldı.");
 
 
