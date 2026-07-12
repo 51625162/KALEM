@@ -1298,4 +1298,56 @@ Başlatıldı
 
 console.log("KALEM V4 başarıyla başlatıldı.");
 
+/* ==========================
+KALEM AI Dosya
+========================== */
 
+const aiFile = $("aiFile");
+
+if (aiFile) {
+
+    aiFile.addEventListener("change", function (e) {
+
+        const file = e.target.files[0];
+
+        if (!file) return;
+
+        $("aiAnswer").innerHTML = `
+            <h3>📄 Dosya Hazır</h3>
+            <p><b>Dosya:</b> ${file.name}</p>
+            <p><b>Boyut:</b> ${(file.size / 1024).toFixed(2)} KB</p>
+            <p>✅ Dosya başarıyla seçildi.</p>
+        `;
+
+    });
+
+}
+
+/* ==========================
+KALEM AI Demo
+========================== */
+
+const askAiBtn = $("askAiBtn");
+
+if (askAiBtn) {
+
+    askAiBtn.addEventListener("click", () => {
+
+        const prompt = $("aiPrompt").value.trim();
+
+        if (prompt === "") {
+            alert("Lütfen bir soru yazın.");
+            return;
+        }
+
+        $("aiAnswer").innerHTML = `
+            <h3>🤖 KALEM AI</h3>
+            <p><b>Sorunuz:</b> ${prompt}</p>
+            <hr>
+            <p>Bu sürüm şu anda demo modunda çalışıyor.</p>
+            <p>Bir sonraki adımda gerçek OpenAI yapay zekâsına bağlanacaktır.</p>
+        `;
+
+    });
+
+}
