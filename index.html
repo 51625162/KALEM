@@ -11,6 +11,34 @@
 </head>
 <body>
 
+<!-- Giriş Ekranı -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <h1>KALEM</h1>
+    <p>Lütfen giriş yapın</p>
+
+    <input
+      type="text"
+      id="username"
+      placeholder="Kullanıcı Adı"
+      autocomplete="username"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Şifre"
+      autocomplete="current-password"
+    >
+
+    <button onclick="login()">Giriş Yap</button>
+
+    <p id="loginError" class="login-error"></p>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none;">
+  
 <div class="app">
   <!-- Sidebar -->
   <aside class="sidebar">
