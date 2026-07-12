@@ -3,526 +3,1322 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>KALEM V4</title>
+    <meta http-equiv="X-UA-Compatible"
+          content="IE=edge">
 
-<meta name="description" content="KALEM - Kişisel Evrak ve Yönetim Sistemi">
+    <meta name="theme-color"
+          content="#2563eb">
 
-<meta name="theme-color" content="#2563eb">
+    <meta name="description"
+          content="KALEM Pro V2 - Kurumsal Akıllı Legal Evrak Merkezi">
 
-<link rel="stylesheet" href="styles.css">
+    <meta name="author"
+          content="Kasım Kaya">
+
+    <meta name="robots"
+          content="index,follow">
+
+    <title>KALEM Pro V2</title>
+
+    <!-- FONT -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- ICON -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet"
+          href="styles.css">
 
 </head>
 
 <body>
 
-<div id="loadingScreen">
+<div id="loader">
 
-<div class="loader"></div>
+    <div class="loader-content">
 
-<h1>KALEM</h1>
+        <div class="loader-logo">
 
-<p>Yükleniyor...</p>
+            <i class="fa-solid fa-scale-balanced"></i>
 
-</div>
+        </div>
 
-<div id="app" class="hidden">
+        <h1>
 
-<header class="topbar">
+            KALEM Pro
 
-<div class="logoArea">
+        </h1>
 
-<h1>KALEM</h1>
+        <p>
 
-<span>V4</span>
+            Kurumsal Akıllı Legal Evrak Merkezi
 
-</div>
+        </p>
 
-<div class="topButtons">
+        <div class="loader-bar">
 
-<button id="menuBtn">☰</button>
+            <span></span>
 
-<button id="themeBtn">🌙</button>
+        </div>
 
-</div>
-
-</header>
-
-<div class="layout">
-
-<nav class="sidebar" id="sidebar">
-
-<h2>Menü</h2>
-
-<ul>
-
-<li class="active" data-page="dashboard">
-🏠 Anasayfa
-</li>
-
-<li data-page="documents">
-📂 Evraklar
-</li>
-
-<li data-page="tasks">
-✅ Görevler
-</li>
-
-<li data-page="notes">
-📝 Notlar
-</li>
-
-<li data-page="calendar">
-📅 Takvim
-</li>
-
-<li data-page="contacts">
-👥 Kişiler
-</li>
-
-<li data-page="archive">
-🗄️ Arşiv
-</li>
-
-<li data-page="settings">
-⚙️ Ayarlar
-</li>
-
-<li data-page="ai">
-🤖 Yapay Zeka
-</li>
-  
-</ul>
-
-</nav>
-
-<main class="content">
-
-<section id="dashboard" class="page active">
-
-<h2>Kontrol Paneli</h2>
-
-<p>KALEM'e hoş geldiniz.</p>
-
-<div class="cardGrid">
-
-<div class="card">
-
-<h3>Evraklar</h3>
-
-<p id="docCount">0</p>
+    </div>
 
 </div>
 
-<div class="card">
+<div id="app">
 
-<h3>Görevler</h3>
+    <!-- SOL MENÜ -->
 
-<p id="taskCount">0</p>
+    <aside id="sidebar">
 
-</div>
+        <div class="sidebar-top">
 
-<div class="card">
+            <div class="logo-box">
 
-<h3>Notlar</h3>
+                <div class="logo-icon">
 
-<p id="noteCount">0</p>
+                    <i class="fa-solid fa-scale-balanced"></i>
 
-</div>
+                </div>
 
-<div class="card">
+                <div class="logo-text">
 
-<h3>Takvim</h3>
+                    <h2>
 
-<p id="calendarCount">0</p>
+                        KALEM
 
-</div>
+                    </h2>
 
-</div>
+                    <small>
 
-</section>
+                        PRO V2
 
-<section id="documents" class="page">
+                    </small>
 
-<h2>Evrak Yönetimi</h2>
+                </div>
 
-<p>Evraklarınızı ekleyebilir ve yönetebilirsiniz.</p>
+            </div>
 
-<div class="formCard">
+        </div>
 
-<div class="inputGroup">
+        <!-- MENÜ -->
 
-<label>Evrak Adı</label>
+        <nav class="sidebar-menu">
 
-<input
-type="text"
-id="documentName"
-placeholder="Evrak adı">
+        <!-- ANA MENÜ -->
 
-</div>
+        <button class="menu-item active"
+                data-page="dashboard">
 
-<div class="inputGroup">
+            <i class="fa-solid fa-house"></i>
 
-<label>Kategori</label>
+            <span>Ana Sayfa</span>
 
-<select id="documentCategory">
+        </button>
 
-<option>Genel</option>
+        <button class="menu-item"
+                data-page="kalem-ai">
 
-<option>Resmi</option>
+            <i class="fa-solid fa-robot"></i>
 
-<option>Kişisel</option>
+            <span>KALEM AI</span>
 
-<option>Mali</option>
+        </button>
 
-<option>Sağlık</option>
+        <button class="menu-item"
+                data-page="documents">
 
-<option>Diğer</option>
+            <i class="fa-solid fa-file-lines"></i>
 
-</select>
+            <span>Belgeler</span>
 
-</div>
+        </button>
 
-<div class="inputGroup">
+        <button class="menu-item"
+                data-page="templates">
 
-<label>Açıklama</label>
+            <i class="fa-solid fa-layer-group"></i>
 
-<textarea
-id="documentDescription"
-placeholder="Açıklama yazınız"></textarea>
+            <span>Şablon Merkezi</span>
 
-</div>
+        </button>
 
-<div class="buttonArea">
+        <button class="menu-item"
+                data-page="excel">
 
-<button id="saveDocumentBtn">
+            <i class="fa-solid fa-table"></i>
 
-Kaydet
+            <span>Excel Studio</span>
 
-</button>
+        </button>
 
-<button id="clearDocumentBtn">
+        <button class="menu-item"
+                data-page="word">
 
-Temizle
+            <i class="fa-solid fa-file-word"></i>
 
-</button>
+            <span>Word Studio</span>
 
-</div>
+        </button>
 
-</div>
+        <button class="menu-item"
+                data-page="pdf">
 
-<div class="tableCard">
+            <i class="fa-solid fa-file-pdf"></i>
 
-<table>
+            <span>PDF Studio</span>
 
-<thead>
+        </button>
 
-<tr>
+        <button class="menu-item"
+                data-page="laws">
 
-<th>#</th>
+            <i class="fa-solid fa-book"></i>
 
-<th>Evrak</th>
+            <span>Mevzuat Merkezi</span>
 
-<th>Kategori</th>
+        </button>
 
-<th>Tarih</th>
+        <button class="menu-item"
+                data-page="archive">
 
-<th>İşlem</th>
+            <i class="fa-solid fa-box-archive"></i>
 
-</tr>
+            <span>Arşiv</span>
 
-</thead>
+        </button>
 
-<tbody id="documentTable">
+        <button class="menu-item"
+                data-page="calendar">
 
-</tbody>
+            <i class="fa-solid fa-calendar-days"></i>
 
-</table>
+            <span>Takvim</span>
 
-</div>
+        </button>
 
-</section>
+        <button class="menu-item"
+                data-page="reminders">
 
-<section id="tasks" class="page">
+            <i class="fa-solid fa-bell"></i>
 
-<h2>Görevler</h2>
+            <span>Hatırlatıcılar</span>
 
-<p>Yapılacak işleri takip edin.</p>
+        </button>
 
-<div class="formCard">
+        <button class="menu-item"
+                data-page="settings">
 
-<input
-type="text"
-id="taskInput"
-placeholder="Yeni görev">
+            <i class="fa-solid fa-gear"></i>
 
-<button id="addTaskBtn">
+            <span>Ayarlar</span>
 
-Görev Ekle
+        </button>
 
-</button>
+        <hr class="menu-divider">
 
-</div>
+        <button class="menu-item"
+                data-page="favorites">
 
-<ul id="taskList">
+            <i class="fa-solid fa-star"></i>
 
-</ul>
+            <span>Favoriler</span>
 
-</section>
+        </button>
 
-<section id="notes" class="page">
+        <button class="menu-item"
+                data-page="trash">
 
-<h2>Notlar</h2>
+            <i class="fa-solid fa-trash"></i>
 
-<p>Hızlı notlarınızı saklayın.</p>
+            <span>Çöp Kutusu</span>
 
-<div class="formCard">
+        </button>
 
-<textarea
-id="noteInput"
-placeholder="Not yazın..."></textarea>
+        </nav>
 
-<div class="buttonArea">
+        <div class="sidebar-footer">
 
-<button id="saveNoteBtn">
+            <div class="user-card">
 
-Not Kaydet
+                <div class="user-avatar">
 
-</button>
+                    <i class="fa-solid fa-user"></i>
 
-<button id="clearNoteBtn">
+                </div>
 
-Temizle
+                <div class="user-info">
 
-</button>
+                    <h4>Kasım Kaya</h4>
 
-</div>
+                    <small>KALEM Pro Kullanıcısı</small>
 
-</div>
+                </div>
 
-<div id="noteList">
+            </div>
 
-</div>
+        </div>
 
-</section>
+    </aside>
 
-<section id="calendar" class="page">
+    <!-- ANA İÇERİK -->
 
-<h2>Takvim</h2>
+    <main id="main">
 
-<p>Etkinliklerinizi planlayın.</p>
+        <!-- ÜST MENÜ -->
 
-<div class="formCard">
+        <header class="topbar">
 
-<div class="inputGroup">
+            <div class="topbar-left">
 
-<label>Tarih</label>
+                <button id="menuToggle"
+                        class="icon-btn">
 
-<input
-type="date"
-id="calendarDate">
+                    <i class="fa-solid fa-bars"></i>
 
-</div>
+                </button>
 
-<div class="inputGroup">
+                <div class="page-title">
 
-<label>Başlık</label>
+                    <h1>
 
-<input
-type="text"
-id="calendarTitle"
-placeholder="Etkinlik başlığı">
+                        Dashboard
 
-</div>
+                    </h1>
 
-<div class="buttonArea">
+                    <span>
 
-<button id="saveCalendarBtn">
+                        Kurumsal Akıllı Legal Evrak Merkezi
 
-Etkinlik Ekle
+                    </span>
 
-</button>
+                </div>
 
-</div>
+            </div>
 
-</div>
+            <div class="topbar-center">
 
-<div id="calendarList" class="listContainer">
+                <div class="search-box">
 
-</div>
+                    <i class="fa-solid fa-magnifying-glass"></i>
 
-</section>
+                    <input
+                        type="search"
+                        id="globalSearch"
+                        placeholder="Belge, mevzuat, şablon veya AI'da ara...">
 
-<section id="contacts" class="page">
+                </div>
 
-<h2>Kişiler</h2>
+            </div>
 
-<p>İletişim bilgilerini saklayın.</p>
+            <div class="topbar-right">
 
-<div class="formCard">
+                <button class="icon-btn"
+                        id="aiButton"
+                        title="KALEM AI">
 
-<input
-type="text"
-id="contactName"
-placeholder="Ad Soyad">
+                    <i class="fa-solid fa-robot"></i>
 
-<input
-type="text"
-id="contactPhone"
-placeholder="Telefon">
+                </button>
 
-<input
-type="email"
-id="contactMail"
-placeholder="E-posta">
+                <button class="icon-btn"
+                        id="notificationButton"
+                        title="Bildirimler">
 
-<div class="buttonArea">
+                    <i class="fa-solid fa-bell"></i>
 
-<button id="saveContactBtn">
+                    <span class="badge">
 
-Kişi Kaydet
+                        0
 
-</button>
+                    </span>
 
-</div>
+                </button>
 
-</div>
+                <button class="icon-btn"
+                        id="settingsButton"
+                        title="Ayarlar">
 
-<div id="contactList" class="listContainer">
+                    <i class="fa-solid fa-gear"></i>
 
-</div>
+                </button>
 
-</section>
+            </div>
 
-<section id="archive" class="page">
+        </header>
 
-<h2>Arşiv</h2>
+        <!-- SAYFALAR -->
 
-<p>Arşivlenen kayıtlar burada görüntülenir.</p>
+        <div id="pages">
 
-<div class="emptyBox">
+            <!-- DASHBOARD -->
 
-Henüz arşivlenmiş kayıt bulunmuyor.
+            <section
+                id="dashboardPage"
+                class="page active">
 
-</div>
+                <div class="page-header">
 
-</section>
+                    <h2>
 
-<section id="settings" class="page">
+                        Kontrol Paneli
 
-<h2>Ayarlar</h2>
+                    </h2>
 
-<p>Uygulama ayarlarını yönetin.</p>
+                    <p>
 
-<div class="settingsGrid">
+                        KALEM Pro ana ekranına hoş geldiniz.
 
-<div class="settingCard">
+                    </p>
 
-<h3>Tema</h3>
+                </div>
 
-<p>Açık / Koyu tema.</p>
+                              <!-- İSTATİSTİK KARTLARI -->
 
-<button id="changeThemeBtn">
+                <div class="stats-grid">
 
-Tema Değiştir
+                    <div class="stat-card">
 
-</button>
+                        <div class="stat-icon blue">
 
-</div>
+                            <i class="fa-solid fa-file-lines"></i>
 
-<div class="settingCard">
+                        </div>
 
-<h3>Yedekleme</h3>
+                        <div class="stat-content">
 
-<p>Verileri dışa aktar.</p>
+                            <h3 id="totalDocuments">0</h3>
 
-<button id="exportDataBtn">
+                            <p>Toplam Belge</p>
 
-Yedek Al
+                        </div>
 
-</button>
+                    </div>
 
-</div>
+                    <div class="stat-card">
 
-<div class="settingCard">
+                        <div class="stat-icon green">
 
-<h3>Geri Yükleme</h3>
+                            <i class="fa-solid fa-layer-group"></i>
 
-<p>JSON yedeğini yükleyin.</p>
+                        </div>
 
-<input
-type="file"
-id="importFile"
-accept=".json">
+                        <div class="stat-content">
 
-</div>
+                            <h3 id="totalTemplates">0</h3>
 
-<div class="settingCard danger">
+                            <p>Şablon Sayısı</p>
 
-<h3>Verileri Temizle</h3>
+                        </div>
 
-<p>Tüm kayıtlar silinir.</p>
+                    </div>
 
-<button id="deleteAllBtn">
+                    <div class="stat-card">
 
-Tüm Verileri Sil
+                        <div class="stat-icon orange">
 
-</button>
+                            <i class="fa-solid fa-book"></i>
 
-</div>
+                        </div>
 
-</div>
+                        <div class="stat-content">
 
-</section>
+                            <h3 id="totalRegulations">0</h3>
 
-<section id="ai" class="page">
+                            <p>Mevzuat</p>
 
-<h2>🤖 KALEM AI</h2>
+                        </div>
 
-<p>Yapay zekâ asistanı</p>
+                    </div>
 
-<div class="formCard">
+                    <div class="stat-card">
 
-<textarea id="aiPrompt" placeholder="Sorunuzu yazın..."></textarea>
+                        <div class="stat-icon red">
 
-  <div class="inputGroup">
-    <label>📄 Dosya Yükle</label>
+                            <i class="fa-solid fa-clock"></i>
 
-    <input
-        type="file"
-        id="aiFile"
-        accept=".pdf,.doc,.docx,.xls,.xlsx,.txt">
-</div>
-  
-<div class="buttonArea">
-<button id="askAiBtn">Gönder</button>
-</div>
+                        </div>
 
-</div>
+                        <div class="stat-content">
 
-<div class="formCard">
+                            <h3 id="todayTasks">0</h3>
 
-<h3>Yanıt</h3>
+                            <p>Bugünkü Görev</p>
 
-<div id="aiAnswer">
-Merhaba, ben KALEM AI.
-</div>
+                        </div>
 
-</div>
+                    </div>
 
-</section>
-  
-</main>
+                </div>
 
-</div>
+                <!-- HIZLI İŞLEMLER -->
 
-<script src="script.js"></script>
+                <div class="dashboard-section">
 
-</body>
+                    <div class="section-header">
 
-</html>
+                        <h3>
 
-  
+                            Hızlı İşlemler
+
+                        </h3>
+
+                    </div>
+
+                    <div class="quick-actions-grid">
+
+                        <button class="quick-action"
+                                id="newPetition">
+
+                            <i class="fa-solid fa-file-circle-plus"></i>
+
+                            <span>Dilekçe</span>
+
+                        </button>
+
+                        <button class="quick-action"
+                                id="newOfficialLetter">
+
+                            <i class="fa-solid fa-building-columns"></i>
+
+                            <span>Üst Yazı</span>
+
+                        </button>
+
+                        <button class="quick-action"
+                                id="newDecision">
+
+                            <i class="fa-solid fa-scale-balanced"></i>
+
+                            <span>Karar</span>
+
+                        </button>
+
+                        <button class="quick-action"
+                                id="newReport">
+
+                            <i class="fa-solid fa-clipboard-list"></i>
+
+                            <span>Rapor</span>
+
+                        </button>
+
+                        <button class="quick-action"
+                                id="openAI">
+
+                            <i class="fa-solid fa-robot"></i>
+
+                            <span>KALEM AI</span>
+
+                        </button>
+
+                        <button class="quick-action"
+                                id="openTemplates">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            <span>Şablonlar</span>
+
+                        </button>
+
+                        <button class="quick-action"
+                                id="openExcelStudio">
+
+                            <i class="fa-solid fa-table"></i>
+
+                            <span>Excel Studio</span>
+
+                        </button>
+
+                        <button class="quick-action"
+                                id="openWordStudio">
+
+                            <i class="fa-solid fa-file-word"></i>
+
+                            <span>Word Studio</span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- SON BELGELER -->
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <h3>
+
+                            Son Belgeler
+
+                        </h3>
+
+                    </div>
+
+                    <div id="recentDocuments"
+                         class="document-list">
+
+                                              <div class="document-card">
+
+                            <div class="document-icon">
+
+                                <i class="fa-solid fa-file-lines"></i>
+
+                            </div>
+
+                            <div class="document-info">
+
+                                <h4>
+
+                                    Henüz belge bulunmuyor
+
+                                </h4>
+
+                                <p>
+
+                                    Yeni belge oluşturduğunuzda burada görünecek.
+
+                                </p>
+
+                            </div>
+
+                            <button class="document-open">
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- FAVORİ ŞABLONLAR -->
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <h3>
+
+                            Favori Şablonlar
+
+                        </h3>
+
+                    </div>
+
+                    <div class="favorites-grid">
+
+                        <div class="favorite-card">
+
+                            <i class="fa-solid fa-star"></i>
+
+                            <h4>
+
+                                Üst Yazı
+
+                            </h4>
+
+                            <p>
+
+                                Kurumsal üst yazı şablonu
+
+                            </p>
+
+                        </div>
+
+                        <div class="favorite-card">
+
+                            <i class="fa-solid fa-star"></i>
+
+                            <h4>
+
+                                Dilekçe
+
+                            </h4>
+
+                            <p>
+
+                                Genel dilekçe şablonu
+
+                            </p>
+
+                        </div>
+
+                        <div class="favorite-card">
+
+                            <i class="fa-solid fa-star"></i>
+
+                            <h4>
+
+                                Karar
+
+                            </h4>
+
+                            <p>
+
+                                Karar hazırlama şablonu
+
+                            </p>
+
+                        </div>
+
+                        <div class="favorite-card">
+
+                            <i class="fa-solid fa-star"></i>
+
+                            <h4>
+
+                                Tutanak
+
+                            </h4>
+
+                            <p>
+
+                                Hazır tutanak şablonu
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- BUGÜNKÜ GÖREVLER -->
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <h3>
+
+                            Bugünkü Görevler
+
+                        </h3>
+
+                    </div>
+
+                    <div id="todayTaskList">
+
+                                              <div class="task-card">
+
+                            <div class="task-status completed">
+
+                                <i class="fa-solid fa-check"></i>
+
+                            </div>
+
+                            <div class="task-content">
+
+                                <h4>
+
+                                    Bugün için görev bulunmuyor
+
+                                </h4>
+
+                                <p>
+
+                                    Yeni görev oluşturduğunuzda burada listelenecektir.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- SON AI İŞLEMLERİ -->
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <h3>
+
+                            Son KALEM AI İşlemleri
+
+                        </h3>
+
+                    </div>
+
+                    <div class="ai-history">
+
+                        <div class="ai-card">
+
+                            <div class="ai-icon">
+
+                                <i class="fa-solid fa-robot"></i>
+
+                            </div>
+
+                            <div class="ai-info">
+
+                                <h4>
+
+                                    Henüz işlem bulunmuyor
+
+                                </h4>
+
+                                <p>
+
+                                    Yapay zekâ ile oluşturduğun belgeler burada görüntülenecek.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- GÜNCEL MEVZUAT -->
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <h3>
+
+                            Güncel Mevzuat
+
+                        </h3>
+
+                    </div>
+
+                    <div class="regulation-card">
+
+                        <i class="fa-solid fa-book"></i>
+
+                        <div>
+
+                            <h4>
+
+                                Güncel mevzuat bulunmuyor
+
+                            </h4>
+
+                            <p>
+
+                                Eklediğin kanun, yönetmelik ve genelgeler burada gösterilecek.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- KALEM AI SAYFASI -->
+
+            <section id="kalemAIPage"
+
+                     class="page">
+
+                              <div class="page-header">
+
+                    <div>
+
+                        <h2>
+
+                            KALEM AI
+
+                        </h2>
+
+                        <p>
+
+                            Yapay zekâ destekli belge hazırlama ve düzenleme merkezi.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="ai-layout">
+
+                    <!-- SOL TARAF -->
+
+                    <div class="ai-sidebar">
+
+                        <button class="ai-tool active">
+
+                            <i class="fa-solid fa-comments"></i>
+
+                            <span>AI Sohbet</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-file-signature"></i>
+
+                            <span>Dilekçe</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-building-columns"></i>
+
+                            <span>Üst Yazı</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-scale-balanced"></i>
+
+                            <span>Karar</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-clipboard"></i>
+
+                            <span>Tutanak</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-chart-column"></i>
+
+                            <span>Rapor</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            <span>Şablon Merkezi</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-book"></i>
+
+                            <span>Mevzuat</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-table"></i>
+
+                            <span>Excel Studio</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-file-word"></i>
+
+                            <span>Word Studio</span>
+
+                        </button>
+
+                        <button class="ai-tool">
+
+                            <i class="fa-solid fa-file-pdf"></i>
+
+                            <span>PDF Studio</span>
+
+                        </button>
+
+                    </div>
+
+                    <!-- SOHBET -->
+
+                    <div class="ai-chat">
+
+                        <div id="chatMessages">
+
+                            <div class="ai-message">
+
+                                <div class="ai-avatar">
+
+                                    <i class="fa-solid fa-robot"></i>
+
+                                </div>
+
+                                <div class="ai-bubble">
+
+                                    <h4>
+
+                                        KALEM AI
+
+                                    </h4>
+
+                                    <p>
+
+                                        Hoş geldiniz.
+
+                                        Size dilekçe, üst yazı, karar, tutanak, rapor, Word, Excel, PDF ve mevzuat konularında yardımcı olabilirim.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                                              <!-- ÖNERİ KARTLARI -->
+
+                        <div class="ai-suggestions">
+
+                            <button class="suggestion-card">
+
+                                <i class="fa-solid fa-file-signature"></i>
+
+                                <span>Dilekçe Hazırla</span>
+
+                            </button>
+
+                            <button class="suggestion-card">
+
+                                <i class="fa-solid fa-building-columns"></i>
+
+                                <span>Üst Yazı Oluştur</span>
+
+                            </button>
+
+                            <button class="suggestion-card">
+
+                                <i class="fa-solid fa-scale-balanced"></i>
+
+                                <span>Karar Yaz</span>
+
+                            </button>
+
+                            <button class="suggestion-card">
+
+                                <i class="fa-solid fa-clipboard"></i>
+
+                                <span>Tutanak Hazırla</span>
+
+                            </button>
+
+                            <button class="suggestion-card">
+
+                                <i class="fa-solid fa-book"></i>
+
+                                <span>Mevzuat Ara</span>
+
+                            </button>
+
+                            <button class="suggestion-card">
+
+                                <i class="fa-solid fa-layer-group"></i>
+
+                                <span>Şablon Düzenle</span>
+
+                            </button>
+
+                        </div>
+
+                        <!-- SOHBET GİRİŞİ -->
+
+                        <div class="chat-input-area">
+
+                            <div class="chat-toolbar">
+
+                                <button id="attachFile"
+                                        class="tool-button"
+                                        title="Dosya Ekle">
+
+                                    <i class="fa-solid fa-paperclip"></i>
+
+                                </button>
+
+                                <button id="voiceInput"
+                                        class="tool-button"
+                                        title="Sesle Yaz">
+
+                                    <i class="fa-solid fa-microphone"></i>
+
+                                </button>
+
+                                <button id="addTemplate"
+                                        class="tool-button"
+                                        title="Şablon Ekle">
+
+                                    <i class="fa-solid fa-layer-group"></i>
+
+                                </button>
+
+                                <button id="addLaw"
+                                        class="tool-button"
+                                        title="Mevzuat Ekle">
+
+                                    <i class="fa-solid fa-book"></i>
+
+                                </button>
+
+                            </div>
+
+                            <div class="chat-input-box">
+
+                                <textarea
+                                    id="chatInput"
+                                    rows="4"
+                                    placeholder="KALEM AI'ya yazın... Örneğin: 'Disiplin soruşturması için üst yazı hazırla ve ilgili mevzuatı ekle.'"></textarea>
+
+                                <button id="sendMessage">
+
+                                    <i class="fa-solid fa-paper-plane"></i>
+
+                                    <span>Gönder</span>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- AI BİLGİ PANELİ -->
+
+                    <aside class="ai-info-panel">
+
+                        <h3>
+
+                            KALEM AI Özellikleri
+
+                        </h3>
+
+                        <ul>
+
+                            <li>📄 Dilekçe Hazırlama</li>
+
+                            <li>🏛️ Üst Yazı Oluşturma</li>
+
+                            <li>⚖️ Karar Hazırlama</li>
+
+                            <li>📝 Tutanak Oluşturma</li>
+
+                            <li>📊 Rapor Hazırlama</li>
+
+                            <li>📚 Şablon Düzenleme</li>
+
+                            <li>⚖️ Mevzuat Desteği</li>
+
+                            <li>📄 Word Oluşturma</li>
+
+                            <li>📊 Excel Oluşturma</li>
+
+                            <li>📑 PDF Oluşturma</li>
+
+                        </ul>
+
+                    </aside>
+
+                </div>
+
+                          <!-- BELGELER SAYFASI -->
+
+            <section id="documentsPage"
+                     class="page">
+
+                <div class="page-header">
+
+                    <div>
+
+                        <h2>
+
+                            Belgeler
+
+                        </h2>
+
+                        <p>
+
+                            Tüm resmi belgelerinizi buradan oluşturabilir ve yönetebilirsiniz.
+
+                        </p>
+
+                    </div>
+
+                    <div class="page-actions">
+
+                        <button class="primary-btn">
+
+                            <i class="fa-solid fa-plus"></i>
+
+                            Yeni Belge
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- BELGE KARTLARI -->
+
+                <div class="document-grid">
+
+                    <div class="document-type-card">
+
+                        <i class="fa-solid fa-file-signature"></i>
+
+                        <h3>
+
+                            Dilekçe
+
+                        </h3>
+
+                        <p>
+
+                            Yeni dilekçe oluştur.
+
+                        </p>
+
+                    </div>
+
+                    <div class="document-type-card">
+
+                        <i class="fa-solid fa-building-columns"></i>
+
+                        <h3>
+
+                            Üst Yazı
+
+                        </h3>
+
+                        <p>
+
+                            Resmi üst yazı oluştur.
+
+                        </p>
+
+                    </div>
+
+                    <div class="document-type-card">
+
+                        <i class="fa-solid fa-scale-balanced"></i>
+
+                        <h3>
+
+                            Karar
+
+                        </h3>
+
+                        <p>
+
+                            Karar metni hazırla.
+
+                        </p>
+
+                    </div>
+
+                    <div class="document-type-card">
+
+                        <i class="fa-solid fa-clipboard"></i>
+
+                        <h3>
+
+                            Tutanak
+
+                        </h3>
+
+                        <p>
+
+                            Hazır tutanak oluştur.
+
+                        </p>
+
+                    </div>
+
+                    <div class="document-type-card">
+
+                        <i class="fa-solid fa-chart-column"></i>
+
+                        <h3>
+
+                            Rapor
+
+                        </h3>
+
+                        <p>
+
+                            Profesyonel rapor hazırla.
+
+                        </p>
+
+                    </div>
+
+                    <div class="document-type-card">
+
+                        <i class="fa-solid fa-folder-open"></i>
+
+                        <h3>
+
+                            Diğer Belgeler
+
+                        </h3>
+
+                        <p>
+
+                            Tüm belge türleri.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- SON BELGELER -->
+
+                <div class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <h3>
+
+                            Son Düzenlenen Belgeler
+
+                        </h3>
+
+                    </div>
+
+                    <div id="documentTable">
+
+
+                    
+
+
+
+          
