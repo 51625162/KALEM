@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KALEM V3</title>
+
+    <meta name="description" content="KALEM - Kişisel Akıllı Liste, Evrak ve Modül Sistemi">
+    <meta name="theme-color" content="#2563eb">
+
+    <link rel="icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div id="loadingScreen">
+    <div class="loader"></div>
+    <h2>KALEM</h2>
+    <p>Yükleniyor...</p>
+</div>
+
+<div id="app" class="hidden">
+
+<header class="topbar">
+
+<div class="logoArea">
+    <h1>KALEM</h1>
+    <span>V3</span>
+</div>
+
+<div class="topButtons">
+
+<button id="menuBtn">
+☰
+</button>
+
+<button id="themeBtn">
+🌙
+</button>
+
+</div>
+
+</header>
+
+<nav class="sidebar" id="sidebar">
+
+<div class="sidebarHeader">
+    <h2>Menü</h2>
+</div>
+
+<ul>
+
+<li class="active" data-page="dashboard">
+    <span>🏠</span>
+    <span>Anasayfa</span>
+</li>
+
+<li data-page="documents">
+    <span>📂</span>
+    <span>Evraklar</span>
+</li>
+
+<li data-page="tasks">
+    <span>✅</span>
+    <span>Görevler</span>
+</li>
+
+<li data-page="notes">
+    <span>📝</span>
+    <span>Notlar</span>
+</li>
+
+<li data-page="calendar">
+    <span>📅</span>
+    <span>Takvim</span>
+</li>
+
+<li data-page="contacts">
+    <span>👥</span>
+    <span>Kişiler</span>
+</li>
+
+<li data-page="archive">
+    <span>🗄️</span>
+    <span>Arşiv</span>
+</li>
+
+<li data-page="settings">
+    <span>⚙️</span>
+    <span>Ayarlar</span>
+</li>
+
+</ul>
+
+</nav>
+
+<main class="content">
+
+<section id="dashboard" class="page active">
+
+<div class="pageTitle">
+<h2>Kontrol Paneli</h2>
+<p>KALEM'e hoş geldiniz.</p>
+</div>
+
+<div class="cardGrid">
+
+<div class="card">
+<h3>Evraklar</h3>
+<p id="docCount">0</p>
+</div>
+
+<div class="card">
+<h3>Görevler</h3>
+<p id="taskCount">0</p>
+</div>
+
+<div class="card">
+<h3>Notlar</h3>
+<p id="noteCount">0</p>
+</div>
+
+<div class="card">
+<h3>Takvim</h3>
+<p id="calendarCount">0</p>
+</div>
+
+</div>
+
+  </section>
+
+<section id="documents" class="page">
+
+<div class="pageTitle">
+    <h2>Evrak Yönetimi</h2>
+    <p>Evrak ekleyin, düzenleyin ve takip edin.</p>
+</div>
+
+<div class="formCard">
+
+<div class="inputGroup">
+<label>Evrak Adı</label>
+<input type="text" id="documentName" placeholder="Evrak adını giriniz">
+</div>
+
+<div class="inputGroup">
+<label>Kategori</label>
+<select id="documentCategory">
+<option>Genel</option>
+<option>Resmi</option>
+<option>Kişisel</option>
+<option>Mali</option>
+<option>Sağlık</option>
+<option>Diğer</option>
+</select>
+</div>
+
+<div class="inputGroup">
+<label>Açıklama</label>
+<textarea id="documentDescription"
+placeholder="Açıklama yazınız..."></textarea>
+</div>
+
+<div class="buttonArea">
+<button id="saveDocumentBtn">
+Kaydet
+</button>
+
+<button id="clearDocumentBtn">
+Temizle
+</button>
+</div>
+
+</div>
+
+<div class="tableCard">
+
+<table>
+
+<thead>
+
+<tr>
+<th>#</th>
+<th>Evrak</th>
+<th>Kategori</th>
+<th>Tarih</th>
+<th>İşlem</th>
+</tr>
+
+</thead>
+
+<tbody id="documentTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<section id="tasks" class="page">
+
+<div class="pageTitle">
+<h2>Görev Takibi</h2>
+<p>Yapılacak işleri yönetin.</p>
+</div>
+
+<div class="formCard">
+
+<input
+type="text"
+id="taskInput"
+placeholder="Yeni görev ekleyin">
+
+<button id="addTaskBtn">
+Görev Ekle
+</button>
+
+</div>
+
+<ul id="taskList">
+
+</ul>
+
+</section>
+
+  <section id="notes" class="page">
+
+<div class="pageTitle">
+    <h2>Notlar</h2>
+    <p>Hızlı notlarınızı kaydedin.</p>
+</div>
+
+<div class="formCard">
+
+<textarea
+id="noteInput"
+placeholder="Notunuzu yazın..."></textarea>
+
+<div class="buttonArea">
+<button id="saveNoteBtn">
+Not Kaydet
+</button>
+
+<button id="clearNoteBtn">
+Temizle
+</button>
+</div>
+
+</div>
+
+<div id="noteList" class="noteList">
+
+</div>
+
+</section>
+
+<section id="calendar" class="page">
+
+<div class="pageTitle">
+    <h2>Takvim</h2>
+    <p>Hatırlatıcı ve önemli tarihlerinizi yönetin.</p>
+</div>
+
+<div class="formCard">
+
+<div class="inputGroup">
+<label>Tarih</label>
+<input type="date" id="calendarDate">
+</div>
+
+<div class="inputGroup">
+<label>Başlık</label>
+<input type="text" id="calendarTitle" placeholder="Etkinlik başlığı">
+</div>
+
+<div class="buttonArea">
+<button id="saveCalendarBtn">
+Etkinlik Ekle
+</button>
+</div>
+
+</div>
+
+<div id="calendarList" class="listContainer">
+
+</div>
+
+</section>
+
+<section id="contacts" class="page">
+
+<div class="pageTitle">
+    <h2>Kişiler</h2>
+    <p>Önemli kişi bilgilerini saklayın.</p>
+</div>
+
+<div class="formCard">
+
+<input
+type="text"
+id="contactName"
+placeholder="Ad Soyad">
+
+<input
+type="text"
+id="contactPhone"
+placeholder="Telefon">
+
+<input
+type="email"
+id="contactMail"
+placeholder="E-posta">
+
+<button id="saveContactBtn">
+Kişi Kaydet
+</button>
+
+</div>
+
+<div id="contactList" class="listContainer">
+
+</div>
+
+</section>
+
+  <section id="archive" class="page">
+
+<div class="pageTitle">
+    <h2>Arşiv</h2>
+    <p>Tamamlanan kayıtlar burada saklanır.</p>
+</div>
+
+<div class="archiveContainer">
+
+<div class="emptyBox">
+📁 Henüz arşivlenmiş kayıt bulunmuyor.
+</div>
+
+</div>
+
+</section>
+
+<section id="settings" class="page">
+
+<div class="pageTitle">
+    <h2>Ayarlar</h2>
+    <p>Uygulama tercihlerini yönetin.</p>
+</div>
+
+<div class="settingsGrid">
+
+<div class="settingCard">
+<h3>Tema</h3>
+<p>Açık / Koyu tema seçebilirsiniz.</p>
+<button id="changeThemeBtn">Tema Değiştir</button>
+</div>
+
+<div class="settingCard">
+<h3>Veri Yedekleme</h3>
+<p>Tüm kayıtları dışa aktarın.</p>
+<button id="exportDataBtn">Yedek Al</button>
+</div>
+
+<div class="settingCard">
+<h3>Veri Geri Yükleme</h3>
+<p>Önceden aldığınız yedeği yükleyin.</p>
+
+<input
+type="file"
+id="importFile"
+accept=".json">
+
+</div>
+
+<div class="settingCard danger">
+
+<h3>Verileri Temizle</h3>
+
+<p>Tüm kayıtlar silinir.</p>
+
+<button id="deleteAllBtn">
+Tüm Verileri Sil
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
