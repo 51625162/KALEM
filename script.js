@@ -1,5 +1,3 @@
-
-
 /* ---------------- State & storage ---------------- */
 const STORE_KEYS = { docs:'kalem_documents', rems:'kalem_reminders', settings:'kalem_settings', profile:'kalem_profile' };
 let state = {
