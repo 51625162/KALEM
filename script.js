@@ -1105,54 +1105,6 @@ reader.readAsText(file);
 }
 
 /* ==========================
-Tema Sistemi
-========================== */
-
-const changeThemeBtn = $("changeThemeBtn");
-
-if(changeThemeBtn){
-
-changeThemeBtn.addEventListener(
-
-"click",
-
-toggleTheme
-
-);
-
-}
-
-function loadTheme(){
-
-const theme = localStorage.getItem(STORAGE.theme);
-
-if(theme==="dark"){
-
-document.body.classList.add("dark");
-
-}
-
-}
-
-function toggleTheme(){
-
-document.body.classList.toggle("dark");
-
-localStorage.setItem(
-
-STORAGE.theme,
-
-document.body.classList.contains("dark")
-
-? "dark"
-
-: "light"
-
-);
-
-}
-
-/* ==========================
 Tüm Verileri Sil
 ========================== */
 
