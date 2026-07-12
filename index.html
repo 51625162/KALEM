@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KALEM V4</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+<h1>KALEM V4</h1>
+</header>
+
+<nav>
+<button onclick="showPage('home')">Anasayfa</button>
+<button onclick="showPage('docs')">Evraklar</button>
+<button onclick="showPage('notes')">Notlar</button>
+</nav>
+
+<main>
+<section id="home" class="page">
+<h2>Hoş Geldiniz</h2>
+<p>KALEM V4 temel sürümü çalışıyor.</p>
+</section>
+
+<section id="docs" class="page" style="display:none">
+<h2>Evraklar</h2>
+<p>Bu bölüm sonraki pakette geliştirilecek.</p>
+</section>
+
+<section id="notes" class="page" style="display:none">
+<h2>Notlar</h2>
+<p>Bu bölüm sonraki pakette geliştirilecek.</p>
+</section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
