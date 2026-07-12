@@ -327,3 +327,76 @@ input,textarea,select{font-family:inherit;}
 
 .scrollbar-hide::-webkit-scrollbar{width:6px;}
 .scrollbar-hide::-webkit-scrollbar-thumb{background:rgba(90,100,150,.3);border-radius:10px;}
+
+/* ===== Giriş Ekranı ===== */
+
+.login-screen{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#2563eb,#1e3a8a);
+    z-index:9999;
+}
+
+.login-box{
+    width:420px;
+    max-width:92%;
+    background:#fff;
+    border-radius:22px;
+    padding:45px 35px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+    text-align:center;
+}
+
+.login-box h1{
+    font-size:48px;
+    margin:0;
+    color:#1e3a8a;
+}
+
+.login-box p{
+    margin:12px 0 28px;
+    color:#666;
+    font-size:18px;
+}
+
+.login-box input{
+    width:100%;
+    height:56px;
+    margin-bottom:18px;
+    border:2px solid #dbe3ef;
+    border-radius:14px;
+    padding:0 18px;
+    font-size:18px;
+    box-sizing:border-box;
+}
+
+.login-box input:focus{
+    outline:none;
+    border-color:#2563eb;
+}
+
+.login-box button{
+    width:100%;
+    height:56px;
+    border:none;
+    border-radius:14px;
+    background:#2563eb;
+    color:#fff;
+    font-size:20px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.login-box button:hover{
+    background:#1d4ed8;
+}
+
+.login-error{
+    color:#e11d48;
+    margin-top:18px;
+    font-weight:600;
+}
