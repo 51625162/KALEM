@@ -228,7 +228,7 @@ function renderCalendar(){
   grid.innerHTML = html;
 }
 
-/* ---------------- AI (local assistant, no external calls) ---------------- */
+/* ---------------- AI: Mevzuat & Şablon Motoru (çevrimdışı) ---------------- */
 function pushMsg(role, text){
   const log = document.getElementById('chatLog');
   const div = document.createElement('div');
@@ -239,31 +239,14 @@ function pushMsg(role, text){
 }
 function aiPreset(kind){
   const map = {
-    soru: 'Bir sorum var: ',
-    ozet: 'Şu belgeyi özetle: ',
-    duzenle: 'Şu metni düzenle ve iyileştir: ',
-    yaz: 'Şu konuda kısa bir yazı oluştur: ',
-    analiz: 'Şu dosyayı analiz et: '
+    soru: '',
+    karar: 'hakkında karar hazırla',
+    tutanak: 'tutanağı hazırla',
+    mevzuat: 'hangi maddede düzenleniyor',
+    yazi: 'yazısı hazırla'
   };
-  document.getElementById('chatInput').value = map[kind];
+  document.getElementById('chatInput').value = map[kind] || '';
   document.getElementById('chatInput').focus();
-}
-function localAiReply(userText){
-  // Basit, tamamen yerel (ücretsiz, sunucusuz) taslak yanıt üretici.
-  const t = userText.toLowerCase();
-  if(t.includes('özet')){
-    return 'Taslak özet: Girdiğin metnin ana fikrini 2-3 cümlede özetlemeye çalıştım. Gerçek bir AI motoruna bağlanınca burası çok daha isabetli özetler üretecek. Şimdilik metni Belgeler bölümünde saklayıp etiketlemeni öneririm.';
-  }
-  if(t.includes('düzenle') || t.includes('iyileştir')){
-    return 'Taslak düzenleme: Metnini daha kısa cümlelerle, aktif çatıyla yazmanı öneririm. Tekrar eden ifadeleri çıkarıp somut örnekler eklemek genelde metni güçlendirir.';
-  }
-  if(t.includes('yazı') || t.includes('oluştur')){
-    return 'Taslak yazı: Konunu üç bölümde ele alabilirsin — giriş (neden önemli), gelişme (ana noktalar), sonuç (çıkarım/öneri). İstersen konuyu biraz daha açar mısın, taslağı genişleteyim.';
-  }
-  if(t.includes('analiz')){
-    return 'Dosya analizi için önce dosyayı Belgeler bölümüne yükleyip kategorisini ve etiketlerini girmeni öneririm; böylece ileride gerçek bir AI motoru bağlandığında otomatik analiz edilebilir.';
-  }
-  return 'Not aldım. KALEM V1\'de bu bölüm yerel bir taslak asistanı olarak çalışıyor — dış sunucuya bağlı değil. Ayarlar\'dan kendi AI servisini bağlarsan burada gerçek yanıtlar alabilirsin.';
 }
 function sendChat(){
   const input = document.getElementById('chatInput');
@@ -271,11 +254,160 @@ function sendChat(){
   if(!text) return;
   pushMsg('user', text);
   input.value = '';
-  setTimeout(()=> pushMsg('ai', localAiReply(text)), 400);
+  setTimeout(()=>{
+    if(typeof kalemAiRespond !== 'function'){
+      pushMsg('ai', 'AI motor dosyaları yüklenemedi (ai/legal-ai-*.js). index.html içindeki script sıralamasını kontrol et.');
+      return;
+    }
+    const res = kalemAiRespond(text);
+    pushMsg('ai', res.text);
+    if(res.action){
+      if(res.action.type === 'start-wizard-template') openTplModal(res.action.templateId);
+      if(res.action.type === 'start-wizard-karar') openTplModal('tpl-disiplin-karari', prefillForKarar(res.action.kararId));
+    }
+  }, 300);
 }
 document.getElementById('chatInput').addEventListener('keydown', e=>{
   if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); }
 });
+
+/* ---------------- AI: Akıllı Arama (şablon + mevzuat + karar) ---------------- */
+let legalCatFilter = 'all';
+function setLegalCatFilter(cat, el){
+  legalCatFilter = cat;
+  document.querySelectorAll('#legalCatFilters .chip-filter').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderLegalSearch();
+}
+function renderLegalSearch(){
+  const q = document.getElementById('legalSearchInput').value.trim();
+  const wrap = document.getElementById('legalResults');
+  if(!q){
+    wrap.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><span class="em-ic">⚖️</span>Aramaya başlamak için yukarı yaz — örneğin "olay tutanağı" veya "telefon hakkı".</div>`;
+    return;
+  }
+  if(typeof legalSmartSearch !== 'function'){
+    wrap.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">AI motor dosyaları yüklenemedi.</div>`;
+    return;
+  }
+  const { templates, mevzuat, kararlar } = legalSmartSearch(q);
+  let cards = [];
+
+  if(legalCatFilter === 'all' || legalCatFilter !== 'Mevzuat'){
+    templates
+      .filter(t => legalCatFilter==='all' || t.category===legalCatFilter)
+      .forEach(t => cards.push(`
+        <div class="card doc-card">
+          <div class="doc-top">
+            <div><div class="doc-cat">${escapeHtml(t.category)}</div><div class="doc-title">${escapeHtml(t.title)}</div></div>
+          </div>
+          <div class="doc-desc">Alanları doldurup saniyeler içinde resmi metni oluştur.</div>
+          <div class="doc-foot"><span class="doc-date">Şablon</span>
+            <button class="btn btn-primary btn-sm" onclick="openTplModal('${t.id}')">Doldur</button>
+          </div>
+        </div>`));
+  }
+
+  if(legalCatFilter === 'all' || legalCatFilter === 'Karar'){
+    kararlar.forEach(k => cards.push(`
+        <div class="card doc-card">
+          <div class="doc-top">
+            <div><div class="doc-cat">Hazır Karar</div><div class="doc-title">${escapeHtml(k.title)}</div></div>
+          </div>
+          <div class="doc-desc">${escapeHtml(k.gerekceMetni.slice(0,110))}${k.gerekceMetni.length>110?'…':''}</div>
+          <div class="doc-foot"><span class="doc-date">Karar</span>
+            <button class="btn btn-primary btn-sm" onclick="openTplModal('tpl-disiplin-karari', prefillForKarar('${k.id}'))">Karar Oluştur</button>
+          </div>
+        </div>`));
+  }
+
+  if(legalCatFilter === 'all' || legalCatFilter === 'Mevzuat'){
+    mevzuat.forEach(m => cards.push(`
+        <div class="card doc-card">
+          <div class="doc-top">
+            <div><div class="doc-cat">${escapeHtml(m.tur)}</div><div class="doc-title">${escapeHtml(m.madde)}</div></div>
+          </div>
+          <div class="doc-desc">${escapeHtml(m.kaynak)} — ${escapeHtml(m.baslik)}</div>
+          <div class="doc-foot">
+            <span class="doc-date">${m.dogrulanma==='DOĞRULANMADI' ? '⚠️ doğrulanmadı' : '✅ doğrulandı'}</span>
+            <button class="btn btn-ghost btn-sm" onclick="openMevzuatModal('${m.id}')">Görüntüle</button>
+          </div>
+        </div>`));
+  }
+
+  wrap.innerHTML = cards.length ? cards.join('') : `<div class="empty-state" style="grid-column:1/-1;"><span class="em-ic">🔍</span>Sonuç bulunamadı.</div>`;
+}
+document.getElementById('legalSearchInput').addEventListener('input', renderLegalSearch);
+
+function openMevzuatModal(id){
+  const m = getMevzuatById(id);
+  if(!m) return;
+  document.getElementById('mevzuatModalTitle').textContent = m.madde + ' — ' + m.kaynak;
+  document.getElementById('mevzuatModalBody').textContent = formatMevzuatCard(m);
+  openModal('mevzuatModal');
+}
+
+/* ---------------- AI: Şablon Doldurma Modalı ---------------- */
+let currentTplId = null;
+function prefillForKarar(kararId){
+  const karar = KARAR_BANKASI.find(k=>k.id===kararId);
+  if(!karar) return {};
+  const dayanak = getMevzuatById(karar.dayanakId);
+  return {
+    dayanak: dayanak ? `${dayanak.kaynak}, ${dayanak.madde}${dayanak.ilgiliFikra?' ('+dayanak.ilgiliFikra+')':''}\n${dayanak.ozet}` : '[Dayanak bulunamadı — elle ekleyin]',
+    gerekce: karar.gerekceMetni
+  };
+}
+function openTplModal(templateId, prefill){
+  const tpl = TEMPLATES_DB.find(t=>t.id===templateId);
+  if(!tpl){ toast('Şablon bulunamadı'); return; }
+  currentTplId = templateId;
+  prefill = prefill || {};
+  document.getElementById('tplModalTitle').textContent = tpl.title;
+  const fieldsWrap = document.getElementById('tplModalFields');
+  fieldsWrap.innerHTML = tpl.fields.map(f=>{
+    const val = prefill[f.key] ? escapeHtml(prefill[f.key]) : '';
+    if(f.type === 'textarea'){
+      return `<div class="field"><label>${escapeHtml(f.label)}</label><textarea data-field="${f.key}">${val}</textarea></div>`;
+    }
+    if(f.type === 'date'){
+      return `<div class="field"><label>${escapeHtml(f.label)}</label><input type="date" data-field="${f.key}" value="${val}"></div>`;
+    }
+    return `<div class="field"><label>${escapeHtml(f.label)}</label><input type="text" data-field="${f.key}" value="${val}"></div>`;
+  }).join('');
+  document.getElementById('tplModalResultWrap').style.display = 'none';
+  document.getElementById('tplModalResult').value = '';
+  document.getElementById('tplGenerateBtn').style.display = 'inline-flex';
+  document.getElementById('tplGenerateBtn').textContent = 'Belgeyi Oluştur';
+  document.getElementById('tplGenerateBtn').onclick = generateFromTplModal;
+  openModal('tplModal');
+}
+function generateFromTplModal(){
+  const tpl = TEMPLATES_DB.find(t=>t.id===currentTplId);
+  if(!tpl) return;
+  const values = {};
+  document.querySelectorAll('#tplModalFields [data-field]').forEach(el=>{
+    values[el.dataset.field] = el.value;
+  });
+  const result = renderTemplate(tpl, values);
+  document.getElementById('tplModalResultWrap').style.display = 'block';
+  document.getElementById('tplModalResult').value = result;
+  document.getElementById('tplGenerateBtn').textContent = 'Belgelere Kaydet';
+  document.getElementById('tplGenerateBtn').onclick = () => saveTplResultToDocs(tpl);
+  toast('Belge oluşturuldu — kontrol edip kaydedebilirsin');
+}
+function saveTplResultToDocs(tpl){
+  const content = document.getElementById('tplModalResult').value;
+  state.docs.unshift({
+    id: uid(),
+    title: tpl.title + ' - ' + new Date().toLocaleDateString('tr-TR'),
+    cat: 'Evrak', tags: [tpl.category],
+    content, fav: false, date: new Date().toISOString()
+  });
+  persist('docs'); renderAll();
+  toast('Belgeler bölümüne kaydedildi');
+  closeModal('tplModal');
+}
 
 /* ---------------- Settings ---------------- */
 function toggleSetting(key, el){

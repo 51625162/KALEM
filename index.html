@@ -163,23 +163,44 @@
       <div class="page-head">
         <div class="section-title">Yapay Zeka Asistanı</div>
         <svg class="ink-underline" viewBox="0 0 200 10" width="150"><path d="M2 6 Q50 -2 100 6 T198 6"/></svg>
-        <div class="page-desc">Sorularını sor, belge özetlet, metin oluştur.</div>
+        <div class="page-desc">Şablon, mevzuat veya karar ara — ya da sohbet kutusuna yaz.</div>
       </div>
+
+      <!-- Şablon / Mevzuat / Karar Arama -->
+      <div class="card pad-lg" style="margin-bottom:18px;">
+        <div class="search-box" style="max-width:none;margin-bottom:14px;">
+          <span>⚖️</span>
+          <input id="legalSearchInput" placeholder="Örn: telefon hakkı, disiplin kararı, olay tutanağı, nakil...">
+        </div>
+        <div class="toolbar" id="legalCatFilters" style="margin-bottom:6px;">
+          <button class="chip-filter active" data-legalcat="all" onclick="setLegalCatFilter('all',this)">Tümü</button>
+          <button class="chip-filter" data-legalcat="Tutanak" onclick="setLegalCatFilter('Tutanak',this)">Tutanaklar</button>
+          <button class="chip-filter" data-legalcat="Karar" onclick="setLegalCatFilter('Karar',this)">Kararlar</button>
+          <button class="chip-filter" data-legalcat="Yazışma" onclick="setLegalCatFilter('Yazışma',this)">Yazışma</button>
+          <button class="chip-filter" data-legalcat="Yazı" onclick="setLegalCatFilter('Yazı',this)">Yazılar</button>
+          <button class="chip-filter" data-legalcat="Düzenleme" onclick="setLegalCatFilter('Düzenleme',this)">Düzenleme</button>
+          <button class="chip-filter" data-legalcat="Mevzuat" onclick="setLegalCatFilter('Mevzuat',this)">Mevzuat</button>
+        </div>
+        <div class="doc-grid" id="legalResults">
+          <div class="empty-state" style="grid-column:1/-1;"><span class="em-ic">⚖️</span>Aramaya başlamak için yukarı yaz — örneğin "olay tutanağı" veya "telefon hakkı".</div>
+        </div>
+      </div>
+
       <div class="ai-layout">
         <div>
           <div class="card pad-md">
             <button class="ai-tool-btn" onclick="aiPreset('soru')">💬 Soru Sor</button>
-            <button class="ai-tool-btn" onclick="aiPreset('ozet')">📄 Belge Özetle</button>
-            <button class="ai-tool-btn" onclick="aiPreset('duzenle')">✏️ Metin Düzenle</button>
-            <button class="ai-tool-btn" onclick="aiPreset('yaz')">📝 Yazı Oluştur</button>
-            <button class="ai-tool-btn" onclick="aiPreset('analiz')">🔍 Dosya Analizi</button>
+            <button class="ai-tool-btn" onclick="aiPreset('karar')">⚖️ Karar Hazırla</button>
+            <button class="ai-tool-btn" onclick="aiPreset('tutanak')">📄 Tutanak Hazırla</button>
+            <button class="ai-tool-btn" onclick="aiPreset('mevzuat')">📚 Mevzuat Sorgula</button>
+            <button class="ai-tool-btn" onclick="aiPreset('yazi')">✏️ Yazı Hazırla</button>
           </div>
         </div>
         <div class="card chat-window">
           <div class="chat-log scrollbar-hide" id="chatLog"></div>
-          <div class="ai-note">KALEM V1 yerel bir taslak asistanı kullanır (dış bağlantı gerekmez). Gerçek bir AI motoruna bağlamak istersen Ayarlar'dan API anahtarı ekleyebilirsin.</div>
+          <div class="ai-note">KALEM'in mevzuat/şablon motoru tamamen çevrimdışı çalışır. Mevzuat verileri örnek niteliğindedir — resmi kullanımdan önce güncel kaynakla doğrulayın.</div>
           <div class="chat-input-row">
-            <textarea id="chatInput" placeholder="Bir mesaj yaz..." rows="1"></textarea>
+            <textarea id="chatInput" placeholder="Örn: telefon hakkı kötüye kullanımı hakkında karar hazırla" rows="1"></textarea>
             <button class="btn btn-primary" onclick="sendChat()">Gönder</button>
           </div>
         </div>
@@ -305,8 +326,40 @@
   </div>
 </div>
 
+<!-- Şablon Doldurma Modalı -->
+<div class="modal-overlay" id="tplModal">
+  <div class="modal" style="max-width:620px;">
+    <h3 id="tplModalTitle">Şablonu Doldur</h3>
+    <div id="tplModalFields"></div>
+    <div id="tplModalResultWrap" style="display:none;">
+      <div class="field">
+        <label>Oluşturulan Belge (kontrol edip düzenleyebilirsin)</label>
+        <textarea id="tplModalResult" style="min-height:220px;font-family:var(--font-mono);font-size:12.5px;"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions" id="tplModalActions">
+      <button class="btn btn-ghost" onclick="closeModal('tplModal')">Kapat</button>
+      <button class="btn btn-primary" id="tplGenerateBtn" onclick="generateFromTplModal()">Belgeyi Oluştur</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mevzuat Detay Modalı -->
+<div class="modal-overlay" id="mevzuatModal">
+  <div class="modal">
+    <h3 id="mevzuatModalTitle">Mevzuat Detayı</h3>
+    <div id="mevzuatModalBody" style="font-size:13.5px;line-height:1.6;white-space:pre-wrap;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('mevzuatModal')">Kapat</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
+<script src="ai/legal-ai-data.js"></script>
+<script src="ai/legal-ai-templates.js"></script>
+<script src="ai/legal-ai-engine.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
