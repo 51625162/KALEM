@@ -1,3 +1,1228 @@
+/* =========================================================================
+   KALEM - CTE MEVZUAT & ŞABLON VERİTABANI
+   =========================================================================
+   ÖNEMLİ / DİKKAT:
+   Bu dosyadaki MEVZUAT kayıtları başlangıç/örnek niteliğindedir. Bir kısmı
+   web araması ile doğrulanmıştır (kaynak alanına bakınız) ama zaman içinde
+   madde numaraları, fıkralar veya yönetmelik metinleri DEĞİŞEBİLİR.
+   Resmi bir belgede "hukuki dayanak" olarak kullanmadan önce mutlaka
+   mevzuat.gov.tr / Resmi Gazete üzerinden GÜNCEL metinle karşılaştırın.
+   Bu sistem hukuki danışmanlık vermez, yalnızca arama/hatırlatma amaçlıdır.
+   ========================================================================= */
+
+const LEGAL_DB_VERSION = "2026-07-13";
+
+/* -------------------- 1) MEVZUAT VERİTABANI -------------------- */
+// tur: 'kanun' | 'yonetmelik' | 'tuzuk' | 'genelge'
+const MEVZUAT_DB = [
+  {
+    id: "kanun-5275-42",
+    tur: "kanun",
+    kaynak: "5275 Sayılı Ceza ve Güvenlik Tedbirlerinin İnfazı Hakkında Kanun",
+    madde: "Madde 42",
+    baslik: "Haberleşme veya iletişim araçlarından yoksun bırakma / disiplin cezaları",
+    ozet: "Hükümlünün belirli disiplin cezasını gerektiren eylemleri sayılır; bu eylemlerden biri, kurum idaresine bildirilen telefon numarası dışında ya da teknik müdahale ile başka hatta yönlendirme yaparak görüşme hakkı olmayan kişilerle görüşmektir (f bendi). Bu eylem için 1 aydan 3 aya kadar haberleşme ve iletişim araçlarından yoksun bırakma cezası öngörülür.",
+    ilgiliFikra: "42/2-f",
+    keywords: ["telefon", "disiplin", "haberleşme", "iletişim", "yoksun bırakma", "yönlendirme", "izinsiz görüşme", "ceza"],
+    kaynakUrl: "https://www.lexpera.com.tr/mevzuat/kanunlar/ceza-ve-guvenlik-tedbirlerinin-infazi-hakkinda-kanun-5275",
+    dogrulanma: "web-arama-2026-07-13"
+  },
+  {
+    id: "kanun-5275-66",
+    tur: "kanun",
+    kaynak: "5275 Sayılı Ceza ve Güvenlik Tedbirlerinin İnfazı Hakkında Kanun",
+    madde: "Madde 66",
+    baslik: "Telefonla haberleşme hakkı",
+    ozet: "Kapalı ceza infaz kurumlarındaki hükümlüler, yönetmelikte belirlenen esas ve usullere göre idarenin kontrolündeki ücretli telefonlarla görüşme yapabilir; görüşmeler idarece dinlenir ve kayıt altına alınır. Açık kurum ve çocuk eğitimevlerinde hükümlüler serbestçe görüşebilir. Hükümlüler kurumda cep telefonu vb. iletişim araçları bulunduramaz ve kullanamaz.",
+    keywords: ["telefon", "haberleşme", "görüşme hakkı", "açık kurum", "kapalı kurum", "cep telefonu"],
+    kaynakUrl: "https://www.lexpera.com.tr/mevzuat/kanunlar/ceza-ve-guvenlik-tedbirlerinin-infazi-hakkinda-kanun-5275",
+    dogrulanma: "web-arama-2026-07-13"
+  },
+  {
+    id: "kanun-5275-83",
+    tur: "kanun",
+    kaynak: "5275 Sayılı Ceza ve Güvenlik Tedbirlerinin İnfazı Hakkında Kanun",
+    madde: "Madde 83",
+    baslik: "Hükümlüyü ziyaret",
+    ozet: "Hükümlü; belgelendirilmesi koşuluyla eşi, üçüncü dereceye kadar kan ve kayın hısımları ile vasisi veya kayyımı tarafından haftada bir kez, ayrıca kabullerinde bildirdiği en fazla üç kişi tarafından yarım saatten az, bir saatten fazla olmamak üzere çalışma saatleri içinde ziyaret edilebilir. Ziyaretin kapalı/açık şekli ve şartları yönetmelikle düzenlenir.",
+    keywords: ["ziyaret", "ziyaretçi", "görüş", "açık görüş", "kapalı görüş", "hısım"],
+    kaynakUrl: "https://karar.memurlar.net/anayasa/detay/default.aspx?primarykey=01ad53c4-609e-ed11-8119-a0369f7d1484",
+    dogrulanma: "web-arama-2026-07-13"
+  },
+  {
+    id: "yonetmelik-cik-74",
+    tur: "yonetmelik",
+    kaynak: "Ceza İnfaz Kurumlarının Yönetimi ile Ceza ve Güvenlik Tedbirlerinin İnfazı Hakkında Yönetmelik",
+    madde: "Madde 74",
+    baslik: "Telefonla görüşme usul ve esasları",
+    ozet: "Kapalı kurumlarda bulunan hükümlüler, belgelendirmeleri koşuluyla eşi, dördüncü dereceye kadar kan ve kayın hısımları ve vasisi ile telefon görüşmesi yapabilir. Görüşme hakkının kullanımı 'Telefon Görüşme Formu' doldurulmasına bağlıdır; ücret hükümlü tarafından karşılanır.",
+    keywords: ["telefon", "görüşme formu", "hısım", "usul", "esas"],
+    kaynakUrl: "https://izmirkkcik.adalet.gov.tr/telefon-gorus-yonetmeligi",
+    dogrulanma: "web-arama-2026-07-13"
+  },
+  {
+    id: "placeholder-firar",
+    tur: "kanun",
+    kaynak: "[DOLDURULMADI — kendi kaynağınla doğrula]",
+    madde: "—",
+    baslik: "Firar (örnek boş kayıt)",
+    ozet: "Bu kayıt bir yer tutucudur. Firar ile ilgili doğru madde/yönetmelik referansını mevzuat.gov.tr üzerinden bulup buraya ekleyin.",
+    keywords: ["firar", "kaçma"],
+    kaynakUrl: "",
+    dogrulanma: "DOĞRULANMADI"
+  },
+  {
+    id: "placeholder-arama",
+    tur: "yonetmelik",
+    kaynak: "[DOLDURULMADI — kendi kaynağınla doğrula]",
+    madde: "—",
+    baslik: "Arama işlemleri (örnek boş kayıt)",
+    ozet: "Bu kayıt bir yer tutucudur. Oda/üst araması ile ilgili doğru madde referansını ekleyin.",
+    keywords: ["arama", "üst araması", "oda araması"],
+    kaynakUrl: "",
+    dogrulanma: "DOĞRULANMADI"
+  }
+];
+
+/* -------------------- 2) ŞABLON KÜTÜPHANESİ -------------------- */
+// Bunlar resmi yazışma FORMATLARIdır (boilerplate) — hukuki içerik değil,
+// bu yüzden güvenle kullanılabilir. {{alan}} yer tutucuları wizard ile doldurulur.
+const TEMPLATES_DB = [
+  {
+    id: "tpl-olay-tutanagi",
+    title: "Olay Tutanağı",
+    category: "Tutanak",
+    keywords: ["olay", "tutanak", "vaka"],
+    fields: [
+      { key: "tarih", label: "Olay Tarihi", type: "date" },
+      { key: "saat", label: "Olay Saati", type: "text" },
+      { key: "yer", label: "Olay Yeri", type: "text" },
+      { key: "taraflar", label: "Olayda Bulunanlar", type: "textarea" },
+      { key: "aciklama", label: "Olayın Tarifi", type: "textarea" },
+      { key: "deliller", label: "Deliller / Kamera Kaydı", type: "textarea" },
+      { key: "tutanakEden", label: "Tutanağı Düzenleyen Personel", type: "text" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+OLAY TUTANAĞI
+
+Tarih: {{tarih}}          Saat: {{saat}}
+Olay Yeri: {{yer}}
+
+Olayda Bulunanlar:
+{{taraflar}}
+
+Olayın Tarifi:
+{{aciklama}}
+
+Deliller / Kamera Kaydı:
+{{deliller}}
+
+İşbu tutanak, olayın tarafımızca tespiti üzerine düzenlenerek imza altına alınmıştır.
+
+Tutanağı Düzenleyen: {{tutanakEden}}
+İmza: ____________________`
+  },
+  {
+    id: "tpl-arama-tutanagi",
+    title: "Arama Tutanağı",
+    category: "Tutanak",
+    keywords: ["arama", "üst araması", "oda araması", "tutanak"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "saat", label: "Saat", type: "text" },
+      { key: "aranan", label: "Araması Yapılan Kişi/Yer", type: "text" },
+      { key: "aramaTuru", label: "Arama Türü (üst/oda/genel)", type: "text" },
+      { key: "bulgular", label: "Bulunan Eşya / Bulgu", type: "textarea" },
+      { key: "gorevliler", label: "Aramayı Yapan Görevliler", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+ARAMA TUTANAĞI
+
+Tarih: {{tarih}}          Saat: {{saat}}
+Arama Türü: {{aramaTuru}}
+Araması Yapılan: {{aranan}}
+
+Bulunan Eşya / Bulgu:
+{{bulgular}}
+
+Aramayı Yapan Görevliler:
+{{gorevliler}}
+
+İşbu tutanak arama işleminin bitiminde düzenlenmiş olup taraflarca imza altına alınmıştır.
+İmza: ____________________`
+  },
+  {
+    id: "tpl-teslim-tutanagi",
+    title: "Teslim Tutanağı",
+    category: "Tutanak",
+    keywords: ["teslim", "eşya", "emanet", "tutanak"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "teslimEden", label: "Teslim Eden", type: "text" },
+      { key: "teslimAlan", label: "Teslim Alan", type: "text" },
+      { key: "esyaListesi", label: "Teslim Edilen Eşya Listesi", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+TESLİM TUTANAĞI
+
+Tarih: {{tarih}}
+Teslim Eden: {{teslimEden}}
+Teslim Alan: {{teslimAlan}}
+
+Teslim Edilen Eşya Listesi:
+{{esyaListesi}}
+
+İşbu tutanak taraflarca imza altına alınmıştır.
+Teslim Eden İmza: ____________       Teslim Alan İmza: ____________`
+  },
+  {
+    id: "tpl-sayim-tutanagi",
+    title: "Sayım Tutanağı",
+    category: "Tutanak",
+    keywords: ["sayım", "tutanak", "mevcut"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "saat", label: "Saat", type: "text" },
+      { key: "koguş", label: "Koğuş / Bölüm", type: "text" },
+      { key: "mevcutSayi", label: "Mevcut Sayısı", type: "text" },
+      { key: "not", label: "Açıklama / Uyuşmazlık Notu", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+SAYIM TUTANAĞI
+
+Tarih: {{tarih}}          Saat: {{saat}}
+Koğuş / Bölüm: {{koguş}}
+Mevcut Sayısı: {{mevcutSayi}}
+
+Açıklama:
+{{not}}
+
+Sayımı Yapan Görevli İmza: ____________________`
+  },
+  {
+    id: "tpl-disiplin-karari",
+    title: "Disiplin Kurulu Kararı",
+    category: "Karar",
+    keywords: ["disiplin", "karar", "ceza", "kurul"],
+    fields: [
+      { key: "kararNo", label: "Karar No", type: "text" },
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "eylem", label: "Disiplin Cezasını Gerektiren Eylem", type: "textarea" },
+      { key: "dayanak", label: "Hukuki Dayanak (Kanun/Yönetmelik Maddesi)", type: "textarea" },
+      { key: "verilenCeza", label: "Verilen Ceza ve Süresi", type: "text" },
+      { key: "gerekce", label: "Gerekçe", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+DİSİPLİN KURULU KARARI
+
+Karar No: {{kararNo}}          Tarih: {{tarih}}
+Hakkında Karar Verilen: {{hukumluAdi}}
+
+Disiplin Cezasını Gerektiren Eylem:
+{{eylem}}
+
+Hukuki Dayanak:
+{{dayanak}}
+
+Gerekçe:
+{{gerekce}}
+
+SONUÇ / KARAR:
+Yukarıda açıklanan nedenlerle {{hukumluAdi}} hakkında {{verilenCeza}} uygulanmasına, kararın ilgiliye tebliğine, tebliğ tarihinden itibaren yasal itiraz süresi bulunduğunun hatırlatılmasına oy birliği/çokluğu ile karar verilmiştir.
+
+Disiplin Kurulu Üyeleri İmza: ____________________`
+  },
+  {
+    id: "tpl-savunma-istem",
+    title: "Savunma İstem Yazısı",
+    category: "Yazı",
+    keywords: ["savunma", "istem", "yazı"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "isnatEdilenEylem", label: "İsnat Edilen Eylem", type: "textarea" },
+      { key: "sure", label: "Savunma İçin Verilen Süre", type: "text" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+SAVUNMA İSTEM YAZISI
+
+Tarih: {{tarih}}
+Sayın: {{hukumluAdi}}
+
+Aşağıda belirtilen eylem nedeniyle hakkınızda disiplin işlemi başlatılmış olup, yazılı savunmanızın {{sure}} içinde tarafımıza sunulması istenmektedir. Süresi içinde savunma verilmemesi halinde savunma hakkından vazgeçmiş sayılacağınız hususu ihtar olunur.
+
+İsnat Edilen Eylem:
+{{isnatEdilenEylem}}
+
+Tebliğ Eden İmza: ____________________
+Tebellüğ Eden (Hükümlü) İmza: ____________________`
+  },
+  {
+    id: "tpl-izin-talep",
+    title: "İzin Talep Yazısı",
+    category: "Yazı",
+    keywords: ["izin", "talep", "yazı"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "adiSoyadi", label: "Talep Eden Adı Soyadı", type: "text" },
+      { key: "izinTuru", label: "İzin Türü", type: "text" },
+      { key: "baslangic", label: "Başlangıç Tarihi", type: "date" },
+      { key: "bitis", label: "Bitiş Tarihi", type: "date" },
+      { key: "gerekce", label: "Gerekçe", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+İZİN TALEP YAZISI
+
+Tarih: {{tarih}}
+Talep Eden: {{adiSoyadi}}
+İzin Türü: {{izinTuru}}
+Talep Edilen Süre: {{baslangic}} — {{bitis}}
+
+Gerekçe:
+{{gerekce}}
+
+Talep Eden İmza: ____________________`
+  },
+  {
+    id: "tpl-ust-yazi",
+    title: "Üst Yazı",
+    category: "Yazı",
+    keywords: ["üst yazı", "resmi yazı"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "sayi", label: "Sayı", type: "text" },
+      { key: "konu", label: "Konu", type: "text" },
+      { key: "muhatap", label: "Muhatap Makam", type: "text" },
+      { key: "icerik", label: "Yazı İçeriği", type: "textarea" },
+      { key: "imzalayan", label: "İmzalayan / Unvan", type: "text" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+
+Sayı: {{sayi}}                              Tarih: {{tarih}}
+Konu: {{konu}}
+
+{{muhatap}} MAKAMINA
+
+{{icerik}}
+
+Bilgilerinize arz/rica ederim.
+
+{{imzalayan}}
+İmza: ____________________`
+  },
+  {
+    id: "tpl-tebligat",
+    title: "Tebligat",
+    category: "Yazı",
+    keywords: ["tebligat", "tebliğ"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "muhatap", label: "Tebliğ Edilecek Kişi", type: "text" },
+      { key: "konu", label: "Tebligat Konusu", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+TEBLİGAT
+
+Tarih: {{tarih}}
+Sayın: {{muhatap}}
+
+Aşağıdaki husus tarafınıza tebliğ olunur:
+
+{{konu}}
+
+Tebliğ Eden İmza: ____________________
+Tebellüğ Eden İmza: ____________________`
+  },
+  {
+    id: "tpl-ziyaretci-yasagi",
+    title: "Ziyaretçi Yasağı Kararı",
+    category: "Karar",
+    keywords: ["ziyaretçi", "yasak", "karar"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "ziyaretciAdi", label: "Yasaklanan Ziyaretçi", type: "text" },
+      { key: "gerekce", label: "Gerekçe", type: "textarea" },
+      { key: "sure", label: "Yasağın Süresi", type: "text" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+ZİYARETÇİ YASAĞI KARARI
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+Yasaklanan Ziyaretçi: {{ziyaretciAdi}}
+Süre: {{sure}}
+
+Gerekçe:
+{{gerekce}}
+
+Karar Veren İmza: ____________________`
+  }
+];
+
+/* -------------------- 3) HAZIR KARAR BANKASI -------------------- */
+// Somut, sık karşılaşılan senaryolara göre önceden yazılmış örnek karar
+// metinleri. Yalnızca "telefon-suistimal" kaydı doğrulanmış madde içerir;
+// diğerleri şablon iskeleti + [DOLDUR] uyarısıdır.
+const KARAR_BANKASI = [
+  {
+    id: "karar-telefon-suistimal",
+    title: "Telefon Görüşme Hakkının Kötüye Kullanılması",
+    keywords: ["telefon", "suistimal", "yönlendirme", "izinsiz görüşme"],
+    dayanakId: "kanun-5275-42",
+    gerekceMetni:
+`Hükümlünün, kurum idaresine bildirdiği telefon numarası dışında bir hatta yönlendirme yapmak suretiyle görüşme hakkı bulunmayan kişi/kişilerle görüştüğü tespit edilmiştir. Bu eylem, 5275 sayılı Kanun'un 42/2-f maddesinde tanımlanan disiplin ihlaline karşılık gelmekte olup, aynı madde uyarınca 1 aydan 3 aya kadar haberleşme ve iletişim araçlarından yoksun bırakma cezası öngörülmektedir.`
+  },
+  {
+    id: "karar-firar-placeholder",
+    title: "Firar (örnek — dayanak doldurulmalı)",
+    keywords: ["firar"],
+    dayanakId: "placeholder-firar",
+    gerekceMetni: "[DOLDUR] — Firar ile ilgili doğrulanmış madde eklenmeden bu karar resmi olarak kullanılmamalıdır."
+  }
+];
+
+/* =========================================================================
+   KALEM - EK ŞABLON KÜTÜPHANESİ
+   -------------------------------------------------------------------------
+   Bu dosya legal-ai-data.js'ten SONRA yüklenmelidir. TEMPLATES_DB dizisine
+   yeni resmi yazışma / karar / düzenleme şablonları ekler.
+   Not: Bunlar RESMİ FORMAT iskeletleridir (boilerplate). Hukuki dayanak
+   gerektiren alanlarda ({{dayanak}} vb.) kendi doğruladığınız mevzuat
+   metnini elle girin — sistem otomatik doldurmaz (bkz. legal-ai-engine.js
+   buildKararWithDayanak fonksiyonu, sadece MEVZUAT_DB'de kaydı olan
+   kararlar için otomatik dayanak ekler).
+   ========================================================================= */
+
+const TEMPLATES_EXT = [
+
+  /* ---------------- YAZIŞMA TÜRLERİ ---------------- */
+  {
+    id: "tpl-cevap-ust-yazi",
+    title: "Cevap Üst Yazısı",
+    category: "Yazışma",
+    keywords: ["cevap", "yanıt", "üst yazı", "yazıya cevap"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "sayi", label: "Sayı", type: "text" },
+      { key: "ilgiYazi", label: "İlgi Yazının Tarih/Sayısı", type: "text" },
+      { key: "muhatap", label: "Muhatap Makam", type: "text" },
+      { key: "konu", label: "Konu", type: "text" },
+      { key: "cevapMetni", label: "Cevap Metni", type: "textarea" },
+      { key: "imzalayan", label: "İmzalayan / Unvan", type: "text" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+
+Sayı: {{sayi}}                              Tarih: {{tarih}}
+Konu: {{konu}}
+İlgi: {{ilgiYazi}}
+
+{{muhatap}} MAKAMINA
+
+İlgi yazınız incelenmiş olup aşağıdaki hususlar arz olunur:
+
+{{cevapMetni}}
+
+Bilgilerinize arz/rica ederim.
+
+{{imzalayan}}
+İmza: ____________________`
+  },
+  {
+    id: "tpl-ic-yazi",
+    title: "Kurum İçi Yazışma",
+    category: "Yazışma",
+    keywords: ["iç yazı", "kurum içi", "birimler arası"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "gonderenBirim", label: "Gönderen Birim", type: "text" },
+      { key: "aliciBirim", label: "Alıcı Birim", type: "text" },
+      { key: "konu", label: "Konu", type: "text" },
+      { key: "icerik", label: "İçerik", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+KURUM İÇİ YAZI
+
+Tarih: {{tarih}}
+Gönderen: {{gonderenBirim}}
+Alıcı: {{aliciBirim}}
+Konu: {{konu}}
+
+{{icerik}}
+
+İmza: ____________________`
+  },
+  {
+    id: "tpl-havale-yazisi",
+    title: "Havale Yazısı",
+    category: "Yazışma",
+    keywords: ["havale", "yönlendirme", "yazı havalesi"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "gelenYazi", label: "Havale Edilen Yazının Tarih/Sayısı", type: "text" },
+      { key: "havaleEdilenBirim", label: "Havale Edilen Birim", type: "text" },
+      { key: "talimat", label: "Talimat / Not", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+HAVALE YAZISI
+
+Tarih: {{tarih}}
+İlgi Yazı: {{gelenYazi}}
+Havale Edilen Birim: {{havaleEdilenBirim}}
+
+Talimat / Not:
+{{talimat}}
+
+İmza: ____________________`
+  },
+  {
+    id: "tpl-bilgi-yazisi",
+    title: "Bilgi Verme Yazısı",
+    category: "Yazışma",
+    keywords: ["bilgi", "bilgilendirme", "yazı"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "muhatap", label: "Muhatap", type: "text" },
+      { key: "konu", label: "Konu", type: "text" },
+      { key: "icerik", label: "Bilgi İçeriği", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+BİLGİ VERME YAZISI
+
+Tarih: {{tarih}}
+{{muhatap}} MAKAMINA
+Konu: {{konu}}
+
+{{icerik}}
+
+Bilgilerinize arz/rica ederim.
+İmza: ____________________`
+  },
+  {
+    id: "tpl-red-yazisi",
+    title: "Talebin Reddi Yazısı",
+    category: "Yazışma",
+    keywords: ["ret", "red", "talep reddi", "yazı"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "muhatap", label: "Talep Eden", type: "text" },
+      { key: "talepKonusu", label: "Talep Konusu", type: "text" },
+      { key: "redGerekcesi", label: "Reddin Gerekçesi", type: "textarea" },
+      { key: "itirazBilgisi", label: "İtiraz/Şikayet Yolu Bilgisi", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+YAZI
+
+Tarih: {{tarih}}
+Sayın: {{muhatap}}
+Konu: {{talepKonusu}} talebiniz hk.
+
+Talebiniz incelenmiş olup aşağıdaki gerekçe ile uygun görülmemiştir:
+
+{{redGerekcesi}}
+
+İtiraz/Şikayet Yolu:
+{{itirazBilgisi}}
+
+İmza: ____________________`
+  },
+  {
+    id: "tpl-onay-yazisi",
+    title: "Onay Yazısı",
+    category: "Yazışma",
+    keywords: ["onay", "uygundur", "yazı"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "konu", label: "Onaylanan Konu", type: "text" },
+      { key: "aciklama", label: "Açıklama", type: "textarea" },
+      { key: "onaylayan", label: "Onaylayan / Unvan", type: "text" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+ONAY
+
+Tarih: {{tarih}}
+Konu: {{konu}}
+
+{{aciklama}}
+
+Yukarıda belirtilen husus uygun görülerek onaylanmıştır.
+
+{{onaylayan}}
+İmza: ____________________`
+  },
+
+  /* ---------------- KARAR TÜRLERİ ---------------- */
+  {
+    id: "tpl-nakil-karari",
+    title: "Nakil Kararı",
+    category: "Karar",
+    keywords: ["nakil", "sevk", "kurum değişikliği", "karar"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü/Tutuklu Adı Soyadı", type: "text" },
+      { key: "mevcutKurum", label: "Mevcut Kurum", type: "text" },
+      { key: "hedefKurum", label: "Nakledileceği Kurum", type: "text" },
+      { key: "gerekce", label: "Nakil Gerekçesi", type: "textarea" },
+      { key: "dayanak", label: "Hukuki Dayanak", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+NAKİL KARARI
+
+Tarih: {{tarih}}
+Hükümlü/Tutuklu: {{hukumluAdi}}
+Mevcut Kurum: {{mevcutKurum}}
+Nakledileceği Kurum: {{hedefKurum}}
+
+Gerekçe:
+{{gerekce}}
+
+Hukuki Dayanak:
+{{dayanak}}
+
+Karar: Yukarıda kimliği belirtilen hükümlü/tutuklunun {{hedefKurum}}'a nakline karar verilmiştir.
+
+Karar Veren İmza: ____________________`
+  },
+  {
+    id: "tpl-acik-kuruma-ayirma",
+    title: "Açık Ceza İnfaz Kurumuna Ayırma Kararı",
+    category: "Karar",
+    keywords: ["açık kurum", "ayırma", "karar", "açığa ayırma"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "degerlendirme", label: "İdare ve Gözlem Kurulu Değerlendirmesi", type: "textarea" },
+      { key: "dayanak", label: "Hukuki Dayanak", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+İDARE VE GÖZLEM KURULU KARARI
+(Açık Ceza İnfaz Kurumuna Ayırma)
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+
+Kurul Değerlendirmesi:
+{{degerlendirme}}
+
+Hukuki Dayanak:
+{{dayanak}}
+
+Karar: Hükümlünün açık ceza infaz kurumuna ayrılmasına karar verilmiştir.
+
+Kurul Üyeleri İmza: ____________________`
+  },
+  {
+    id: "tpl-kapali-kuruma-iade",
+    title: "Kapalı Kuruma İade Kararı",
+    category: "Karar",
+    keywords: ["kapalı kurum", "iade", "karar", "geri gönderme"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "gerekce", label: "İade Gerekçesi", type: "textarea" },
+      { key: "dayanak", label: "Hukuki Dayanak", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+İDARE VE GÖZLEM KURULU KARARI
+(Kapalı Kuruma İade)
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+
+Gerekçe:
+{{gerekce}}
+
+Hukuki Dayanak:
+{{dayanak}}
+
+Karar: Hükümlünün kapalı ceza infaz kurumuna iadesine karar verilmiştir.
+
+Kurul Üyeleri İmza: ____________________`
+  },
+  {
+    id: "tpl-odul-karari",
+    title: "Ödül Kararı",
+    category: "Karar",
+    keywords: ["ödül", "ödüllendirme", "karar", "teşvik"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "odulGerekcesi", label: "Ödül Gerekçesi (olumlu tutum/davranış)", type: "textarea" },
+      { key: "odulTuru", label: "Verilen Ödülün Türü", type: "text" },
+      { key: "dayanak", label: "Hukuki Dayanak", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+ÖDÜL KARARI
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+
+Ödül Gerekçesi:
+{{odulGerekcesi}}
+
+Verilen Ödül: {{odulTuru}}
+
+Hukuki Dayanak:
+{{dayanak}}
+
+Karar Veren İmza: ____________________`
+  },
+  {
+    id: "tpl-hucre-cezasi-karari",
+    title: "Hücreye Koyma Cezası Kararı",
+    category: "Karar",
+    keywords: ["hücre", "hücreye koyma", "disiplin", "ceza", "karar"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "eylem", label: "Cezayı Gerektiren Eylem", type: "textarea" },
+      { key: "sure", label: "Ceza Süresi (gün)", type: "text" },
+      { key: "dayanak", label: "Hukuki Dayanak", type: "textarea" },
+      { key: "saglikKontrolu", label: "Doktor Kontrolü Notu", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+DİSİPLİN KURULU KARARI
+(Hücreye Koyma Cezası)
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+
+Cezayı Gerektiren Eylem:
+{{eylem}}
+
+Hukuki Dayanak:
+{{dayanak}}
+
+Ceza Süresi: {{sure}} gün
+
+Doktor Kontrolü:
+{{saglikKontrolu}}
+
+Karar: Yukarıda belirtilen eylem nedeniyle hükümlü hakkında {{sure}} gün hücreye koyma cezası uygulanmasına karar verilmiştir. İtiraz hakkının hatırlatılmasına.
+
+Disiplin Kurulu Üyeleri İmza: ____________________`
+  },
+  {
+    id: "tpl-oda-degisikligi",
+    title: "Oda / Koğuş Değişikliği Kararı",
+    category: "Karar",
+    keywords: ["oda değişikliği", "koğuş", "karar", "nakil oda"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "eskiOda", label: "Eski Oda/Koğuş", type: "text" },
+      { key: "yeniOda", label: "Yeni Oda/Koğuş", type: "text" },
+      { key: "gerekce", label: "Gerekçe", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+ODA/KOĞUŞ DEĞİŞİKLİĞİ KARARI
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+Eski Oda/Koğuş: {{eskiOda}}
+Yeni Oda/Koğuş: {{yeniOda}}
+
+Gerekçe:
+{{gerekce}}
+
+Karar Veren İmza: ____________________`
+  },
+  {
+    id: "tpl-saglik-erteleme",
+    title: "Sağlık Nedeniyle İnfazın Ertelenmesi Kararı",
+    category: "Karar",
+    keywords: ["sağlık", "erteleme", "infaz erteleme", "karar", "rapor"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "raporBilgisi", label: "Sağlık Raporu Bilgisi (kurum, tarih, sayı)", type: "text" },
+      { key: "gerekce", label: "Erteleme Gerekçesi", type: "textarea" },
+      { key: "ertelemeSuresi", label: "Erteleme Süresi", type: "text" },
+      { key: "dayanak", label: "Hukuki Dayanak", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+KARAR
+(Sağlık Nedeniyle İnfazın Ertelenmesi)
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+Sağlık Raporu: {{raporBilgisi}}
+
+Gerekçe:
+{{gerekce}}
+
+Erteleme Süresi: {{ertelemeSuresi}}
+
+Hukuki Dayanak:
+{{dayanak}}
+
+Karar Veren İmza: ____________________`
+  },
+  {
+    id: "tpl-gozlem-siniflandirma",
+    title: "Gözlem ve Sınıflandırma Kurulu Kararı",
+    category: "Karar",
+    keywords: ["gözlem", "sınıflandırma", "kurul", "karar"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "degerlendirme", label: "Değerlendirme (kişilik, risk, ihtiyaç analizi)", type: "textarea" },
+      { key: "sonuc", label: "Sınıflandırma Sonucu / Öneri", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+GÖZLEM VE SINIFLANDIRMA KURULU KARARI
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+
+Değerlendirme:
+{{degerlendirme}}
+
+Sonuç / Öneri:
+{{sonuc}}
+
+Kurul Üyeleri İmza: ____________________`
+  },
+  {
+    id: "tpl-emanet-esya-karari",
+    title: "Emanet Eşya İşlem Kararı",
+    category: "Karar",
+    keywords: ["emanet", "eşya", "imha", "muhafaza", "karar"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "esyaListesi", label: "Eşya Listesi", type: "textarea" },
+      { key: "islemTuru", label: "İşlem Türü (muhafaza/imha/iade)", type: "text" },
+      { key: "gerekce", label: "Gerekçe", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+EMANET EŞYA İŞLEM KARARI
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+İşlem Türü: {{islemTuru}}
+
+Eşya Listesi:
+{{esyaListesi}}
+
+Gerekçe:
+{{gerekce}}
+
+Karar Veren İmza: ____________________`
+  },
+  {
+    id: "tpl-telefon-kisitlama-karari",
+    title: "Telefon Görüşme Hakkının Kısıtlanması Kararı",
+    category: "Karar",
+    keywords: ["telefon", "kısıtlama", "karar", "görüşme yasağı"],
+    fields: [
+      { key: "tarih", label: "Karar Tarihi", type: "date" },
+      { key: "hukumluAdi", label: "Hükümlü Adı Soyadı", type: "text" },
+      { key: "gerekce", label: "Kısıtlama Gerekçesi", type: "textarea" },
+      { key: "sure", label: "Kısıtlama Süresi", type: "text" },
+      { key: "dayanak", label: "Hukuki Dayanak", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+KARAR
+(Telefon Görüşme Hakkının Kısıtlanması)
+
+Tarih: {{tarih}}
+Hükümlü: {{hukumluAdi}}
+
+Gerekçe:
+{{gerekce}}
+
+Kısıtlama Süresi: {{sure}}
+
+Hukuki Dayanak:
+{{dayanak}}
+
+Karar Veren İmza: ____________________`
+  },
+  {
+    id: "tpl-denetimli-serbestlik-degerlendirme",
+    title: "Denetimli Serbestlik Yükümlülük Değerlendirme Yazısı",
+    category: "Karar",
+    keywords: ["denetimli serbestlik", "yükümlülük", "değerlendirme", "karar"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "yukumluAdi", label: "Yükümlü Adı Soyadı", type: "text" },
+      { key: "yukumlulukTuru", label: "Yükümlülük Türü", type: "text" },
+      { key: "uyum", label: "Yükümlülüğe Uyum Değerlendirmesi", type: "textarea" },
+      { key: "oneri", label: "Öneri / Sonuç", type: "textarea" }
+    ],
+    body:
+`T.C.
+DENETİMLİ SERBESTLİK MÜDÜRLÜĞÜ
+YÜKÜMLÜLÜK DEĞERLENDİRME YAZISI
+
+Tarih: {{tarih}}
+Yükümlü: {{yukumluAdi}}
+Yükümlülük Türü: {{yukumlulukTuru}}
+
+Uyum Değerlendirmesi:
+{{uyum}}
+
+Öneri / Sonuç:
+{{oneri}}
+
+Değerlendiren İmza: ____________________`
+  },
+
+  /* ---------------- EKLEME / DÜZENLEME YAZILARI ---------------- */
+  {
+    id: "tpl-karar-duzeltme",
+    title: "Karar Düzeltme / Ek Karar Yazısı",
+    category: "Düzenleme",
+    keywords: ["düzeltme", "ek karar", "sehven", "hata", "revizyon"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "eskiKararNo", label: "Düzeltilen Kararın No/Tarihi", type: "text" },
+      { key: "duzeltmeNedeni", label: "Düzeltme Nedeni", type: "textarea" },
+      { key: "yeniIcerik", label: "Düzeltilmiş / Eklenen İçerik", type: "textarea" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+KARAR DÜZELTME / EK KARAR YAZISI
+
+Tarih: {{tarih}}
+İlgili Karar: {{eskiKararNo}}
+
+Düzeltme Nedeni:
+{{duzeltmeNedeni}}
+
+Düzeltilmiş / Eklenen İçerik:
+{{yeniIcerik}}
+
+İşbu yazı, yukarıda belirtilen kararın eki/düzeltmesi olarak düzenlenmiştir.
+
+Karar Veren İmza: ____________________`
+  },
+  {
+    id: "tpl-tutanak-ek",
+    title: "Tutanağa Ek Yazısı",
+    category: "Düzenleme",
+    keywords: ["ek tutanak", "ilave", "tamamlayıcı tutanak"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "anaTutanak", label: "Asıl Tutanağın Tarihi/Konusu", type: "text" },
+      { key: "ekBilgi", label: "Eklenen Bilgi / Bulgu", type: "textarea" },
+      { key: "duzenleyen", label: "Düzenleyen Personel", type: "text" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+TUTANAĞA EK YAZISI
+
+Tarih: {{tarih}}
+İlgili Tutanak: {{anaTutanak}}
+
+Eklenen Bilgi / Bulgu:
+{{ekBilgi}}
+
+Bu yazı, ilgili tutanağın ayrılmaz eki niteliğindedir.
+
+Düzenleyen: {{duzenleyen}}
+İmza: ____________________`
+  },
+  {
+    id: "tpl-ek-sure-talep",
+    title: "Ek Süre Talep Yazısı",
+    category: "Düzenleme",
+    keywords: ["ek süre", "süre uzatımı", "talep"],
+    fields: [
+      { key: "tarih", label: "Tarih", type: "date" },
+      { key: "muhatap", label: "Muhatap Makam", type: "text" },
+      { key: "ilgiKonu", label: "İlgili Süreç / Konu", type: "text" },
+      { key: "gerekce", label: "Ek Süre Gerekçesi", type: "textarea" },
+      { key: "talepEdilenSure", label: "Talep Edilen Ek Süre", type: "text" }
+    ],
+    body:
+`T.C.
+CEZA İNFAZ KURUMU
+EK SÜRE TALEP YAZISI
+
+Tarih: {{tarih}}
+{{muhatap}} MAKAMINA
+Konu: {{ilgiKonu}} hk. ek süre talebi
+
+Gerekçe:
+{{gerekce}}
+
+Talep Edilen Ek Süre: {{talepEdilenSure}}
+
+Bilgilerinize arz/rica ederim.
+İmza: ____________________`
+  }
+];
+
+/* Ana şablon kütüphanesine ekle (legal-ai-data.js sonrasında çalışmalı) */
+if (typeof TEMPLATES_DB !== "undefined") {
+  TEMPLATES_EXT.forEach(t => {
+    if (!TEMPLATES_DB.find(x => x.id === t.id)) TEMPLATES_DB.push(t);
+  });
+}
+
+/* =========================================================================
+   KALEM - CTE MEVZUAT & ŞABLON AI MOTORU (çevrimdışı, sunucusuz)
+   -------------------------------------------------------------------------
+   Bu dosya legal-ai-data.js'e bağımlıdır (önce o yüklenmeli).
+   KALEM'in "Yapay Zeka" sekmesindeki eski basit sohbet mantığının yerine
+   geçecek şekilde tasarlanmıştır. Entegrasyon notları dosyanın sonundadır.
+   ========================================================================= */
+
+/* -------------------- Yardımcılar -------------------- */
+function normalizeTr(str) {
+  return (str || "")
+    .toLocaleLowerCase("tr")
+    .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
+    .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
+}
+
+function scoreMatch(queryNorm, text) {
+  const t = normalizeTr(text);
+  if (!queryNorm) return 0;
+  if (t.includes(queryNorm)) return 3;
+  const qWords = queryNorm.split(/\s+/).filter(Boolean);
+  let hits = 0;
+  qWords.forEach(w => { if (t.includes(w)) hits++; });
+  return hits;
+}
+
+/* -------------------- 1) AKILLI ARAMA MOTORU -------------------- */
+// Tek bir arama kutusuna yazılan kelimeyle: şablonlar + mevzuat + kararlar
+// aynı anda taranır ve puanına göre sıralanır.
+function legalSmartSearch(query) {
+  const qn = normalizeTr(query);
+  if (!qn) return { templates: [], mevzuat: [], kararlar: [] };
+
+  const templates = TEMPLATES_DB
+    .map(t => ({ item: t, score: Math.max(
+      scoreMatch(qn, t.title) * 2,
+      ...t.keywords.map(k => scoreMatch(qn, k))
+    )}))
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(r => r.item);
+
+  const mevzuat = MEVZUAT_DB
+    .map(m => ({ item: m, score: Math.max(
+      scoreMatch(qn, m.baslik) * 2,
+      scoreMatch(qn, m.ozet),
+      ...m.keywords.map(k => scoreMatch(qn, k))
+    )}))
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(r => r.item);
+
+  const kararlar = KARAR_BANKASI
+    .map(k => ({ item: k, score: Math.max(
+      scoreMatch(qn, k.title) * 2,
+      ...k.keywords.map(w => scoreMatch(qn, w))
+    )}))
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(r => r.item);
+
+  return { templates, mevzuat, kararlar };
+}
+
+/* -------------------- 2) MEVZUAT DETAY GETİRME -------------------- */
+function getMevzuatById(id) {
+  return MEVZUAT_DB.find(m => m.id === id) || null;
+}
+
+function formatMevzuatCard(m) {
+  const guven = m.dogrulanma === "DOĞRULANMADI"
+    ? "⚠️ DOĞRULANMADI — resmi kullanımdan önce kontrol edin"
+    : "✅ Web kaynağıyla doğrulandı (" + m.dogrulanma + ")";
+  return `${m.kaynak} — ${m.madde}
+${m.baslik}
+
+${m.ozet}
+
+Durum: ${guven}${m.kaynakUrl ? "\nKaynak: " + m.kaynakUrl : ""}`;
+}
+
+/* -------------------- 3) ŞABLON DOLDURMA (placeholder replace) -------------------- */
+function renderTemplate(template, values) {
+  let out = template.body;
+  template.fields.forEach(f => {
+    const val = (values[f.key] ?? "").toString().trim() || `[${f.label} girilmedi]`;
+    out = out.split(`{{${f.key}}}`).join(val);
+  });
+  return out;
+}
+
+// Karar şablonuna otomatik hukuki dayanak ekleme
+function buildKararWithDayanak(kararKaydi, extraFields) {
+  const dayanak = getMevzuatById(kararKaydi.dayanakId);
+  const template = TEMPLATES_DB.find(t => t.id === "tpl-disiplin-karari");
+  const values = Object.assign({
+    dayanak: dayanak
+      ? `${dayanak.kaynak}, ${dayanak.madde}${dayanak.ilgiliFikra ? " (" + dayanak.ilgiliFikra + ")" : ""}\n${dayanak.ozet}`
+      : "[Dayanak bulunamadı — elle ekleyin]",
+    gerekce: kararKaydi.gerekceMetni
+  }, extraFields);
+  return renderTemplate(template, values);
+}
+
+/* -------------------- 4) TUTANAK / KARAR SİHİRBAZI -------------------- */
+// Adım adım soru sorar, cevapları toplar, şablonu doldurur.
+class KalemWizard {
+  constructor(templateId, onComplete) {
+    this.template = TEMPLATES_DB.find(t => t.id === templateId);
+    this.onComplete = onComplete;
+    this.stepIndex = 0;
+    this.answers = {};
+  }
+  currentField() {
+    if (!this.template) return null;
+    return this.template.fields[this.stepIndex] || null;
+  }
+  currentQuestionText() {
+    const f = this.currentField();
+    if (!f) return null;
+    return `${f.label}?`;
+  }
+  submitAnswer(value) {
+    const f = this.currentField();
+    if (!f) return;
+    this.answers[f.key] = value;
+    this.stepIndex++;
+    if (this.isDone()) {
+      const result = renderTemplate(this.template, this.answers);
+      this.onComplete(result);
+    }
+  }
+  isDone() {
+    return !this.template || this.stepIndex >= this.template.fields.length;
+  }
+  progressLabel() {
+    if (!this.template) return "";
+    return `Adım ${Math.min(this.stepIndex + 1, this.template.fields.length)}/${this.template.fields.length}`;
+  }
+}
+
+/* -------------------- 5) NİYET TANIMA (basit anahtar kelime eşleme) -------------------- */
+// "Olay tutanağı hazırla" gibi serbest metinden hangi şablon/işlem
+// kastedildiğini anlamaya çalışan çok basit, tamamen yerel bir eşleyici.
+function detectIntent(freeText) {
+  const qn = normalizeTr(freeText);
+
+  // "X hakkında karar hazırla" -> karar bankasında ara
+  if (qn.includes("karar hazirla") || qn.includes("karar olustur")) {
+    const kararMatch = KARAR_BANKASI
+      .map(k => ({ item: k, score: Math.max(...k.keywords.map(w => scoreMatch(qn, w))) }))
+      .filter(r => r.score > 0)
+      .sort((a, b) => b.score - a.score)[0];
+    if (kararMatch) return { type: "karar", payload: kararMatch.item };
+  }
+
+  // "X maddesi / hangi yönetmelik / dayanak" -> mevzuat sorgusu
+  if (qn.includes("madde") || qn.includes("yonetmelik") || qn.includes("dayanak") || qn.includes("kanun")) {
+    const results = legalSmartSearch(freeText);
+    if (results.mevzuat.length) return { type: "mevzuat", payload: results.mevzuat };
+  }
+
+  // Doğrudan şablon adı geçiyor mu?
+  const tplResults = legalSmartSearch(freeText);
+  if (tplResults.templates.length) return { type: "template", payload: tplResults.templates[0] };
+
+  return { type: "unknown", payload: null };
+}
+
+/* -------------------- 6) DIŞA AÇILAN ANA FONKSİYON -------------------- */
+// Sohbet kutusuna yazılan serbest metni işleyip kullanıcıya gösterilecek
+// yanıtı (metin) üretir. UI tarafı bunu chat balonuna basar.
+function kalemAiRespond(userText) {
+  const intent = detectIntent(userText);
+
+  switch (intent.type) {
+    case "karar": {
+      const karar = intent.payload;
+      const dayanak = getMevzuatById(karar.dayanakId);
+      let msg = `"${karar.title}" için hazır karar taslağı buldum.\n\n`;
+      msg += `Dayanak: ${dayanak ? dayanak.kaynak + " " + dayanak.madde : "bulunamadı"}\n\n`;
+      msg += `Gerekçe önerisi:\n${karar.gerekceMetni}\n\n`;
+      msg += `Tam kararı doldurmak için sihirbazı başlatabilirsin (aşağıdaki "Karar Sihirbazını Başlat" butonu).`;
+      return { text: msg, action: { type: "start-wizard-karar", kararId: karar.id } };
+    }
+    case "mevzuat": {
+      const list = intent.payload.slice(0, 3);
+      const msg = list.map(formatMevzuatCard).join("\n\n---\n\n");
+      return { text: msg, action: null };
+    }
+    case "template": {
+      const tpl = intent.payload;
+      return {
+        text: `"${tpl.title}" şablonunu buldum (${tpl.category}). Adım adım doldurmak için sihirbazı başlatabilirim.`,
+        action: { type: "start-wizard-template", templateId: tpl.id }
+      };
+    }
+    default:
+      return {
+        text: `Bunu tam olarak eşleştiremedim. Şunları deneyebilirsin:\n• "olay tutanağı hazırla"\n• "telefon hakkı hangi maddede"\n• "disiplin cezası dayanağını göster"\n\nYa da üstteki arama kutusuna anahtar kelime yaz.`,
+        action: null
+      };
+  }
+}
+
+
 /* ---------------- State & storage ---------------- */
 const STORE_KEYS = { docs:'kalem_documents', rems:'kalem_reminders', settings:'kalem_settings', profile:'kalem_profile' };
 let state = {
