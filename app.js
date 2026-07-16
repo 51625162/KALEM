@@ -48,9 +48,6 @@ const Router = {
   titles:{
     dashboard:['Dashboard','KALEM / Dashboard'],
     ai:['KALEM AI','KALEM / KALEM AI · Karar Motoru'],
-    documents:['Belge Yönetimi','KALEM / Belgeler'],
-    templates:['Şablon Merkezi','KALEM / Şablonlar'],
-    mevzuat:['Mevzuat Merkezi','KALEM / Mevzuat'],
     word:['Word Studio','KALEM / Stüdyolar / Word'],
     excel:['Excel Studio','KALEM / Stüdyolar / Excel'],
     pdf:['PDF Studio','KALEM / Stüdyolar / PDF'],
@@ -72,9 +69,6 @@ const Router = {
     // sayfa girişlerinde tazele
     if(name==='dashboard') Dashboard.render();
     if(name==='ai') KalemAI.updateModeIndicator();
-    if(name==='documents') Docs.render();
-    if(name==='templates') Templates.render();
-    if(name==='mevzuat') Mevzuat.render();
     if(name==='archive') Docs.renderArchive();
     if(name==='calendar') Calendar.render();
     if(name==='pdf') PdfStudio.populateSelect();
@@ -144,25 +138,6 @@ const MEVZUAT_DB = [
 ];
 
 const Mevzuat = {
-  render(filter){
-    const list = document.getElementById('lawList');
-    const q = (filter!==undefined? filter : document.getElementById('lawSearch').value).toLowerCase().trim();
-    const items = MEVZUAT_DB.filter(m=>{
-      if(!q) return true;
-      return (m.kanun+' '+m.madde+' '+m.baslik+' '+m.konu+' '+m.metin).toLowerCase().includes(q);
-    });
-    if(items.length===0){
-      list.innerHTML = '<div class="empty-state"><div class="big">§</div>Sonuç bulunamadı.</div>';
-      return;
-    }
-    list.innerHTML = items.map(m=>`
-      <div class="card law-card">
-        <div class="law-title">${escapeHtml(m.baslik)}</div>
-        <div class="law-meta">${escapeHtml(m.kanun)} · ${escapeHtml(m.madde)}</div>
-        <div class="law-text">${escapeHtml(m.metin)}</div>
-      </div>
-    `).join('');
-  },
   search(text, limit){
     const q = text.toLowerCase();
     const words = q.split(/[\s,.]+/).filter(w=>w.length>3);
@@ -176,7 +151,6 @@ const Mevzuat = {
     return scored.slice(0, limit||3).map(x=>x.m);
   }
 };
-document.getElementById('lawSearch').addEventListener('input', e=>Mevzuat.render(e.target.value));
 
 /* =========================================================
    ŞABLON MERKEZİ — gömülü şablon verisi
@@ -298,22 +272,6 @@ const TEMPLATES = [
 ];
 
 const Templates = {
-  activeCat:'',
-  render(){
-    const cats = ['Tümü', ...new Set(TEMPLATES.map(t=>t.cat))];
-    const row = document.getElementById('tmplCategoryRow');
-    row.innerHTML = cats.map(c=>`<span class="tag-pill ${(c==='Tümü' && !this.activeCat)||c===this.activeCat?'active':''}" onclick="Templates.filter('${c==='Tümü'?'':c}')">${c}</span>`).join('');
-    const items = TEMPLATES.filter(t=>!this.activeCat || t.cat===this.activeCat);
-    const grid = document.getElementById('tmplGrid');
-    grid.innerHTML = items.map(t=>`
-      <div class="card tmpl-card" onclick="Templates.use('${t.id}')">
-        <div class="cat">${escapeHtml(t.cat)}</div>
-        <h4>${escapeHtml(t.title)}</h4>
-        <p>${escapeHtml(t.desc)}</p>
-      </div>
-    `).join('');
-  },
-  filter(cat){ this.activeCat = cat; this.render(); },
   use(id){
     const t = TEMPLATES.find(x=>x.id===id);
     if(!t) return;
@@ -485,7 +443,7 @@ const KalemAI = {
 
     const baseHtml = `
       <h4 style="margin:0 0 6px;">Önerilen Belge Türü ${matched ? '' : '<span class="section-desc">(yakın eşleşme bulunamadı)</span>'}</h4>
-      <div class="chip-line">${matched ? `<span class="chip">${escapeHtml(matched.docType)}</span>${matched.karar ? '<span class="chip">+ '+escapeHtml(matched.karar)+'</span>' : ''}` : "<span class=\"chip\">Şablon Merkezi'nden manuel seçin</span>"}</div>
+      <div class="chip-line">${matched ? `<span class="chip">${escapeHtml(matched.docType)}</span>${matched.karar ? '<span class="chip">+ '+escapeHtml(matched.karar)+'</span>' : ''}` : "<span class=\"chip\">Word Studio'da manuel oluşturun</span>"}</div>
       ${matched ? `<p class="section-desc" style="margin:12px 0 0;">${escapeHtml(matched.ozet)}</p>` : ''}
 
       <h4 style="margin:20px 0 6px;">İlgili Mevzuat</h4>
@@ -567,31 +525,6 @@ ${paragraphs}
 const Docs = {
   all(){ return Store.get('documents', []); },
   saveAll(list){ Store.set('documents', list); },
-  render(){
-    const q = (document.getElementById('docSearch').value||'').toLowerCase();
-    const typeFilter = document.getElementById('docFilterType').value;
-    const list = this.all().filter(d=>!d.archived).filter(d=>{
-      const matchQ = !q || (d.title+' '+d.type+' '+(d.person||'')).toLowerCase().includes(q);
-      const matchT = !typeFilter || d.type===typeFilter;
-      return matchQ && matchT;
-    }).sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt));
-    const body = document.getElementById('docTableBody');
-    document.getElementById('docEmpty').style.display = list.length? 'none':'block';
-    body.innerHTML = list.map(d=>`
-      <tr>
-        <td><b>${escapeHtml(d.title)}</b></td>
-        <td><span class="badge type">${escapeHtml(d.type)}</span></td>
-        <td>${escapeHtml(d.person||'—')}</td>
-        <td>${fmtDate(d.updatedAt)}</td>
-        <td><span class="badge status-${d.status==='Tamamlandı'?'tamam':'taslak'}">${escapeHtml(d.status||'Taslak')}</span></td>
-        <td style="white-space:nowrap;">
-          <button class="btn secondary small" onclick="Docs.edit('${d.id}')">Düzenle</button>
-          <button class="btn secondary small" onclick="Docs.archive('${d.id}')">Arşivle</button>
-          <button class="btn danger small" onclick="Docs.remove('${d.id}')">Sil</button>
-        </td>
-      </tr>
-    `).join('');
-  },
   newBlank(){
     WordStudio.loadContent('Yeni Belge', 'Diğer', '<p>Belge içeriğini buraya yazın.</p>');
     Router.go('word');
@@ -605,7 +538,7 @@ const Docs = {
   archive(id){
     const list = this.all();
     const d = list.find(x=>x.id===id);
-    if(d){ d.archived = true; d.archivedAt = nowIso(); this.saveAll(list); this.render(); toast('Belge arşivlendi.'); }
+    if(d){ d.archived = true; d.archivedAt = nowIso(); this.saveAll(list); toast('Belge arşivlendi.'); }
   },
   restore(id){
     const list = this.all();
@@ -615,7 +548,7 @@ const Docs = {
   remove(id){
     if(!confirm('Bu belgeyi kalıcı olarak silmek istediğinize emin misiniz?')) return;
     const list = this.all().filter(x=>x.id!==id);
-    this.saveAll(list); this.render(); this.renderArchive();
+    this.saveAll(list); this.renderArchive();
     toast('Belge silindi.');
   },
   renderArchive(){
@@ -635,8 +568,6 @@ const Docs = {
     `).join('');
   }
 };
-document.getElementById('docSearch').addEventListener('input', ()=>Docs.render());
-document.getElementById('docFilterType').addEventListener('change', ()=>Docs.render());
 
 /* =========================================================
    WORD STUDIO
@@ -691,10 +622,26 @@ const WordStudio = {
 /* =========================================================
    EXCEL STUDIO
    ========================================================= */
+const EXCEL_TEMPLATES = [
+  {id:'e1', title:'Hükümlü Listesi', desc:'Kurumdaki hükümlü/tutukluların temel kayıt listesi.',
+   headers:['Sıra No','Ad Soyad','T.C. Kimlik No','Koğuş/Oda','Giriş Tarihi','Tahliye Tarihi','Açıklama']},
+  {id:'e2', title:'Nöbet Çizelgesi', desc:'Haftalık/aylık personel nöbet planlaması.',
+   headers:['Tarih','Gün','Sabah Nöbetçisi','Akşam Nöbetçisi','Gece Nöbetçisi','Not']},
+  {id:'e3', title:'Ziyaretçi Kayıt Formu', desc:'Görüşme/ziyaret giriş-çıkış kayıtları.',
+   headers:['Tarih','Ziyaret Edilen','Ziyaretçi Ad Soyad','Yakınlık','Giriş Saati','Çıkış Saati','Kontrol Eden']},
+  {id:'e4', title:'Eşya Teslim / Emanet Listesi', desc:'Emanete alınan veya iade edilen eşyaların kaydı.',
+   headers:['Tarih','Ad Soyad','Eşya','Adet','Teslim Alan','Teslim Eden','Not']},
+  {id:'e5', title:'Aylık İstatistik Tablosu', desc:'Kurum aylık faaliyet ve olay istatistikleri.',
+   headers:['Ay','Toplam Hükümlü','Giriş','Çıkış','Disiplin Olayı','Sağlık Sevki','Açık Kuruma Ayrılan']},
+  {id:'e6', title:'Denetimli Serbestlik Yükümlü Takip Tablosu', desc:'Yükümlülerin süreç ve görüşme takibi.',
+   headers:['Sıra No','Ad Soyad','Yükümlülük Türü','Başlangıç','Bitiş','Görüşme Sıklığı','Durum']},
+];
+
 const ExcelStudio = {
   data: Store.get('excelGrid', null) || {rows:8, cols:6, cells:{}},
   persist(){ Store.set('excelGrid', this.data); },
   render(){
+    this.renderTemplates();
     document.getElementById('excelTitle').value = Store.get('excelTitle','');
     const table = document.getElementById('excelGrid');
     let html = '<tr><th class="rownum"></th>';
@@ -710,6 +657,61 @@ const ExcelStudio = {
       html += '</tr>';
     }
     table.innerHTML = html;
+  },
+  renderTemplates(){
+    const grid = document.getElementById('excelTemplateGrid');
+    if(!grid) return;
+    const custom = Store.get('excelTemplates', []);
+    const builtinHtml = EXCEL_TEMPLATES.map(t=>`
+      <div class="card tmpl-card" onclick="ExcelStudio.applyTemplate('${t.id}', false)">
+        <div class="cat">Hazır Şablon</div>
+        <h4>${escapeHtml(t.title)}</h4>
+        <p>${escapeHtml(t.desc)}</p>
+      </div>
+    `).join('');
+    const customHtml = custom.map(t=>`
+      <div class="card tmpl-card" style="position:relative;">
+        <div onclick="ExcelStudio.applyTemplate('${t.id}', true)">
+          <div class="cat">Özel Şablon</div>
+          <h4>${escapeHtml(t.title)}</h4>
+          <p>${escapeHtml((t.headers||[]).join(', '))}</p>
+        </div>
+        <button class="btn danger small" style="position:absolute; top:10px; right:10px;" onclick="event.stopPropagation(); ExcelStudio.deleteTemplate('${t.id}')">Sil</button>
+      </div>
+    `).join('');
+    grid.innerHTML = (builtinHtml + customHtml) || '<div class="empty-state">Henüz şablon yok.</div>';
+  },
+  applyTemplate(id, isCustom){
+    const list = isCustom ? Store.get('excelTemplates', []) : EXCEL_TEMPLATES;
+    const t = list.find(x=>x.id===id);
+    if(!t) return;
+    if(!confirm('Bu şablonu uygulamak mevcut tablo içeriğinin üzerine yazacaktır. Devam edilsin mi?')) return;
+    const headers = t.headers || [];
+    this.data = {rows: 12, cols: headers.length || this.data.cols, cells:{}};
+    headers.forEach((h,i)=>{ this.data.cells['0_'+i] = h; });
+    this.persist();
+    document.getElementById('excelTitle').value = t.title;
+    Store.set('excelTitle', t.title);
+    this.render();
+    toast('Şablon uygulandı: '+t.title);
+  },
+  saveAsTemplate(){
+    const headers = [];
+    for(let c=0;c<this.data.cols;c++) headers.push(this.data.cells['0_'+c] || ('Sütun '+(c+1)));
+    const name = prompt('Şablon adı girin:', document.getElementById('excelTitle').value || 'Yeni Şablon');
+    if(!name || !name.trim()) return;
+    const custom = Store.get('excelTemplates', []);
+    custom.push({id: uid(), title: name.trim(), headers});
+    Store.set('excelTemplates', custom);
+    this.renderTemplates();
+    toast('Şablon kaydedildi: '+name.trim());
+  },
+  deleteTemplate(id){
+    if(!confirm('Bu özel şablonu silmek istediğinize emin misiniz?')) return;
+    const custom = Store.get('excelTemplates', []).filter(t=>t.id!==id);
+    Store.set('excelTemplates', custom);
+    this.renderTemplates();
+    toast('Şablon silindi.');
   },
   colLabel(i){
     let s=''; i++;
@@ -764,7 +766,7 @@ const PdfStudio = {
     const id = document.getElementById('pdfDocSelect').value;
     const d = Docs.all().find(x=>x.id===id);
     const box = document.getElementById('pdfPreview');
-    if(!d){ box.innerHTML = "<div class=\"empty-state\">Önce Belge Yönetimi veya Word Studio'dan bir belge kaydedin.</div>"; return; }
+    if(!d){ box.innerHTML = "<div class=\"empty-state\">Önce Word Studio'da bir belge kaydedin.</div>"; return; }
     box.innerHTML = d.content;
   }
 };
@@ -900,6 +902,7 @@ const Settings = {
       settings: Store.get('settings', {}),
       excelGrid: Store.get('excelGrid', null),
       excelTitle: Store.get('excelTitle',''),
+      excelTemplates: Store.get('excelTemplates', []),
       exportedAt: nowIso(),
     };
     download('kalem_yedek_'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(backup, null, 2), 'application/json');
@@ -917,6 +920,7 @@ const Settings = {
         if(data.settings) Store.set('settings', data.settings);
         if(data.excelGrid) Store.set('excelGrid', data.excelGrid);
         if(data.excelTitle!==undefined) Store.set('excelTitle', data.excelTitle);
+        if(data.excelTemplates) Store.set('excelTemplates', data.excelTemplates);
         toast('Yedek başarıyla geri yüklendi. Sayfa yenileniyor...');
         setTimeout(()=>location.reload(), 1200);
       }catch(err){
@@ -927,7 +931,7 @@ const Settings = {
   },
   clearAll(){
     if(!confirm('TÜM veriler (belgeler, hatırlatıcılar, ayarlar) kalıcı olarak silinecek. Emin misiniz?')) return;
-    ['documents','reminders','settings','excelGrid','excelTitle'].forEach(k=>localStorage.removeItem('kalem_'+k));
+    ['documents','reminders','settings','excelGrid','excelTitle','excelTemplates'].forEach(k=>localStorage.removeItem('kalem_'+k));
     toast('Tüm veriler silindi. Sayfa yenileniyor...');
     setTimeout(()=>location.reload(), 1000);
   }
@@ -978,8 +982,6 @@ const Dashboard = {
 
 /* ---------------- Başlangıç ---------------- */
 Dashboard.render();
-Templates.render();
-Mevzuat.render('');
 Calendar.render();
 ExcelStudio.render();
 KalemAI.updateModeIndicator();

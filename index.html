@@ -21,10 +21,6 @@
       <div class="menu-group-label">Genel</div>
       <div class="menu-item" data-target="dashboard"><span class="ico">◆</span> Dashboard</div>
       <div class="menu-item" data-target="ai"><span class="ico">✦</span> KALEM AI</div>
-      <div class="menu-group-label">Belgeler</div>
-      <div class="menu-item" data-target="documents"><span class="ico">▤</span> Belge Yönetimi</div>
-      <div class="menu-item" data-target="templates"><span class="ico">▧</span> Şablon Merkezi</div>
-      <div class="menu-item" data-target="mevzuat"><span class="ico">§</span> Mevzuat Merkezi</div>
       <div class="menu-group-label">Stüdyolar</div>
       <div class="menu-item" data-target="word"><span class="ico">W</span> Word Studio</div>
       <div class="menu-item" data-target="excel"><span class="ico">X</span> Excel Studio</div>
@@ -74,9 +70,8 @@
           <h3 style="margin-top:0; font-size:15px;">Hızlı İşlemler</h3>
           <div class="toolbar" style="margin-bottom:0;">
             <button class="btn bronze" onclick="Router.go('ai')">✦ KALEM AI ile Karar Üret</button>
-            <button class="btn secondary" onclick="Router.go('templates')">▧ Şablondan Belge Oluştur</button>
             <button class="btn secondary" onclick="Router.go('word')">W Boş Belgeye Başla</button>
-            <button class="btn secondary" onclick="Router.go('mevzuat')">§ Mevzuat Ara</button>
+            <button class="btn secondary" onclick="Router.go('excel')">X Tablo Oluştur</button>
           </div>
         </div>
       </section>
@@ -106,53 +101,6 @@
 
           <div id="aiResult" class="kalem-ai-result" style="display:none;"></div>
         </div>
-      </section>
-
-      <!-- DOCUMENTS -->
-      <section class="section" id="sec-documents">
-        <h2 class="section-title">▤ Belge Yönetimi</h2>
-        <p class="section-desc">Tüm oluşturulan belgeleri buradan görüntüleyin, düzenleyin, arşivleyin veya silin.</p>
-        <div class="toolbar">
-          <input class="input" id="docSearch" placeholder="Belge ara (başlık, kişi, tür)...">
-          <select class="input" id="docFilterType" style="max-width:200px;">
-            <option value="">Tüm türler</option>
-            <option value="Dilekçe">Dilekçe</option>
-            <option value="Üst Yazı">Üst Yazı</option>
-            <option value="Karar">Karar</option>
-            <option value="Tutanak">Tutanak</option>
-            <option value="Rapor">Rapor</option>
-          </select>
-          <button class="btn bronze" onclick="Docs.newBlank()">+ Yeni Belge</button>
-        </div>
-        <div class="card">
-          <table class="data-table" id="docTable">
-            <thead><tr><th>Başlık</th><th>Tür</th><th>Kişi</th><th>Tarih</th><th>Durum</th><th></th></tr></thead>
-            <tbody id="docTableBody"></tbody>
-          </table>
-          <div id="docEmpty" class="empty-state" style="display:none; margin:20px;">
-            <div class="big">▤</div>
-            Henüz belge oluşturulmadı.<br>
-            <button class="btn bronze" style="margin-top:14px;" onclick="Docs.newBlank()">İlk belgeyi oluştur</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- TEMPLATES -->
-      <section class="section" id="sec-templates">
-        <h2 class="section-title">▧ Şablon Merkezi</h2>
-        <p class="section-desc">Kurum standartlarına uygun hazır belge şablonları. Bir şablon seçtiğinizde Word Studio'da düzenlemeye hazır hale gelir.</p>
-        <div class="tag-row" id="tmplCategoryRow"></div>
-        <div class="grid grid-3" id="tmplGrid"></div>
-      </section>
-
-      <!-- MEVZUAT -->
-      <section class="section" id="sec-mevzuat">
-        <h2 class="section-title">§ Mevzuat Merkezi</h2>
-        <p class="section-desc">CTE ve denetimli serbestlik uygulamalarında sık başvurulan kanun ve yönetmelik maddeleri. Arama kutusuna anahtar kelime yazın.</p>
-        <div class="toolbar">
-          <input class="input" id="lawSearch" placeholder="Mevzuat ara (madde, konu, kanun no)...">
-        </div>
-        <div id="lawList"></div>
       </section>
 
       <!-- WORD STUDIO -->
@@ -193,13 +141,18 @@
       <!-- EXCEL STUDIO -->
       <section class="section" id="sec-excel">
         <h2 class="section-title">X Excel Studio</h2>
-        <p class="section-desc">Basit tablo/çizelge oluşturun; CSV veya Excel (.xls) olarak dışa aktarın.</p>
+        <p class="section-desc">Basit tablo/çizelge oluşturun; CSV veya Excel (.xls) olarak dışa aktarın. Hazır şablonlardan başlayabilir veya kendi tablonuzu şablon olarak kaydedebilirsiniz.</p>
+
+        <h4 style="margin:0 0 8px;">Şablonlar</h4>
+        <div class="grid grid-3" id="excelTemplateGrid" style="margin-bottom:22px;"></div>
+
         <div class="toolbar">
           <input class="input" id="excelTitle" placeholder="Tablo adı" style="max-width:260px;">
           <button class="btn secondary" onclick="ExcelStudio.addRow()">+ Satır</button>
           <button class="btn secondary" onclick="ExcelStudio.addCol()">+ Sütun</button>
           <button class="btn secondary" onclick="ExcelStudio.removeRow()">− Satır</button>
           <button class="btn secondary" onclick="ExcelStudio.removeCol()">− Sütun</button>
+          <button class="btn bronze" onclick="ExcelStudio.saveAsTemplate()">✦ Şablon Olarak Kaydet</button>
           <button class="btn secondary" onclick="ExcelStudio.exportCsv()">⇩ CSV indir</button>
           <button class="btn secondary" onclick="ExcelStudio.exportXls()">⇩ Excel (.xls) indir</button>
         </div>
