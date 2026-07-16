@@ -2,400 +2,310 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>KALEM — Kişisel Bilgi Merkezi</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖋️</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KALEM — Kurumsal Karar ve Belge Üretim Sistemi</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app">
-  <!-- Sidebar -->
-  <aside class="sidebar">
+<div id="app">
+  <aside id="sidebar">
     <div class="brand">
-      <div class="brand-mark">🖋️</div>
-      <div>
-        <div class="brand-name">KALEM</div>
-        <div class="brand-sub">V1 · Bilgi Merkezi</div>
+      <div class="seal">K</div>
+      <div class="brand-text">
+        <div class="name">KALEM</div>
+        <div class="sub">KARAR &amp; BELGE SİSTEMİ</div>
       </div>
     </div>
-    <nav id="navList">
-      <button class="nav-item active" data-page="dashboard"><span class="ic">🏠</span> Dashboard</button>
-      <button class="nav-item" data-page="documents"><span class="ic">📄</span> Belgeler</button>
-      <button class="nav-item" data-page="reminders"><span class="ic">⏰</span> Hatırlatıcılar</button>
-      <button class="nav-item" data-page="calendar"><span class="ic">📅</span> Takvim</button>
-      <button class="nav-item" data-page="ai"><span class="ic">🤖</span> Yapay Zeka</button>
-      <button class="nav-item" data-page="settings"><span class="ic">⚙️</span> Ayarlar</button>
+    <nav class="menu" id="menuNav">
+      <div class="menu-group-label">Genel</div>
+      <div class="menu-item" data-target="dashboard"><span class="ico">◆</span> Dashboard</div>
+      <div class="menu-item" data-target="ai"><span class="ico">✦</span> KALEM AI</div>
+      <div class="menu-group-label">Belgeler</div>
+      <div class="menu-item" data-target="documents"><span class="ico">▤</span> Belge Yönetimi</div>
+      <div class="menu-item" data-target="templates"><span class="ico">▧</span> Şablon Merkezi</div>
+      <div class="menu-item" data-target="mevzuat"><span class="ico">§</span> Mevzuat Merkezi</div>
+      <div class="menu-group-label">Stüdyolar</div>
+      <div class="menu-item" data-target="word"><span class="ico">W</span> Word Studio</div>
+      <div class="menu-item" data-target="excel"><span class="ico">X</span> Excel Studio</div>
+      <div class="menu-item" data-target="pdf"><span class="ico">P</span> PDF Studio</div>
+      <div class="menu-group-label">Yönetim</div>
+      <div class="menu-item" data-target="archive"><span class="ico">▣</span> Arşiv</div>
+      <div class="menu-item" data-target="calendar"><span class="ico">▦</span> Takvim &amp; Hatırlatıcı</div>
+      <div class="menu-item" data-target="settings"><span class="ico">⚙</span> Ayarlar</div>
     </nav>
-    <div class="sidebar-footer">
-      <div class="profile-chip" data-page="profile" onclick="goPage('profile')">
-        <div class="avatar" id="avatarInitial">K</div>
-        <div>
-          <div class="profile-chip-name" id="sideProfileName">Kullanıcı</div>
-          <div class="profile-chip-role">Profili görüntüle</div>
-        </div>
-      </div>
-    </div>
+    <div class="sidebar-foot">KALEM v1.0 · Tamamen çevrimdışı<br>Veriler yalnızca bu cihazda saklanır.</div>
   </aside>
 
-  <!-- Main -->
-  <main class="main">
-    <div class="topbar">
-      <div class="search-box">
-        <span>🔎</span>
-        <input id="globalSearch" placeholder="Belgelerde, notlarda ara...">
-      </div>
-      <div class="topbar-actions">
-        <button class="icon-btn" title="Bildirim izni iste" onclick="requestNotifPermission()">🔔</button>
-        <button class="icon-btn" title="Yedekle" onclick="exportData()">⬇️</button>
-        <button class="icon-btn" title="Profil" onclick="goPage('profile')"><span id="topAvatarInitial">K</span></button>
-      </div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <section class="page active" id="page-dashboard">
-      <div class="welcome-card">
-        <h1 id="welcomeGreeting">Hoş geldin</h1>
-        <p>Notların, belgelerin ve görevlerin tek bir yerde. KALEM ile güne hazırlan.</p>
-        <div class="welcome-date" id="todayDate"></div>
-      </div>
-
-      <div class="stat-grid">
-        <div class="card stat-card">
-          <div class="stat-icon">📄</div>
-          <div class="stat-num" id="statDocs">0</div>
-          <div class="stat-label">Toplam Belge</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-icon">🕓</div>
-          <div class="stat-num" id="statPending">0</div>
-          <div class="stat-label">Bekleyen Görev</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-icon">📅</div>
-          <div class="stat-num" id="statUpcoming">0</div>
-          <div class="stat-label">Yaklaşan Hatırlatma</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-icon">⭐</div>
-          <div class="stat-num" id="statFav">0</div>
-          <div class="stat-label">Favori Belge</div>
-        </div>
-      </div>
-
-      <div class="quick-actions">
-        <button class="qa-btn" onclick="openDocModal()">➕ Yeni Belge</button>
-        <button class="qa-btn" onclick="openRemModal()">➕ Yeni Görev</button>
-        <button class="qa-btn" onclick="goPage('ai')">🤖 AI'a Sor</button>
-        <button class="qa-btn" onclick="goPage('calendar')">📅 Takvime Git</button>
-      </div>
-
-      <div class="dash-columns">
-        <div class="card pad-lg">
-          <div class="section-title" style="font-size:18px;">Yaklaşan Hatırlatmalar</div>
-          <div class="mini-list" id="dashReminders"></div>
-        </div>
-        <div class="card pad-lg">
-          <div class="section-title" style="font-size:18px;">Son Belgeler</div>
-          <div class="mini-list" id="dashDocs"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- DOCUMENTS -->
-    <section class="page" id="page-documents">
-      <div class="page-head">
-        <div class="section-title">Belgeler</div>
-        <svg class="ink-underline" viewBox="0 0 200 10" width="150"><path d="M2 6 Q50 -2 100 6 T198 6"/></svg>
-        <div class="page-desc">Notlarını ve belgelerini kategorile, etiketle, saniyeler içinde bul.</div>
-      </div>
-      <div class="toolbar">
-        <button class="btn btn-primary" onclick="openDocModal()">➕ Belge Ekle</button>
-        <button class="chip-filter active" data-catf="all" onclick="setDocFilter('all',this)">Tümü</button>
-        <button class="chip-filter" data-catf="Not" onclick="setDocFilter('Not',this)">Not</button>
-        <button class="chip-filter" data-catf="Evrak" onclick="setDocFilter('Evrak',this)">Evrak</button>
-        <button class="chip-filter" data-catf="Finans" onclick="setDocFilter('Finans',this)">Finans</button>
-        <button class="chip-filter" data-catf="Diğer" onclick="setDocFilter('Diğer',this)">Diğer</button>
-        <button class="chip-filter" id="favFilterBtn" onclick="toggleFavFilter(this)">⭐ Favoriler</button>
-      </div>
-      <div class="doc-grid" id="docGrid"></div>
-    </section>
-
-    <!-- REMINDERS -->
-    <section class="page" id="page-reminders">
-      <div class="page-head">
-        <div class="section-title">Hatırlatıcılar</div>
-        <svg class="ink-underline" viewBox="0 0 200 10" width="150"><path d="M2 6 Q50 -2 100 6 T198 6"/></svg>
-        <div class="page-desc">Görevlerini önceliğine ve son tarihine göre yönet.</div>
-      </div>
-      <div class="toolbar">
-        <button class="btn btn-primary" onclick="openRemModal()">➕ Yeni Görev</button>
-        <button class="chip-filter active" data-remf="active" onclick="setRemFilter('active',this)">Bekleyen</button>
-        <button class="chip-filter" data-remf="done" onclick="setRemFilter('done',this)">Tamamlanan</button>
-        <button class="chip-filter" data-remf="all" onclick="setRemFilter('all',this)">Tümü</button>
-      </div>
-      <div class="card pad-lg">
-        <div class="rem-list" id="remList"></div>
-      </div>
-    </section>
-
-    <!-- CALENDAR -->
-    <section class="page" id="page-calendar">
-      <div class="page-head">
-        <div class="section-title">Takvim</div>
-        <svg class="ink-underline" viewBox="0 0 200 10" width="150"><path d="M2 6 Q50 -2 100 6 T198 6"/></svg>
-        <div class="page-desc">Görevlerini aylık görünümde takip et.</div>
-      </div>
-      <div class="card pad-lg">
-        <div class="cal-head">
-          <button class="btn btn-ghost btn-sm" onclick="calShift(-1)">← Önceki</button>
-          <div class="cal-title" id="calTitle"></div>
-          <button class="btn btn-ghost btn-sm" onclick="calShift(1)">Sonraki →</button>
-        </div>
-        <div class="cal-grid" id="calGrid"></div>
-      </div>
-    </section>
-
-    <!-- AI -->
-    <section class="page" id="page-ai">
-      <div class="page-head">
-        <div class="section-title">Yapay Zeka Asistanı</div>
-        <svg class="ink-underline" viewBox="0 0 200 10" width="150"><path d="M2 6 Q50 -2 100 6 T198 6"/></svg>
-        <div class="page-desc">Şablon, mevzuat veya karar ara — ya da sohbet kutusuna yaz.</div>
-      </div>
-
-      <!-- Şablon / Mevzuat / Karar Arama -->
-      <div class="card pad-lg" style="margin-bottom:18px;">
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-          <div class="search-box" style="max-width:none;flex:1;min-width:220px;">
-            <span>⚖️</span>
-            <input id="legalSearchInput" placeholder="Örn: telefon hakkı, disiplin kararı, olay tutanağı, nakil...">
-          </div>
-          <button class="btn btn-primary" onclick="openCustomTplModal()">➕ Kendi Şablonunu Ekle</button>
-        </div>
-        <div class="toolbar" id="legalCatFilters" style="margin-bottom:6px;">
-          <button class="chip-filter active" data-legalcat="all" onclick="setLegalCatFilter('all',this)">Tümü</button>
-          <button class="chip-filter" data-legalcat="Tutanak" onclick="setLegalCatFilter('Tutanak',this)">Tutanaklar</button>
-          <button class="chip-filter" data-legalcat="Karar" onclick="setLegalCatFilter('Karar',this)">Kararlar</button>
-          <button class="chip-filter" data-legalcat="Yazışma" onclick="setLegalCatFilter('Yazışma',this)">Yazışma</button>
-          <button class="chip-filter" data-legalcat="Yazı" onclick="setLegalCatFilter('Yazı',this)">Yazılar</button>
-          <button class="chip-filter" data-legalcat="Düzenleme" onclick="setLegalCatFilter('Düzenleme',this)">Düzenleme</button>
-          <button class="chip-filter" data-legalcat="Mevzuat" onclick="setLegalCatFilter('Mevzuat',this)">Mevzuat</button>
-          <button class="chip-filter" data-legalcat="Özel" onclick="setLegalCatFilter('Özel',this)">Kendi Şablonlarım</button>
-        </div>
-        <div class="doc-grid" id="legalResults">
-          <div class="empty-state" style="grid-column:1/-1;"><span class="em-ic">⚖️</span>Aramaya başlamak için yukarı yaz — örneğin "olay tutanağı" veya "telefon hakkı".</div>
-        </div>
-      </div>
-
-      <div class="ai-layout">
+  <div id="main">
+    <div id="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="hamburger" id="hamburgerBtn">☰</button>
         <div>
-          <div class="card pad-md">
-            <button class="ai-tool-btn" onclick="aiPreset('soru')">💬 Soru Sor</button>
-            <button class="ai-tool-btn" onclick="aiPreset('karar')">⚖️ Karar Hazırla</button>
-            <button class="ai-tool-btn" onclick="aiPreset('tutanak')">📄 Tutanak Hazırla</button>
-            <button class="ai-tool-btn" onclick="aiPreset('mevzuat')">📚 Mevzuat Sorgula</button>
-            <button class="ai-tool-btn" onclick="aiPreset('yazi')">✏️ Yazı Hazırla</button>
-          </div>
-        </div>
-        <div class="card chat-window">
-          <div class="chat-log scrollbar-hide" id="chatLog"></div>
-          <div class="ai-note">KALEM'in mevzuat/şablon motoru tamamen çevrimdışı çalışır. Mevzuat verileri örnek niteliğindedir — resmi kullanımdan önce güncel kaynakla doğrulayın.</div>
-          <div class="chat-input-row">
-            <textarea id="chatInput" placeholder="Örn: telefon hakkı kötüye kullanımı hakkında karar hazırla" rows="1"></textarea>
-            <button class="btn btn-primary" onclick="sendChat()">Gönder</button>
-          </div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <div class="breadcrumb" id="pageBreadcrumb">KALEM / Dashboard</div>
         </div>
       </div>
-    </section>
-
-    <!-- SETTINGS -->
-    <section class="page" id="page-settings">
-      <div class="page-head">
-        <div class="section-title">Ayarlar</div>
-        <svg class="ink-underline" viewBox="0 0 200 10" width="150"><path d="M2 6 Q50 -2 100 6 T198 6"/></svg>
-        <div class="page-desc">Uygulamayı kendine göre şekillendir.</div>
+      <div class="topbar-right">
+        <div class="clock"><b id="clockTime">--:--</b><span id="clockDate">--</span></div>
       </div>
-      <div class="settings-grid">
-        <div class="card pad-lg">
-          <div class="set-row">
-            <div><div class="set-label">Bildirimler</div><div class="set-sub">Hatırlatma bildirimlerini aç/kapat</div></div>
-            <button class="switch on" id="notifSwitch" onclick="toggleSetting('notifications', this)"></button>
-          </div>
-          <div class="set-row">
-            <div><div class="set-label">Test Bildirimi</div><div class="set-sub">Tarayıcı bildirimini dene</div></div>
-            <button class="btn btn-ghost btn-sm" onclick="sendTestNotif()">Gönder</button>
-          </div>
-          <div class="set-row">
-            <div><div class="set-label">Dil</div><div class="set-sub">Arayüz dili</div></div>
-            <select class="select-field" id="langSelect" onchange="setLang(this.value)">
-              <option value="tr">Türkçe</option>
-              <option value="en">English (yakında)</option>
-            </select>
-          </div>
-        </div>
-        <div class="card pad-lg">
-          <div class="set-row">
-            <div><div class="set-label">Verini Dışa Aktar</div><div class="set-sub">Tüm verilerini JSON olarak indir</div></div>
-            <button class="btn btn-ghost btn-sm" onclick="exportData()">İndir</button>
-          </div>
-          <div class="set-row">
-            <div><div class="set-label">Verini İçe Aktar</div><div class="set-sub">Yedekten geri yükle</div></div>
-            <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
-              Seç <input type="file" accept=".json" style="display:none" onchange="importData(event)">
-            </label>
-          </div>
-          <div class="set-row">
-            <div><div class="set-label">Tüm Verileri Sıfırla</div><div class="set-sub">Bu işlem geri alınamaz</div></div>
-            <button class="btn btn-danger btn-sm" onclick="resetAllData()">Sıfırla</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROFILE -->
-    <section class="page" id="page-profile">
-      <div class="page-head">
-        <div class="section-title">Profil</div>
-        <svg class="ink-underline" viewBox="0 0 200 10" width="150"><path d="M2 6 Q50 -2 100 6 T198 6"/></svg>
-      </div>
-      <div class="card pad-lg" style="max-width:480px;">
-        <div class="field">
-          <label>Ad Soyad</label>
-          <input id="profName" placeholder="Adını yaz">
-        </div>
-        <div class="field">
-          <label>E-posta</label>
-          <input id="profEmail" placeholder="ornek@eposta.com">
-        </div>
-        <div class="field">
-          <label>Unvan / Not</label>
-          <input id="profRole" placeholder="örn. Yatırımcı, Öğrenci...">
-        </div>
-        <button class="btn btn-primary" onclick="saveProfile()">Kaydet</button>
-      </div>
-    </section>
-
-  </main>
-</div>
-
-<!-- Mobile bottom nav -->
-<div class="mobile-nav" id="mobileNav">
-  <button data-page="dashboard" class="active"><span class="ic">🏠</span>Ana</button>
-  <button data-page="documents"><span class="ic">📄</span>Belge</button>
-  <button data-page="reminders"><span class="ic">⏰</span>Görev</button>
-  <button data-page="calendar"><span class="ic">📅</span>Takvim</button>
-  <button data-page="ai"><span class="ic">🤖</span>AI</button>
-</div>
-
-<!-- Document Modal -->
-<div class="modal-overlay" id="docModal">
-  <div class="modal">
-    <h3 id="docModalTitle">Yeni Belge</h3>
-    <input type="hidden" id="docId">
-    <div class="field"><label>Başlık</label><input id="docTitle" placeholder="Belge başlığı"></div>
-    <div class="field-row">
-      <div class="field"><label>Kategori</label>
-        <select id="docCat"><option>Not</option><option>Evrak</option><option>Finans</option><option>Diğer</option></select>
-      </div>
-      <div class="field"><label>Etiketler (virgülle ayır)</label><input id="docTags" placeholder="iş, önemli"></div>
     </div>
-    <div class="field"><label>İçerik</label><textarea id="docContent" placeholder="Notunu ya da açıklamanı yaz..."></textarea></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('docModal')">Vazgeç</button>
-      <button class="btn btn-primary" onclick="saveDoc()">Kaydet</button>
+
+    <div id="content">
+
+      <!-- DASHBOARD -->
+      <section class="section active" id="sec-dashboard">
+        <h2 class="section-title">Genel Bakış</h2>
+        <p class="section-desc">Kurum içi belge üretim sürecinizin özeti. Aşağıdaki sayılar bu cihazda kayıtlı verilere göre hesaplanır.</p>
+        <div class="grid grid-4" id="dashStats"></div>
+
+        <div class="grid grid-2" style="margin-top:20px; align-items:start;">
+          <div class="card card-pad">
+            <h3 style="margin-top:0; font-size:15px;">Son Belgeler</h3>
+            <div id="dashRecentDocs"></div>
+          </div>
+          <div class="card card-pad">
+            <h3 style="margin-top:0; font-size:15px;">Yaklaşan Hatırlatıcılar</h3>
+            <div id="dashReminders"></div>
+          </div>
+        </div>
+
+        <div class="card card-pad" style="margin-top:20px;">
+          <h3 style="margin-top:0; font-size:15px;">Hızlı İşlemler</h3>
+          <div class="toolbar" style="margin-bottom:0;">
+            <button class="btn bronze" onclick="Router.go('ai')">✦ KALEM AI ile Karar Üret</button>
+            <button class="btn secondary" onclick="Router.go('templates')">▧ Şablondan Belge Oluştur</button>
+            <button class="btn secondary" onclick="Router.go('word')">W Boş Belgeye Başla</button>
+            <button class="btn secondary" onclick="Router.go('mevzuat')">§ Mevzuat Ara</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- KALEM AI -->
+      <section class="section" id="sec-ai">
+        <h2 class="section-title">✦ KALEM AI — Karar Motoru</h2>
+        <p class="section-desc">Olayı kısaca tarif edin. KALEM AI, olaya uygun belge türünü, ilgili mevzuat maddelerini ve gerekçeli taslak metni öneri olarak sunar. Üretilen taslak her zaman yetkili personel tarafından incelenip onaylanmalıdır.</p>
+
+        <div class="card kalem-ai-box">
+          <div class="field">
+            <label class="field-label">Olay / durum tarifi</label>
+            <textarea class="input" id="aiInput" rows="4" placeholder="Örn: Hükümlü kuruma ait çamaşırhanede disiplin talimatına uymadı ve görevliye sözlü olarak hakaret etti."></textarea>
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label class="field-label">İlgili kişi / hükümlü-hükümlü adayı adı (opsiyonel)</label>
+              <input class="input" id="aiPersonName" placeholder="Ad Soyad">
+            </div>
+            <div class="field">
+              <label class="field-label">Kurum / birim</label>
+              <input class="input" id="aiKurum" placeholder="Örn: ... T Tipi Kapalı Ceza İnfaz Kurumu">
+            </div>
+          </div>
+          <button class="btn bronze" onclick="KalemAI.analyze()">✦ Analiz Et ve Karar Üret</button>
+
+          <div id="aiResult" class="kalem-ai-result" style="display:none;"></div>
+        </div>
+      </section>
+
+      <!-- DOCUMENTS -->
+      <section class="section" id="sec-documents">
+        <h2 class="section-title">▤ Belge Yönetimi</h2>
+        <p class="section-desc">Tüm oluşturulan belgeleri buradan görüntüleyin, düzenleyin, arşivleyin veya silin.</p>
+        <div class="toolbar">
+          <input class="input" id="docSearch" placeholder="Belge ara (başlık, kişi, tür)...">
+          <select class="input" id="docFilterType" style="max-width:200px;">
+            <option value="">Tüm türler</option>
+            <option value="Dilekçe">Dilekçe</option>
+            <option value="Üst Yazı">Üst Yazı</option>
+            <option value="Karar">Karar</option>
+            <option value="Tutanak">Tutanak</option>
+            <option value="Rapor">Rapor</option>
+          </select>
+          <button class="btn bronze" onclick="Docs.newBlank()">+ Yeni Belge</button>
+        </div>
+        <div class="card">
+          <table class="data-table" id="docTable">
+            <thead><tr><th>Başlık</th><th>Tür</th><th>Kişi</th><th>Tarih</th><th>Durum</th><th></th></tr></thead>
+            <tbody id="docTableBody"></tbody>
+          </table>
+          <div id="docEmpty" class="empty-state" style="display:none; margin:20px;">
+            <div class="big">▤</div>
+            Henüz belge oluşturulmadı.<br>
+            <button class="btn bronze" style="margin-top:14px;" onclick="Docs.newBlank()">İlk belgeyi oluştur</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEMPLATES -->
+      <section class="section" id="sec-templates">
+        <h2 class="section-title">▧ Şablon Merkezi</h2>
+        <p class="section-desc">Kurum standartlarına uygun hazır belge şablonları. Bir şablon seçtiğinizde Word Studio'da düzenlemeye hazır hale gelir.</p>
+        <div class="tag-row" id="tmplCategoryRow"></div>
+        <div class="grid grid-3" id="tmplGrid"></div>
+      </section>
+
+      <!-- MEVZUAT -->
+      <section class="section" id="sec-mevzuat">
+        <h2 class="section-title">§ Mevzuat Merkezi</h2>
+        <p class="section-desc">CTE ve denetimli serbestlik uygulamalarında sık başvurulan kanun ve yönetmelik maddeleri. Arama kutusuna anahtar kelime yazın.</p>
+        <div class="toolbar">
+          <input class="input" id="lawSearch" placeholder="Mevzuat ara (madde, konu, kanun no)...">
+        </div>
+        <div id="lawList"></div>
+      </section>
+
+      <!-- WORD STUDIO -->
+      <section class="section" id="sec-word">
+        <h2 class="section-title">W Word Studio</h2>
+        <p class="section-desc">Belge içeriğinizi biçimlendirin. ".doc" olarak dışa aktardığınızda dosya Microsoft Word ile doğrudan açılır.</p>
+        <div class="toolbar">
+          <input class="input" id="wordTitle" placeholder="Belge başlığı" style="max-width:320px;">
+          <select class="input" id="wordDocType" style="max-width:170px;">
+            <option>Dilekçe</option><option>Üst Yazı</option><option>Karar</option><option>Tutanak</option><option>Rapor</option><option>Diğer</option>
+          </select>
+          <button class="btn secondary" onclick="WordStudio.save()">💾 Kaydet</button>
+          <button class="btn secondary" onclick="WordStudio.exportDoc()">⇩ .doc indir</button>
+          <button class="btn secondary" onclick="window.print()">🖶 Yazdır / PDF</button>
+        </div>
+        <div class="editor-page-wrap">
+          <div class="editor-toolbar">
+            <button onclick="WordStudio.cmd('bold')" title="Kalın"><b>K</b></button>
+            <button onclick="WordStudio.cmd('italic')" title="İtalik"><i>İ</i></button>
+            <button onclick="WordStudio.cmd('underline')" title="Altı çizili"><u>A</u></button>
+            <div class="sep"></div>
+            <button onclick="WordStudio.cmd('justifyLeft')" title="Sola yasla">◧</button>
+            <button onclick="WordStudio.cmd('justifyCenter')" title="Ortala">▣</button>
+            <button onclick="WordStudio.cmd('justifyRight')" title="Sağa yasla">◨</button>
+            <button onclick="WordStudio.cmd('justifyFull')" title="İki yana yasla">☰</button>
+            <div class="sep"></div>
+            <button onclick="WordStudio.block('h2')" title="Başlık">H</button>
+            <button onclick="WordStudio.block('p')" title="Paragraf">¶</button>
+            <button onclick="WordStudio.cmd('insertUnorderedList')" title="Madde işareti">•</button>
+            <button onclick="WordStudio.cmd('insertOrderedList')" title="Numaralı liste">1.</button>
+            <div class="sep"></div>
+            <button onclick="WordStudio.clearFormat()" title="Biçimi temizle">⨯</button>
+          </div>
+          <div id="wordEditor" contenteditable="true"></div>
+        </div>
+      </section>
+
+      <!-- EXCEL STUDIO -->
+      <section class="section" id="sec-excel">
+        <h2 class="section-title">X Excel Studio</h2>
+        <p class="section-desc">Basit tablo/çizelge oluşturun; CSV veya Excel (.xls) olarak dışa aktarın.</p>
+        <div class="toolbar">
+          <input class="input" id="excelTitle" placeholder="Tablo adı" style="max-width:260px;">
+          <button class="btn secondary" onclick="ExcelStudio.addRow()">+ Satır</button>
+          <button class="btn secondary" onclick="ExcelStudio.addCol()">+ Sütun</button>
+          <button class="btn secondary" onclick="ExcelStudio.removeRow()">− Satır</button>
+          <button class="btn secondary" onclick="ExcelStudio.removeCol()">− Sütun</button>
+          <button class="btn secondary" onclick="ExcelStudio.exportCsv()">⇩ CSV indir</button>
+          <button class="btn secondary" onclick="ExcelStudio.exportXls()">⇩ Excel (.xls) indir</button>
+        </div>
+        <div class="card card-pad" style="overflow-x:auto;">
+          <table id="excelGrid"></table>
+        </div>
+      </section>
+
+      <!-- PDF STUDIO -->
+      <section class="section" id="sec-pdf">
+        <h2 class="section-title">P PDF Studio</h2>
+        <p class="section-desc">Kayıtlı bir belgeyi seçip PDF önizleme yapın; tarayıcının "Yazdır → PDF olarak kaydet" seçeneğiyle dışa aktarın (internet gerekmez).</p>
+        <div class="toolbar">
+          <select class="input" id="pdfDocSelect" style="max-width:340px;"></select>
+          <button class="btn secondary" onclick="PdfStudio.load()">Önizle</button>
+          <button class="btn bronze" onclick="window.print()">🖶 Yazdır / PDF Olarak Kaydet</button>
+        </div>
+        <div class="editor-page-wrap">
+          <div id="pdfPreview" style="min-height:520px; background:#fff; border:1px solid var(--line); padding:50px 60px; box-shadow:var(--shadow); line-height:1.85; font-size:14.5px;">
+            <div class="empty-state">Önizlemek için yukarıdan bir belge seçin.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARCHIVE -->
+      <section class="section" id="sec-archive">
+        <h2 class="section-title">▣ Arşiv</h2>
+        <p class="section-desc">Arşivlenen belgeler burada saklanır. Gerektiğinde geri yükleyebilir veya kalıcı olarak silebilirsiniz.</p>
+        <div class="card">
+          <table class="data-table">
+            <thead><tr><th>Başlık</th><th>Tür</th><th>Arşiv Tarihi</th><th></th></tr></thead>
+            <tbody id="archiveTableBody"></tbody>
+          </table>
+          <div id="archiveEmpty" class="empty-state" style="display:none; margin:20px;">
+            <div class="big">▣</div> Arşivde belge bulunmuyor.
+          </div>
+        </div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="section" id="sec-calendar">
+        <h2 class="section-title">▦ Takvim &amp; Hatırlatıcılar</h2>
+        <p class="section-desc">Süreli işler, duruşma/görüşme tarihleri ve teslim süreleri için hatırlatıcı oluşturun.</p>
+        <div class="grid grid-2" style="align-items:start;">
+          <div class="card card-pad">
+            <div class="toolbar" style="justify-content:space-between;">
+              <button class="btn secondary small" onclick="Calendar.shiftMonth(-1)">‹ Önceki</button>
+              <h3 id="calMonthLabel" style="margin:0; font-size:15px;"></h3>
+              <button class="btn secondary small" onclick="Calendar.shiftMonth(1)">Sonraki ›</button>
+            </div>
+            <div class="cal-grid" id="calDayLabels"></div>
+            <div class="cal-grid" id="calGrid" style="margin-top:6px;"></div>
+          </div>
+          <div class="card card-pad">
+            <div class="toolbar" style="justify-content:space-between;">
+              <h3 style="margin:0; font-size:15px;">Hatırlatıcılar</h3>
+              <button class="btn bronze small" onclick="Calendar.openNew()">+ Yeni</button>
+            </div>
+            <div id="reminderList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="section" id="sec-settings">
+        <h2 class="section-title">⚙ Ayarlar</h2>
+        <p class="section-desc">Kurum bilgileri, veri yedekleme ve geri yükleme işlemleri. Tüm veriler yalnızca bu tarayıcıda (localStorage) tutulur; internete hiçbir veri gönderilmez.</p>
+
+        <div class="grid grid-2" style="align-items:start;">
+          <div class="card card-pad">
+            <h3 style="margin-top:0; font-size:15px;">Kurum ve Personel Bilgileri</h3>
+            <div class="field"><label class="field-label">Kurum Adı</label><input class="input" id="setKurumAdi"></div>
+            <div class="field"><label class="field-label">Personel Adı Soyadı</label><input class="input" id="setPersonelAdi"></div>
+            <div class="field"><label class="field-label">Sicil / Unvan</label><input class="input" id="setSicil"></div>
+            <button class="btn bronze" onclick="Settings.save()">Kaydet</button>
+          </div>
+          <div class="card card-pad">
+            <h3 style="margin-top:0; font-size:15px;">Veri Yönetimi</h3>
+            <p class="section-desc" style="margin-bottom:14px;">Tüm belgeler, şablonlar ve hatırlatıcılar tek bir JSON dosyası olarak yedeklenebilir.</p>
+            <div class="toolbar" style="margin-bottom:10px;">
+              <button class="btn secondary" onclick="Settings.exportBackup()">⇩ Yedek Al (JSON)</button>
+              <button class="btn secondary" onclick="document.getElementById('restoreFile').click()">⇧ Yedekten Geri Yükle</button>
+              <input type="file" id="restoreFile" accept="application/json" style="display:none" onchange="Settings.importBackup(event)">
+            </div>
+            <button class="btn danger" onclick="Settings.clearAll()">Tüm Verileri Sil</button>
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
 </div>
 
-<!-- Reminder Modal -->
-<div class="modal-overlay" id="remModal">
-  <div class="modal">
-    <h3 id="remModalTitle">Yeni Görev</h3>
-    <input type="hidden" id="remId">
-    <div class="field"><label>Başlık</label><input id="remTitle" placeholder="Görev adı"></div>
-    <div class="field-row">
-      <div class="field"><label>Son Tarih</label><input type="date" id="remDate"></div>
-      <div class="field"><label>Öncelik</label>
-        <select id="remPriority"><option value="low">Düşük</option><option value="medium" selected>Orta</option><option value="high">Yüksek</option></select>
-      </div>
+<!-- MODALS -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-head">
+      <h3 id="modalTitle">Başlık</h3>
+      <button class="modal-close" onclick="Modal.close()">×</button>
     </div>
-    <div class="field"><label>Not</label><textarea id="remNote" placeholder="Ek detay (opsiyonel)"></textarea></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('remModal')">Vazgeç</button>
-      <button class="btn btn-primary" onclick="saveRem()">Kaydet</button>
-    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
   </div>
 </div>
 
-<!-- Şablon Doldurma Modalı -->
-<div class="modal-overlay" id="tplModal">
-  <div class="modal" style="max-width:620px;">
-    <h3 id="tplModalTitle">Şablonu Doldur</h3>
-    <div id="tplModalFields"></div>
-    <div id="tplModalResultWrap" style="display:none;">
-      <div class="field">
-        <label>Oluşturulan Belge (kontrol edip düzenleyebilirsin)</label>
-        <textarea id="tplModalResult" style="min-height:220px;font-family:var(--font-mono);font-size:12.5px;"></textarea>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-        <button class="btn btn-ghost btn-sm" onclick="exportTplResultAsWord()">📄 Word'e Aktar (.doc)</button>
-        <button class="btn btn-ghost btn-sm" onclick="exportTplResultAsPDF()">🖨️ PDF'e Aktar</button>
-      </div>
-    </div>
-    <div class="modal-actions" id="tplModalActions">
-      <button class="btn btn-ghost" onclick="closeModal('tplModal')">Kapat</button>
-      <button class="btn btn-primary" id="tplGenerateBtn" onclick="generateFromTplModal()">Belgeyi Oluştur</button>
-    </div>
-  </div>
-</div>
+<div id="toast"></div>
 
-<!-- Mevzuat Detay Modalı -->
-<div class="modal-overlay" id="mevzuatModal">
-  <div class="modal">
-    <h3 id="mevzuatModalTitle">Mevzuat Detayı</h3>
-    <div id="mevzuatModalBody" style="font-size:13.5px;line-height:1.6;white-space:pre-wrap;"></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('mevzuatModal')">Kapat</button>
-    </div>
-  </div>
-</div>
-
-<!-- Kendi Şablonunu Ekle Modalı -->
-<div class="modal-overlay" id="customTplModal">
-  <div class="modal" style="max-width:600px;">
-    <h3>Kendi Şablonunu Ekle</h3>
-    <div class="field">
-      <label>Şablon Adı</label>
-      <input id="customTplTitle" placeholder="Örn: Hastane Sevk Yazısı">
-    </div>
-    <div class="field">
-      <label>Kategori</label>
-      <select id="customTplCategory">
-        <option>Tutanak</option>
-        <option>Karar</option>
-        <option>Yazışma</option>
-        <option>Yazı</option>
-        <option>Düzenleme</option>
-        <option selected>Özel</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Belge Metni</label>
-      <textarea id="customTplBody" style="min-height:180px;font-family:var(--font-mono);font-size:12.5px;" placeholder="T.C.&#10;CEZA İNFAZ KURUMU&#10;...&#10;&#10;Değişecek yerleri çift süslü parantez içine yaz: {{tarih}}, {{hukumluAdi}} gibi.&#10;Bu alanlar otomatik olarak doldurma formuna dönüşür."></textarea>
-    </div>
-    <div class="ai-note" style="padding:0 0 10px;">İpucu: Metninde değişecek her yeri <code>{{boyle}}</code> şeklinde yaz (örn. <code>{{tarih}}</code>, <code>{{adSoyad}}</code>). KALEM bunları otomatik olarak doldurma formuna çevirir. Bu şablon tarayıcında kalıcı olarak saklanır, GitHub'a tekrar yüklemene gerek yoktur.</div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('customTplModal')">Vazgeç</button>
-      <button class="btn btn-primary" onclick="saveCustomTplFromModal()">Şablonu Kaydet</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
