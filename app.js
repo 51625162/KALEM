@@ -71,6 +71,7 @@ const Router = {
     document.getElementById('sidebar').classList.remove('open');
     // sayfa girişlerinde tazele
     if(name==='dashboard') Dashboard.render();
+    if(name==='ai') KalemAI.updateModeIndicator();
     if(name==='documents') Docs.render();
     if(name==='templates') Templates.render();
     if(name==='mevzuat') Mevzuat.render();
@@ -357,55 +358,191 @@ const AI_RULES = [
    ozet:'İyi hal ve açık kuruma ayrılma değerlendirmesi ile ilgilidir. İdare ve Gözlem Kurulu kararı düzenlenmelidir.'},
 ];
 
-const KalemAI = {
-  analyze(){
-    const text = document.getElementById('aiInput').value.trim();
-    const person = document.getElementById('aiPersonName').value.trim();
-    const kurum = document.getElementById('aiKurum').value.trim();
-    const resultBox = document.getElementById('aiResult');
-    if(!text){
-      toast('Lütfen olay tarifini girin.');
-      return;
+/* =========================================================
+   AI ENGINE — gerçek dil modeli entegrasyonu (Google Gemini, ücretsiz katman)
+   Kullanıcı kendi API anahtarını Ayarlar'dan girer; anahtar yalnızca
+   bu tarayıcıda (localStorage) saklanır ve doğrudan Google'a gönderilir.
+   İnternet yoksa veya anahtar/etkinleştirme yoksa sistem otomatik olarak
+   offline kural motorunu (AI_RULES) kullanır.
+   ========================================================= */
+const AiEngine = {
+  geminiModel: 'gemini-2.0-flash',
+  groqModel: 'llama-3.3-70b-versatile',
+  settings(){ return Store.get('settings', {}); },
+  provider(){ return this.settings().aiProvider || 'gemini'; },
+  hasKey(){
+    const s = this.settings();
+    return !!(s.aiEnabled && s.aiKey && s.aiKey.length > 10);
+  },
+  async callModel(promptText){
+    return this.provider()==='groq' ? this.callGroq(promptText) : this.callGemini(promptText);
+  },
+  async callGemini(promptText){
+    const s = this.settings();
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.geminiModel}:generateContent?key=${encodeURIComponent(s.aiKey)}`;
+    const res = await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ contents:[{ parts:[{ text: promptText }] }] })
+    });
+    if(!res.ok){
+      const errText = await res.text().catch(()=> '');
+      throw new Error('Gemini API hatası ('+res.status+'): '+errText.slice(0,200));
     }
+    const data = await res.json();
+    const text = data && data.candidates && data.candidates[0] && data.candidates[0].content
+      && data.candidates[0].content.parts && data.candidates[0].content.parts[0]
+      && data.candidates[0].content.parts[0].text;
+    if(!text) throw new Error('Gemini modelinden yanıt alınamadı.');
+    return text;
+  },
+  async callGroq(promptText){
+    const s = this.settings();
+    const url = 'https://api.groq.com/openai/v1/chat/completions';
+    const res = await fetch(url, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+s.aiKey
+      },
+      body: JSON.stringify({
+        model: this.groqModel,
+        messages: [{ role:'user', content: promptText }]
+      })
+    });
+    if(!res.ok){
+      const errText = await res.text().catch(()=> '');
+      throw new Error('Groq API hatası ('+res.status+'): '+errText.slice(0,200));
+    }
+    const data = await res.json();
+    const text = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if(!text) throw new Error('Groq modelinden yanıt alınamadı.');
+    return text;
+  },
+  buildPrompt(olayText, person, kurum, relatedLaws){
+    const lawBlock = relatedLaws.map(m=>`- ${m.kanun} ${m.madde} (${m.baslik}): ${m.metin}`).join('\n');
+    return `Sen bir Türk ceza infaz kurumu / denetimli serbestlik biriminde çalışan, resmi yazışma kurallarına hâkim bir memur asistanısın.
+Aşağıdaki olay tarifine dayanarak, kurumsal üslupta, gerekçeli ve mevzuata atıf yapan bir belge taslağı yaz (tutanak/karar/rapor tarzında, olaya en uygun olanı sen seç).
+
+Kurum: ${kurum || '[KURUM ADI]'}
+İlgili kişi: ${person || '[AD SOYAD]'}
+Olay tarifi: ${olayText}
+
+İlgili olabilecek mevzuat maddeleri (varsa atıf yap, uydurma madde ekleme):
+${lawBlock || 'Doğrudan eşleşen madde bulunamadı, genel ifade kullan.'}
+
+Kurallar:
+- Resmi, nesnel ve kurumsal bir dil kullan.
+- Sadece verilen mevzuat maddelerine atıf yap, yeni kanun/madde numarası uydurma.
+- Taslağın sonunda "Bu taslak öneridir, yetkili personel tarafından incelenmelidir" notunu ekleme (arayüz zaten ekleyecek).
+- Düz metin olarak, paragraflar halinde yaz.`;
+  },
+  async testConnection(){
+    const box = document.getElementById('aiTestResult');
+    box.textContent = 'Test ediliyor...';
+    try{
+      if(!this.hasKey()){
+        box.textContent = "Önce \"Gerçek AI'ı etkinleştir\" kutusunu işaretleyip bir API anahtarı girip kaydedin.";
+        return;
+      }
+      await this.callModel('Sadece "Bağlantı başarılı" yaz.');
+      box.textContent = '✓ Bağlantı başarılı. Gerçek AI kullanıma hazır.';
+    }catch(err){
+      box.textContent = '✗ Bağlantı başarısız: ' + err.message + ' (İnternet yok, anahtar hatalı veya kurum ağı engelliyor olabilir — offline mod yine de çalışmaya devam eder.)';
+    }
+  }
+};
+
+const KalemAI = {
+  updateModeIndicator(){
+    const el = document.getElementById('aiModeIndicator');
+    if(!el) return;
+    el.innerHTML = AiEngine.hasKey()
+      ? `<span class="chip" style="background:#e6f0e9; color:var(--green);">🟢 Gerçek AI aktif (${AiEngine.provider()==='groq' ? 'Groq' : 'Gemini'})</span>`
+      : "<span class=\"chip\">⚪ Offline kural motoru — Ayarlar'dan gerçek AI etkinleştirebilirsiniz</span>";
+  },
+  ruleMatch(text){
     const lower = text.toLowerCase();
     let matched = null, hitCount = 0;
     AI_RULES.forEach(rule=>{
       const c = rule.keys.filter(k=>lower.includes(k)).length;
       if(c > hitCount){ hitCount = c; matched = rule; }
     });
-    const relatedLaws = Mevzuat.search(text, 3);
-
-    if(!matched){
-      resultBox.style.display = 'block';
-      resultBox.innerHTML = `
-        <div class="empty-state">
-          <div class="big">✦</div>
-          Girilen tarif için doğrudan eşleşen bir kural bulunamadı. Aşağıda konuyla ilgili olabilecek mevzuat maddeleri listelenmiştir; en yakın belge türünü Şablon Merkezi'nden seçebilirsiniz.
-        </div>
-        ${relatedLaws.length ? '<h4 style="margin-top:18px;">İlgili olabilecek mevzuat</h4>' + relatedLaws.map(m=>`
-          <div class="card law-card"><div class="law-title">${escapeHtml(m.baslik)}</div><div class="law-meta">${escapeHtml(m.kanun)} · ${escapeHtml(m.madde)}</div><div class="law-text">${escapeHtml(m.metin)}</div></div>
-        `).join('') : ''}
-      `;
+    return matched;
+  },
+  async analyze(){
+    const text = document.getElementById('aiInput').value.trim();
+    const person = document.getElementById('aiPersonName').value.trim();
+    const kurum = document.getElementById('aiKurum').value.trim();
+    const resultBox = document.getElementById('aiResult');
+    const btn = document.getElementById('aiAnalyzeBtn');
+    if(!text){
+      toast('Lütfen olay tarifini girin.');
       return;
     }
+    const matched = this.ruleMatch(text);
+    const relatedLaws = Mevzuat.search(text, 3);
 
-    resultBox.style.display = 'block';
-    resultBox.innerHTML = `
-      <h4 style="margin:0 0 6px;">Önerilen Belge Türü</h4>
-      <div class="chip-line"><span class="chip">${escapeHtml(matched.docType)}</span>${matched.karar ? '<span class="chip">+ '+escapeHtml(matched.karar)+'</span>' : ''}</div>
-      <p class="section-desc" style="margin:12px 0 0;">${escapeHtml(matched.ozet)}</p>
+    const baseHtml = `
+      <h4 style="margin:0 0 6px;">Önerilen Belge Türü ${matched ? '' : '<span class="section-desc">(yakın eşleşme bulunamadı)</span>'}</h4>
+      <div class="chip-line">${matched ? `<span class="chip">${escapeHtml(matched.docType)}</span>${matched.karar ? '<span class="chip">+ '+escapeHtml(matched.karar)+'</span>' : ''}` : "<span class=\"chip\">Şablon Merkezi'nden manuel seçin</span>"}</div>
+      ${matched ? `<p class="section-desc" style="margin:12px 0 0;">${escapeHtml(matched.ozet)}</p>` : ''}
 
       <h4 style="margin:20px 0 6px;">İlgili Mevzuat</h4>
       ${relatedLaws.length ? relatedLaws.map(m=>`
         <div class="card law-card"><div class="law-title">${escapeHtml(m.baslik)}</div><div class="law-meta">${escapeHtml(m.kanun)} · ${escapeHtml(m.madde)}</div><div class="law-text">${escapeHtml(m.metin)}</div></div>
       `).join('') : '<p class="section-desc">Doğrudan eşleşen madde bulunamadı.</p>'}
 
-      <div class="toolbar" style="margin-top:18px;">
-        <button class="btn bronze" onclick="KalemAI.createDraft('${matched.templateId}', ${JSON.stringify(text).replace(/"/g,'&quot;')}, '${escapeHtml(person)}', '${escapeHtml(kurum)}')">✦ Taslağı Word Studio'da Oluştur</button>
+      ${matched ? `<div class="toolbar" style="margin-top:18px;">
+        <button class="btn secondary" onclick="KalemAI.createDraft('${matched.templateId}', ${JSON.stringify(text).replace(/"/g,'&quot;')}, '${escapeHtml(person)}', '${escapeHtml(kurum)}')">Şablon Taslağını Word Studio'da Oluştur</button>
         ${matched.kararTemplateId ? `<button class="btn secondary" onclick="KalemAI.createDraft('${matched.kararTemplateId}', ${JSON.stringify(text).replace(/"/g,'&quot;')}, '${escapeHtml(person)}', '${escapeHtml(kurum)}')">İkinci aşama belgeyi oluştur</button>` : ''}
-      </div>
-      <p class="section-desc" style="margin-top:14px; font-style:italic;">Not: Bu taslak yalnızca bir öneridir; içeriği yetkili personel tarafından incelenmeli ve onaylanmalıdır.</p>
+      </div>` : ''}
+
+      <div id="aiRealResult" style="margin-top:18px;"></div>
     `;
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = baseHtml;
+
+    const realBox = document.getElementById('aiRealResult');
+    if(AiEngine.hasKey()){
+      btn.disabled = true;
+      realBox.innerHTML = `<div class="section-desc">✦ Gerçek AI ile gerekçeli taslak oluşturuluyor, lütfen bekleyin...</div>`;
+      try{
+        const prompt = AiEngine.buildPrompt(text, person, kurum, relatedLaws);
+        const draft = await AiEngine.callModel(prompt);
+        this._lastDraft = draft;
+        realBox.innerHTML = `
+          <h4 style="margin:0 0 6px;">🟢 Gerçek AI Taslağı (${AiEngine.provider()==='groq' ? 'Groq' : 'Gemini'})</h4>
+          <div class="card card-pad" style="white-space:pre-wrap; line-height:1.75; font-size:13.5px;">${escapeHtml(draft)}</div>
+          <div class="toolbar" style="margin-top:14px;">
+            <button class="btn bronze" onclick="KalemAI.sendAiDraftToWord('${escapeHtml(person)}', '${escapeHtml(kurum)}')">✦ Bu Taslağı Word Studio'ya Aktar</button>
+          </div>
+        `;
+      }catch(err){
+        realBox.innerHTML = `<div class="empty-state">Gerçek AI'a ulaşılamadı (${escapeHtml(err.message)}). İnternet bağlantınızı veya API anahtarınızı kontrol edin. Yukarıdaki kural tabanlı öneri kullanılabilir.</div>`;
+      }finally{
+        btn.disabled = false;
+      }
+    }
+
+    const finalNote = document.createElement('p');
+    finalNote.className = 'section-desc';
+    finalNote.style.marginTop = '14px';
+    finalNote.style.fontStyle = 'italic';
+    finalNote.textContent = 'Not: Üretilen taslaklar yalnızca öneridir; içerik yetkili personel tarafından incelenmeli ve onaylanmalıdır.';
+    resultBox.appendChild(finalNote);
+  },
+  sendAiDraftToWord(person, kurum){
+    if(!this._lastDraft) return;
+    const settings = Store.get('settings', {});
+    const paragraphs = this._lastDraft.split(/\n+/).filter(p=>p.trim()).map(p=>`<p>${escapeHtml(p)}</p>`).join('');
+    const html = `<h2 style="text-align:center">${escapeHtml(kurum || settings.kurumAdi || '[KURUM ADI]')}</h2>
+<p><b>Tarih:</b> ${fmtDate(nowIso())} &nbsp; <b>İlgili Kişi:</b> ${escapeHtml(person || '[AD SOYAD]')}</p>
+${paragraphs}
+<p style="margin-top:30px;">Hazırlayan: ${escapeHtml(settings.personelAdi || '.........................')}</p>`;
+    WordStudio.loadContent('AI Taslağı - '+fmtDate(nowIso()), 'Diğer', html);
+    Router.go('word');
+    toast("Taslak Word Studio'ya aktarıldı.");
   },
   createDraft(templateId, ozetText, person, kurum){
     const t = TEMPLATES.find(x=>x.id===templateId);
@@ -726,15 +863,35 @@ const Settings = {
     document.getElementById('setKurumAdi').value = s.kurumAdi || '';
     document.getElementById('setPersonelAdi').value = s.personelAdi || '';
     document.getElementById('setSicil').value = s.sicil || '';
+    document.getElementById('setAiEnabled').checked = !!s.aiEnabled;
+    document.getElementById('setAiProvider').value = s.aiProvider || 'gemini';
+    document.getElementById('setAiKey').value = s.aiKey || '';
+    this.onProviderChange();
+  },
+  onProviderChange(){
+    const provider = document.getElementById('setAiProvider').value;
+    const label = document.getElementById('setAiKeyLabel');
+    const input = document.getElementById('setAiKey');
+    if(provider==='groq'){
+      label.textContent = 'Groq API Anahtarı';
+      input.placeholder = 'gsk_...';
+    } else {
+      label.textContent = 'Gemini API Anahtarı';
+      input.placeholder = 'AIzaSy...';
+    }
   },
   save(){
     const s = {
       kurumAdi: document.getElementById('setKurumAdi').value.trim(),
       personelAdi: document.getElementById('setPersonelAdi').value.trim(),
       sicil: document.getElementById('setSicil').value.trim(),
+      aiEnabled: document.getElementById('setAiEnabled').checked,
+      aiProvider: document.getElementById('setAiProvider').value,
+      aiKey: document.getElementById('setAiKey').value.trim(),
     };
     Store.set('settings', s);
     toast('Ayarlar kaydedildi.');
+    if(typeof KalemAI !== 'undefined') KalemAI.updateModeIndicator();
   },
   exportBackup(){
     const backup = {
@@ -825,3 +982,4 @@ Templates.render();
 Mevzuat.render('');
 Calendar.render();
 ExcelStudio.render();
+KalemAI.updateModeIndicator();
