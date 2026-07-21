@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KALEM — Kurumsal Karar ve Belge Üretim Sistemi</title>
+<link rel="stylesheet" href="stil.css?v=2">
+</head>
+<body>
+
+<div id="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="seal">K</div>
+      <div class="brand-text">
+        <div class="name">KALEM</div>
+        <div class="sub">KARAR &amp; BELGE SİSTEMİ</div>
+      </div>
+    </div>
+    <nav class="menu" id="menuNav">
+      <div class="menu-group-label">Genel</div>
+      <div class="menu-item" data-target="dashboard"><span class="ico">◆</span> Dashboard</div>
+      <div class="menu-item" data-target="ai"><span class="ico">✦</span> KALEM AI</div>
+      <div class="menu-group-label">Stüdyolar</div>
+      <div class="menu-item" data-target="word"><span class="ico">W</span> Word Studio</div>
+      <div class="menu-item" data-target="excel"><span class="ico">X</span> Excel Studio</div>
+      <div class="menu-item" data-target="pdf"><span class="ico">P</span> PDF Studio</div>
+      <div class="menu-group-label">Yönetim</div>
+      <div class="menu-item" data-target="archive"><span class="ico">▣</span> Arşiv</div>
+      <div class="menu-item" data-target="calendar"><span class="ico">▦</span> Takvim &amp; Hatırlatıcı</div>
+      <div class="menu-item" data-target="settings"><span class="ico">⚙</span> Ayarlar</div>
+    </nav>
+    <div class="sidebar-foot">KALEM v1.0 · Tamamen çevrimdışı<br>Veriler yalnızca bu cihazda saklanır.</div>
+  </aside>
+
+  <div id="main">
+    <div id="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="hamburger" id="hamburgerBtn">☰</button>
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <div class="breadcrumb" id="pageBreadcrumb">KALEM / Dashboard</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="clock"><b id="clockTime">--:--</b><span id="clockDate">--</span></div>
+      </div>
+    </div>
+
+    <div id="content">
+
+      <!-- DASHBOARD -->
+      <section class="section active" id="sec-dashboard">
+        <h2 class="section-title">Genel Bakış</h2>
+        <p class="section-desc">Kurum içi belge üretim sürecinizin özeti. Aşağıdaki sayılar bu cihazda kayıtlı verilere göre hesaplanır.</p>
+        <div class="grid grid-4" id="dashStats"></div>
+
+        <div class="grid grid-2" style="margin-top:20px; align-items:start;">
+          <div class="card card-pad">
+            <h3 style="margin-top:0; font-size:15px;">Son Belgeler</h3>
+            <div id="dashRecentDocs"></div>
+          </div>
+          <div class="card card-pad">
+            <h3 style="margin-top:0; font-size:15px;">Yaklaşan Hatırlatıcılar</h3>
+            <div id="dashReminders"></div>
+          </div>
+        </div>
+
+        <div class="card card-pad" style="margin-top:20px;">
+          <h3 style="margin-top:0; font-size:15px;">Hızlı İşlemler</h3>
+          <div class="toolbar" style="margin-bottom:0;">
+            <button class="btn bronze" onclick="Router.go('ai')">✦ KALEM AI ile Karar Üret</button>
+            <button class="btn secondary" onclick="Router.go('word')">W Boş Belgeye Başla</button>
+            <button class="btn secondary" onclick="Router.go('excel')">X Tablo Oluştur</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- KALEM AI -->
+      <section class="section" id="sec-ai">
+        <h2 class="section-title">✦ KALEM AI — Karar Motoru</h2>
+        <p class="section-desc">Olayı kısaca tarif edin. KALEM AI, olaya uygun belge türünü, ilgili mevzuat maddelerini ve gerekçeli taslak metni öneri olarak sunar. Üretilen taslak her zaman yetkili personel tarafından incelenip onaylanmalıdır.</p>
+
+        <div class="card kalem-ai-box">
+          <div class="field">
+            <label class="field-label">Olay / durum tarifi</label>
+            <textarea class="input" id="aiInput" rows="4" placeholder="Örn: Hükümlü kuruma ait çamaşırhanede disiplin talimatına uymadı ve görevliye sözlü olarak hakaret etti."></textarea>
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label class="field-label">İlgili kişi / hükümlü-hükümlü adayı adı (opsiyonel)</label>
+              <input class="input" id="aiPersonName" placeholder="Ad Soyad">
+            </div>
+            <div class="field">
+              <label class="field-label">Kurum / birim</label>
+              <input class="input" id="aiKurum" placeholder="Örn: ... T Tipi Kapalı Ceza İnfaz Kurumu">
+            </div>
+          </div>
+          <div class="chip-line" id="aiModeIndicator" style="margin-bottom:14px;"></div>
+          <button class="btn bronze" id="aiAnalyzeBtn" onclick="KalemAI.analyze()">✦ Analiz Et ve Karar Üret</button>
+
+          <div id="aiResult" class="kalem-ai-result" style="display:none;"></div>
+        </div>
+      </section>
+
+      <!-- WORD STUDIO -->
+      <section class="section" id="sec-word">
+        <h2 class="section-title">W Word Studio</h2>
+        <p class="section-desc">Belge içeriğinizi biçimlendirin. ".doc" olarak dışa aktardığınızda dosya Microsoft Word ile doğrudan açılır.</p>
+        <div class="toolbar">
+          <input class="input" id="wordTitle" placeholder="Belge başlığı" style="max-width:320px;">
+          <select class="input" id="wordDocType" style="max-width:170px;">
+            <option>Üst Yazı</option><option>Karar</option><option>Tutanak</option><option>Rapor</option><option>Diğer</option>
+          </select>
+          <button class="btn secondary" onclick="WordStudio.save()">💾 Kaydet</button>
+          <button class="btn secondary" onclick="WordStudio.exportDoc()">⇩ .doc indir</button>
+          <button class="btn secondary" onclick="window.print()">🖶 Yazdır / PDF</button>
+        </div>
+        <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;">
+        <div class="editor-page-wrap" style="flex:1; min-width:340px;">
+          <div class="editor-toolbar">
+            <button onclick="WordStudio.cmd('bold')" title="Kalın"><b>K</b></button>
+            <button onclick="WordStudio.cmd('italic')" title="İtalik"><i>İ</i></button>
+            <button onclick="WordStudio.cmd('underline')" title="Altı çizili"><u>A</u></button>
+            <div class="sep"></div>
+            <button onclick="WordStudio.cmd('justifyLeft')" title="Sola yasla">◧</button>
+            <button onclick="WordStudio.cmd('justifyCenter')" title="Ortala">▣</button>
+            <button onclick="WordStudio.cmd('justifyRight')" title="Sağa yasla">◨</button>
+            <button onclick="WordStudio.cmd('justifyFull')" title="İki yana yasla">☰</button>
+            <div class="sep"></div>
+            <button onclick="WordStudio.block('h2')" title="Başlık">H</button>
+            <button onclick="WordStudio.block('p')" title="Paragraf">¶</button>
+            <button onclick="WordStudio.cmd('insertUnorderedList')" title="Madde işareti">•</button>
+            <button onclick="WordStudio.cmd('insertOrderedList')" title="Numaralı liste">1.</button>
+            <div class="sep"></div>
+            <button onclick="WordStudio.clearFormat()" title="Biçimi temizle">⨯</button>
+          </div>
+          <div id="wordEditor" contenteditable="true"></div>
+        </div>
+
+        <div class="card card-pad" id="phrasePanel" style="width:300px; flex-shrink:0; max-height:640px; overflow-y:auto;">
+          <h4 style="margin:0 0 10px; font-size:14px;">📖 Resmi Dil Kalıpları</h4>
+          <p class="section-desc" style="margin-bottom:12px;">Tıkladığında imlecin bulunduğu yere eklenir.</p>
+          <div id="phraseList"></div>
+        </div>
+        </div>
+      </section>
+
+
+      <!-- EXCEL STUDIO -->
+      <section class="section" id="sec-excel">
+        <h2 class="section-title">X Excel Studio</h2>
+        <p class="section-desc">Basit tablo/çizelge oluşturun; CSV veya Excel (.xls) olarak dışa aktarın. Hazır şablonlardan başlayabilir veya kendi tablonuzu şablon olarak kaydedebilirsiniz.</p>
+
+        <h4 style="margin:0 0 8px;">Şablonlar</h4>
+        <div class="grid grid-3" id="excelTemplateGrid" style="margin-bottom:22px;"></div>
+
+        <div class="toolbar">
+          <input class="input" id="excelTitle" placeholder="Tablo adı" style="max-width:260px;">
+          <button class="btn secondary" onclick="ExcelStudio.addRow()">+ Satır</button>
+          <button class="btn secondary" onclick="ExcelStudio.addCol()">+ Sütun</button>
+          <button class="btn secondary" onclick="ExcelStudio.removeRow()">− Satır</button>
+          <button class="btn secondary" onclick="ExcelStudio.removeCol()">− Sütun</button>
+          <button class="btn bronze" onclick="ExcelStudio.saveAsTemplate()">✦ Şablon Olarak Kaydet</button>
+          <button class="btn secondary" onclick="ExcelStudio.exportCsv()">⇩ CSV indir</button>
+          <button class="btn secondary" onclick="ExcelStudio.exportXls()">⇩ Excel (.xls) indir</button>
+        </div>
+        <div class="card card-pad" style="overflow-x:auto;">
+          <table id="excelGrid"></table>
+        </div>
+      </section>
+
+      <!-- PDF STUDIO -->
+      <section class="section" id="sec-pdf">
+        <h2 class="section-title">P PDF Studio</h2>
+        <p class="section-desc">Kayıtlı bir belgeyi seçip PDF önizleme yapın; tarayıcının "Yazdır → PDF olarak kaydet" seçeneğiyle dışa aktarın (internet gerekmez).</p>
+        <div class="toolbar">
+          <select class="input" id="pdfDocSelect" style="max-width:340px;"></select>
+          <button class="btn secondary" onclick="PdfStudio.load()">Önizle</button>
+          <button class="btn bronze" onclick="window.print()">🖶 Yazdır / PDF Olarak Kaydet</button>
+        </div>
+        <div class="editor-page-wrap">
+          <div id="pdfPreview" style="min-height:520px; background:#fff; border:1px solid var(--line); padding:50px 60px; box-shadow:var(--shadow); line-height:1.85; font-size:14.5px;">
+            <div class="empty-state">Önizlemek için yukarıdan bir belge seçin.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARCHIVE -->
+      <section class="section" id="sec-archive">
+        <h2 class="section-title">▣ Arşiv</h2>
+        <p class="section-desc">Arşivlenen belgeler burada saklanır. Gerektiğinde geri yükleyebilir veya kalıcı olarak silebilirsiniz.</p>
+        <div class="card">
+          <table class="data-table">
+            <thead><tr><th>Başlık</th><th>Tür</th><th>Arşiv Tarihi</th><th></th></tr></thead>
+            <tbody id="archiveTableBody"></tbody>
+          </table>
+          <div id="archiveEmpty" class="empty-state" style="display:none; margin:20px;">
+            <div class="big">▣</div> Arşivde belge bulunmuyor.
+          </div>
+        </div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="section" id="sec-calendar">
+        <h2 class="section-title">▦ Takvim &amp; Hatırlatıcılar</h2>
+        <p class="section-desc">Süreli işler, duruşma/görüşme tarihleri ve teslim süreleri için hatırlatıcı oluşturun.</p>
+        <div class="grid grid-2" style="align-items:start;">
+          <div class="card card-pad">
+            <div class="toolbar" style="justify-content:space-between;">
+              <button class="btn secondary small" onclick="Calendar.shiftMonth(-1)">‹ Önceki</button>
+              <h3 id="calMonthLabel" style="margin:0; font-size:15px;"></h3>
+              <button class="btn secondary small" onclick="Calendar.shiftMonth(1)">Sonraki ›</button>
+            </div>
+            <div class="cal-grid" id="calDayLabels"></div>
+            <div class="cal-grid" id="calGrid" style="margin-top:6px;"></div>
+          </div>
+          <div class="card card-pad">
+            <div class="toolbar" style="justify-content:space-between;">
+              <h3 style="margin:0; font-size:15px;">Hatırlatıcılar</h3>
+              <button class="btn bronze small" onclick="Calendar.openNew()">+ Yeni</button>
+            </div>
+            <div id="reminderList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="section" id="sec-settings">
+        <h2 class="section-title">⚙ Ayarlar</h2>
+        <p class="section-desc">Kurum bilgileri, veri yedekleme ve geri yükleme işlemleri. Tüm veriler yalnızca bu tarayıcıda (localStorage) tutulur; internete hiçbir veri gönderilmez.</p>
+
+        <div class="grid grid-2" style="align-items:start;">
+          <div class="card card-pad">
+            <h3 style="margin-top:0; font-size:15px;">Gerçek Yapay Zekâ Bağlantısı (Opsiyonel)</h3>
+            <p class="section-desc" style="margin-bottom:14px;">KALEM AI, burada bir API anahtarı tanımlarsanız gerçek bir dil modeli kullanarak taslak üretir. Anahtar yalnızca bu tarayıcıda saklanır, hiçbir sunucuya gönderilmez. İnternet yoksa veya anahtar boşsa sistem otomatik olarak offline kural motoruna döner.</p>
+            <div class="field">
+              <label class="field-label"><input type="checkbox" id="setAiEnabled" style="width:auto; margin-right:6px;"> Gerçek AI'ı etkinleştir (internet gerektirir)</label>
+            </div>
+            <div class="field">
+              <label class="field-label">Sağlayıcı</label>
+              <select class="input" id="setAiProvider" onchange="Settings.onProviderChange()">
+                <option value="gemini">Google Gemini — ücretsiz katman, anahtar: aistudio.google.com/apikey</option>
+                <option value="groq">Groq (Llama 3.3 70B) — ücretsiz katman, anahtar: console.groq.com/keys</option>
+              </select>
+            </div>
+            <div class="field"><label class="field-label" id="setAiKeyLabel">API Anahtarı</label><input class="input" type="password" id="setAiKey" placeholder="AIzaSy... veya gsk_..."></div>
+            <div class="toolbar" style="margin-bottom:0;">
+              <button class="btn bronze" onclick="Settings.save()">Kaydet</button>
+              <button class="btn secondary" onclick="AiEngine.testConnection()">Bağlantıyı Test Et</button>
+            </div>
+            <div id="aiTestResult" class="section-desc" style="margin-top:10px;"></div>
+          </div>
+          <div class="card card-pad">
+            <h3 style="margin-top:0; font-size:15px;">Veri Yönetimi</h3>
+            <p class="section-desc" style="margin-bottom:14px;">Tüm belgeler, şablonlar ve hatırlatıcılar tek bir JSON dosyası olarak yedeklenebilir.</p>
+            <div class="toolbar" style="margin-bottom:10px;">
+              <button class="btn secondary" onclick="Settings.exportBackup()">⇩ Yedek Al (JSON)</button>
+              <button class="btn secondary" onclick="document.getElementById('restoreFile').click()">⇧ Yedekten Geri Yükle</button>
+              <input type="file" id="restoreFile" accept="application/json" style="display:none" onchange="Settings.importBackup(event)">
+            </div>
+            <button class="btn danger" onclick="Settings.clearAll()">Tüm Verileri Sil</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-head">
+      <h3 id="modalTitle">Başlık</h3>
+      <button class="modal-close" onclick="Modal.close()">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="uygulama.js?v=2"></script>
+</body>
+</html>
