@@ -110,13 +110,14 @@
         <div class="toolbar">
           <input class="input" id="wordTitle" placeholder="Belge başlığı" style="max-width:320px;">
           <select class="input" id="wordDocType" style="max-width:170px;">
-            <option>Dilekçe</option><option>Üst Yazı</option><option>Karar</option><option>Tutanak</option><option>Rapor</option><option>Diğer</option>
+            <option>Üst Yazı</option><option>Karar</option><option>Tutanak</option><option>Rapor</option><option>Diğer</option>
           </select>
           <button class="btn secondary" onclick="WordStudio.save()">💾 Kaydet</button>
           <button class="btn secondary" onclick="WordStudio.exportDoc()">⇩ .doc indir</button>
           <button class="btn secondary" onclick="window.print()">🖶 Yazdır / PDF</button>
         </div>
-        <div class="editor-page-wrap">
+        <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;">
+        <div class="editor-page-wrap" style="flex:1; min-width:340px;">
           <div class="editor-toolbar">
             <button onclick="WordStudio.cmd('bold')" title="Kalın"><b>K</b></button>
             <button onclick="WordStudio.cmd('italic')" title="İtalik"><i>İ</i></button>
@@ -136,7 +137,15 @@
           </div>
           <div id="wordEditor" contenteditable="true"></div>
         </div>
+
+        <div class="card card-pad" id="phrasePanel" style="width:300px; flex-shrink:0; max-height:640px; overflow-y:auto;">
+          <h4 style="margin:0 0 10px; font-size:14px;">📖 Resmi Dil Kalıpları</h4>
+          <p class="section-desc" style="margin-bottom:12px;">Tıkladığında imlecin bulunduğu yere eklenir.</p>
+          <div id="phraseList"></div>
+        </div>
+        </div>
       </section>
+
 
       <!-- EXCEL STUDIO -->
       <section class="section" id="sec-excel">
@@ -222,13 +231,6 @@
         <p class="section-desc">Kurum bilgileri, veri yedekleme ve geri yükleme işlemleri. Tüm veriler yalnızca bu tarayıcıda (localStorage) tutulur; internete hiçbir veri gönderilmez.</p>
 
         <div class="grid grid-2" style="align-items:start;">
-          <div class="card card-pad">
-            <h3 style="margin-top:0; font-size:15px;">Kurum ve Personel Bilgileri</h3>
-            <div class="field"><label class="field-label">Kurum Adı</label><input class="input" id="setKurumAdi"></div>
-            <div class="field"><label class="field-label">Personel Adı Soyadı</label><input class="input" id="setPersonelAdi"></div>
-            <div class="field"><label class="field-label">Sicil / Unvan</label><input class="input" id="setSicil"></div>
-            <button class="btn bronze" onclick="Settings.save()">Kaydet</button>
-          </div>
           <div class="card card-pad">
             <h3 style="margin-top:0; font-size:15px;">Gerçek Yapay Zekâ Bağlantısı (Opsiyonel)</h3>
             <p class="section-desc" style="margin-bottom:14px;">KALEM AI, burada bir API anahtarı tanımlarsanız gerçek bir dil modeli kullanarak taslak üretir. Anahtar yalnızca bu tarayıcıda saklanır, hiçbir sunucuya gönderilmez. İnternet yoksa veya anahtar boşsa sistem otomatik olarak offline kural motoruna döner.</p>
