@@ -1004,8 +1004,11 @@ Kurallar:
     const box = document.getElementById('aiTestResult');
     box.textContent = 'Test ediliyor...';
     try{
+      // Önce ekrandaki mevcut değerleri (kutucuk, sağlayıcı, anahtar) otomatik kaydet —
+      // kullanıcı "Kaydet"e basmayı unutsa bile test doğru veriyle çalışsın.
+      Settings.save();
       if(!this.hasKey()){
-        box.textContent = "Önce \"Gerçek AI'ı etkinleştir\" kutusunu işaretleyip bir API anahtarı girip kaydedin.";
+        box.textContent = "Önce \"Gerçek AI'ı etkinleştir\" kutusunu işaretleyip bir API anahtarı girin.";
         return;
       }
       await this.callModel('Sadece "Bağlantı başarılı" yaz.');
