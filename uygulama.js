@@ -929,7 +929,7 @@ const AI_RULES = [
    offline kural motorunu (AI_RULES) kullanır.
    ========================================================= */
 const AiEngine = {
-  geminiModel: 'gemini-2.0-flash',
+  geminiModel: 'gemini-2.5-flash',
   groqModel: 'llama-3.3-70b-versatile',
   settings(){ return Store.get('settings', {}); },
   provider(){ return this.settings().aiProvider || 'gemini'; },
@@ -942,10 +942,13 @@ const AiEngine = {
   },
   async callGemini(promptText){
     const s = this.settings();
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.geminiModel}:generateContent?key=${encodeURIComponent(s.aiKey)}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.geminiModel}:generateContent`;
     const res = await fetch(url, {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-goog-api-key': s.aiKey
+      },
       body: JSON.stringify({ contents:[{ parts:[{ text: promptText }] }] })
     });
     if(!res.ok){
