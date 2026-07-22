@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KALEM — Kurumsal Karar ve Belge Üretim Sistemi</title>
-<link rel="stylesheet" href="stil.css?v=3">
+<link rel="stylesheet" href="stil.css?v=4">
 </head>
 <body>
 
@@ -241,7 +241,14 @@
               <label class="field-label">Sağlayıcı</label>
               <select class="input" id="setAiProvider" onchange="Settings.onProviderChange()">
                 <option value="gemini">Google Gemini — ücretsiz katman, anahtar: aistudio.google.com/apikey</option>
-                <option value="groq">Groq (Llama 3.3 70B) — ücretsiz katman, anahtar: console.groq.com/keys</option>
+                <option value="groq">Groq — ücretsiz katman, anahtar: console.groq.com/keys</option>
+              </select>
+            </div>
+            <div class="field" id="setGroqModelField" style="display:none;">
+              <label class="field-label">Groq Modeli</label>
+              <select class="input" id="setGroqModel">
+                <option value="llama-3.3-70b-versatile">Llama 3.3 70B — hızlı, genel amaçlı</option>
+                <option value="deepseek-r1-distill-llama-70b">DeepSeek R1 Distill 70B — daha güçlü akıl yürütme/gerekçelendirme</option>
               </select>
             </div>
             <div class="field"><label class="field-label" id="setAiKeyLabel">API Anahtarı</label><input class="input" type="password" id="setAiKey" placeholder="AIzaSy... veya gsk_..."></div>
@@ -282,6 +289,6 @@
 
 <div id="toast"></div>
 
-<script src="uygulama.js?v=3"></script>
+<script src="uygulama.js?v=4"></script>
 </body>
 </html>

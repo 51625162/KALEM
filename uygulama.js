@@ -965,6 +965,7 @@ const AiEngine = {
   async callGroq(promptText){
     const s = this.settings();
     const url = 'https://api.groq.com/openai/v1/chat/completions';
+    const model = s.groqModel || this.groqModel;
     const res = await fetch(url, {
       method:'POST',
       headers:{
@@ -972,7 +973,7 @@ const AiEngine = {
         'Authorization':'Bearer '+s.aiKey
       },
       body: JSON.stringify({
-        model: this.groqModel,
+        model: model,
         messages: [{ role:'user', content: promptText }]
       })
     });
@@ -981,8 +982,11 @@ const AiEngine = {
       throw new Error('Groq API hatası ('+res.status+'): '+errText.slice(0,200));
     }
     const data = await res.json();
-    const text = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    let text = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
     if(!text) throw new Error('Groq modelinden yanıt alınamadı.');
+    // DeepSeek R1 Distill gibi akıl yürütme modelleri yanıta <think>...</think>
+    // etiketli bir iç muhakeme bloğu ekler — belgeye karışmaması için temizlenir.
+    text = text.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
     return text;
   },
   buildPrompt(olayText, person, kurum, relatedLaws){
@@ -1524,18 +1528,22 @@ const Settings = {
     document.getElementById('setAiEnabled').checked = !!s.aiEnabled;
     document.getElementById('setAiProvider').value = s.aiProvider || 'gemini';
     document.getElementById('setAiKey').value = s.aiKey || '';
+    document.getElementById('setGroqModel').value = s.groqModel || 'llama-3.3-70b-versatile';
     this.onProviderChange();
   },
   onProviderChange(){
     const provider = document.getElementById('setAiProvider').value;
     const label = document.getElementById('setAiKeyLabel');
     const input = document.getElementById('setAiKey');
+    const modelField = document.getElementById('setGroqModelField');
     if(provider==='groq'){
       label.textContent = 'Groq API Anahtarı';
       input.placeholder = 'gsk_...';
+      modelField.style.display = 'block';
     } else {
       label.textContent = 'Gemini API Anahtarı';
       input.placeholder = 'AIzaSy...';
+      modelField.style.display = 'none';
     }
   },
   save(){
@@ -1545,6 +1553,7 @@ const Settings = {
       aiEnabled: document.getElementById('setAiEnabled').checked,
       aiProvider: document.getElementById('setAiProvider').value,
       aiKey: document.getElementById('setAiKey').value.trim(),
+      groqModel: document.getElementById('setGroqModel').value,
     };
     Store.set('settings', s);
     toast('Ayarlar kaydedildi.');
